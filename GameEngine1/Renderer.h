@@ -32,6 +32,8 @@ public:
 
 	void SetMesh(MeshData*);
 	void SetMaterial(MaterialGroup);
+
+	MeshData* GetMesh();
 };
 
 #endif

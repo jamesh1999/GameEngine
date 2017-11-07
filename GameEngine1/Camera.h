@@ -6,7 +6,7 @@
 
 struct Camera : Component
 {
-
+	Camera();
 };
 
 #endif

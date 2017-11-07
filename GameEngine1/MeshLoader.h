@@ -18,7 +18,7 @@ private:
 	static void FBXGetUV(FbxMesh*, int, int, DirectX::XMFLOAT3&);
 
 	static void PrintFBXRecursive(FbxNode*, int);
-	static void ApplyFbxRecursive(MeshData*, FbxNode*);
+	static void ApplyFbxRecursive(MeshData*, FbxNode*, bool);
 
 	static void ApplyFbxRecursiveWithTextures(MeshData*, FbxNode*, std::vector<std::string>&);
 
@@ -27,7 +27,7 @@ public:
 
 	static FbxNode* LoadFBX(std::string);
 	static void PrintFBXHeirachy(FbxNode*);
-	static void ApplyFBX(MeshData*, FbxNode*, std::string);
+	static void ApplyFBX(MeshData*, FbxNode*, std::string, bool);
 	static void ApplyFBXWithTextures(MeshData*, FbxNode*, std::string, std::vector<std::string>&);
 	static void ApplyMesh(SubMesh*, FbxMesh*);
 	static void ApplyMesh(SubMesh*, FbxMesh*, int);

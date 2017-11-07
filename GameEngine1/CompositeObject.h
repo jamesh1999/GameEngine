@@ -6,9 +6,11 @@
 #include "Component.h"
 #include "Transform.h"
 #include "Script.h"
+#include "GCObject.h"
 
-class CompositeObject
+class CompositeObject : GCObject
 {
+	friend class ObjectManager;
 private:
 	std::vector<Component*> m_components;
 	Transform* m_transform;
@@ -16,14 +18,11 @@ private:
 public:
 	CompositeObject() 
 	{
-		ObjectManager::AddObject(this);
 		m_transform = new Transform;
 	}
 
 	~CompositeObject()
 	{
-		ObjectManager::RemoveObject(this);
-
 		//Cleanup
 		for (Component* c : m_components)
 			delete c;
@@ -60,7 +59,7 @@ public:
 	template<class T>
 	T* AttachComponent()
 	{
-		T* component = new T;
+		T* component = ObjectManager::CreateComponent<T>();
 		m_components.push_back(component);
 		reinterpret_cast<Component*>(component)->obj = this;
 		if (dynamic_cast<Script*>(component) != nullptr)
@@ -72,6 +71,22 @@ public:
 	{
 		exit(-1);
 	}
+
+	template<class T>
+	T* AttachComponent(T* component)
+	{
+		m_components.push_back(component);
+		reinterpret_cast<Component*>(component)->obj = this;
+		if (dynamic_cast<Script*>(component) != nullptr)
+			dynamic_cast<Script*>(component)->Create();
+		return component;
+	}
+	template<>
+	Transform* AttachComponent<Transform>(Transform* component)
+	{
+		exit(-1);
+	}
 };
+
 
 #endif

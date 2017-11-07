@@ -7,6 +7,8 @@ void Renderer::Render(int i)
 	if (mat.Size() < min)
 		min = mat.Size();
 
+	GeometryBuffer::BufferLocation idxes = GraphicsController::instance->geomBuff.FindRenderer(this);
+
 	if (i < min)
 	{
 		for (int j = 0; j < mat[i]->passes.size(); ++j)
@@ -15,7 +17,7 @@ void Renderer::Render(int i)
 			GraphicsController::instance->devContext->VSSetShader(mat[i]->passes[j].vs, NULL, NULL);
 			GraphicsController::instance->devContext->PSSetShader(mat[i]->passes[j].ps, NULL, NULL);
 
-			GraphicsController::instance->devContext->DrawIndexed((*mesh)[i].indices.size(), 0, 0);
+			GraphicsController::instance->devContext->DrawIndexed((*mesh)[i].indices.size(), std::get<0>(idxes), std::get<1>(idxes));
 		}
 	}
 }
@@ -40,4 +42,9 @@ void Renderer::SetMesh(MeshData* m)
 {
 	delete mesh;
 	mesh = m;
+}
+
+MeshData* Renderer::GetMesh()
+{
+	return mesh;
 }

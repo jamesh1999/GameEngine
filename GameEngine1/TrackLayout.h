@@ -12,7 +12,12 @@ typedef struct
 	DirectX::XMFLOAT3 p2;
 	DirectX::XMFLOAT3 p3;
 
+	DirectX::XMFLOAT3 n1;
+	DirectX::XMFLOAT3 n2;
+	DirectX::XMFLOAT3 n3;
+
 	DirectX::XMFLOAT3 norm;
+
 	float pos;
 } Segment;
 

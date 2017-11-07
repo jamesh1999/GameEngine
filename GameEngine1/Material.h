@@ -10,11 +10,17 @@
 
 struct TGAHeader
 {
-	char d1[12];
+	char d1;
+	char colourMap;
+	char image;
+	char d2[2];
+	short entries;
+	char entryBpp;
+	char d3[3];
 	short width;
 	short height;
 	char bpp;
-	char d2;
+	char d4;
 };
 
 class RenderPass

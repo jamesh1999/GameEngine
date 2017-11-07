@@ -275,18 +275,13 @@ void texcpy(void* dest, void* src, int size, int yscale, int xscale, int nrows, 
 	uint8_t* udest = static_cast<uint8_t*>(dest);
 	uint8_t* usrc = static_cast<uint8_t*>(src);
 
-	/*for(int i = 0; i < nrows; ++i)
-	{
-		memcpy(udest + (i + row_offset) * ncols * size + col_offset * size, usrc + ncols * i * size, ncols * size);
-	}*/
-
 	for(int i = 0; i < nrows; ++i)
 		for(int j = 0; j < ncols; ++j)
 		{
-			udest[(i * ncols + j) * size] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size];
-			udest[(i * ncols + j) * size + 1] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size + 1];
-			udest[(i * ncols + j) * size + 2] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size + 2];
-			udest[(i * ncols + j) * size + 3] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size + 3];
+			udest[(i * ncols + j) * size] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size];
+			udest[(i * ncols + j) * size + 1] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 1];
+			udest[(i * ncols + j) * size + 2] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 2];
+			udest[(i * ncols + j) * size + 3] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 3];
 		}
 }
 
@@ -381,7 +376,15 @@ std::tuple<uint8_t*, int, int> Material::getTGAData(std::string filename)
 	TGAHeader h;
 	in.read(reinterpret_cast<char*>(&h), sizeof(TGAHeader));
 
-	uint8_t* tgadata;
+	uint8_t* colourMap = nullptr;
+	if (h.image == 1)
+	{
+		colourMap = new uint8_t[h.entries * h.entryBpp / 8];
+
+		in.read(reinterpret_cast<char*>(colourMap), h.entries * h.entryBpp / 8);
+	}
+
+	uint8_t* tgadata = nullptr;
 	//32 bits per pixel
 	if (h.bpp == 32)
 	{
@@ -394,8 +397,12 @@ std::tuple<uint8_t*, int, int> Material::getTGAData(std::string filename)
 		tgadata = new uint8_t[h.width * h.height * 3];
 		in.read(reinterpret_cast<char*>(tgadata), h.width * h.height * 3);
 	}
-	else
-		exit(-1);
+	else if (h.image == 1)
+	{
+		tgadata = new uint8_t[h.width * h.height];
+		in.read(reinterpret_cast<char*>(tgadata), h.width * h.height);
+	}
+
 	in.close();
 
 	uint8_t* textureData = new uint8_t[h.width * h.height * 4];
@@ -417,9 +424,27 @@ std::tuple<uint8_t*, int, int> Material::getTGAData(std::string filename)
 				textureData[(i * h.width + j) * 4 + 2] = tgadata[((h.height - i - 1) * h.width + j) * 3];
 				textureData[(i * h.width + j) * 4 + 3] = 255;
 			}
+			else if(h.image == 1)
+			{
+				textureData[(i * h.width + j) * 4] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4 + 2];
+				textureData[(i * h.width + j) * 4 + 1] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4 + 1];
+				textureData[(i * h.width + j) * 4 + 2] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4];
+				textureData[(i * h.width + j) * 4 + 3] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4 + 3];
+			}
+			else
+			{
+				textureData[(i * h.width + j) * 4] = 0;
+				textureData[(i * h.width + j) * 4 + 1] = 0;
+				textureData[(i * h.width + j) * 4 + 2] = 0;
+				textureData[(i * h.width + j) * 4 + 3] = 0;
+			}
 		}
 	}
-	delete[] tgadata;
+
+	if(tgadata != nullptr)
+		delete[] tgadata;
+	if (colourMap != nullptr)
+		delete[] colourMap;
 
 	return std::tuple<uint8_t*, int, int>(textureData, h.width, h.height);
 }

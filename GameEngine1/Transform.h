@@ -7,12 +7,15 @@
 class Transform : public Component
 {
 private:
+	
 	DirectX::XMFLOAT3A m_position;
 	DirectX::XMFLOAT4A m_rotation;
 	DirectX::XMFLOAT3A m_scale;
-	Transform* m_parent = nullptr;
 
 public:
+	Transform* parent = nullptr;
+	bool m_static = false;
+
 	DirectX::XMMATRIX GetTransform() const;
 	DirectX::XMVECTOR GetPosition() const;
 	DirectX::XMVECTOR GetRotation() const;
@@ -33,8 +36,6 @@ public:
 	void SetPosition(const DirectX::XMVECTOR&);
 	void SetRotation(const DirectX::XMVECTOR&);
 	void SetScale(const DirectX::XMVECTOR&);
-
-	void SetParent(Transform*);
 };
 
 #endif

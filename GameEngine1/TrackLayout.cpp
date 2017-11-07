@@ -20,6 +20,10 @@ void TrackLayout::SetTrack(SubMesh* mesh)
 		s.p2 = mesh->vertices[mesh->indices[i + 1]].pos;
 		s.p3 = mesh->vertices[mesh->indices[i + 2]].pos;
 
+		s.n1 = mesh->vertices[mesh->indices[i]].normal;
+		s.n2 = mesh->vertices[mesh->indices[i + 1]].normal;
+		s.n3 = mesh->vertices[mesh->indices[i + 2]].normal;
+
 		DirectX::XMVECTOR p1 = DirectX::XMLoadFloat3(&s.p1);
 		DirectX::XMVECTOR p2 = DirectX::XMLoadFloat3(&s.p2);
 		DirectX::XMVECTOR p3 = DirectX::XMLoadFloat3(&s.p3);
@@ -82,7 +86,15 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR, bool> TrackLayout::GetNormal(Di
 			continue;
 		if (dist > minDist) continue;
 		minDist = dist;
-		shipNorm = s.norm;
+
+		DirectX::XMStoreFloat3(&shipNorm, 
+			DirectX::XMVector3Normalize(
+				DirectX::XMVectorAdd(
+					DirectX::XMVectorAdd(
+						DirectX::XMVectorScale(DirectX::XMLoadFloat3(&s.n1), 1.0f - w - v),
+						DirectX::XMVectorScale(DirectX::XMLoadFloat3(&s.n2), v)),
+					DirectX::XMVectorScale(DirectX::XMLoadFloat3(&s.n3), w))));
+
 		projFinal = proj;
 		over = true;
 	}

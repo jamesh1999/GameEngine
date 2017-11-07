@@ -134,24 +134,39 @@ void MeshLoader::PrintFBXRecursive(FbxNode* node, int indentation)
 		PrintFBXRecursive(node->GetChild(i), indentation + 1);
 }
 
-void MeshLoader::ApplyFbxRecursive(MeshData* out, FbxNode* node)
+void MeshLoader::ApplyFbxRecursive(MeshData* out, FbxNode* node, bool track)
 {
+	if (node->FindProperty("WOforwardTrackDirection").IsValid()
+		&& !node->FindProperty("WOforwardTrackDirection").Get<FbxBool>())
+		return;
+
+	if (track && std::strncmp(node->GetName(), "collision_reverse", 17) == 0)
+		return;
+
 	FbxNodeAttribute* attr = node->GetNodeAttribute();
 	if (attr)
 	{
 		if (attr->GetAttributeType() == FbxNodeAttribute::eMesh)
 		{
+			const char* name = node->GetName();
+			if (track && std::strncmp(name, "collision_floor", 15) != 0 && std::strncmp(name, "collision_magfl", 15) != 0)
+				return;
+
 			out->push_back(SubMesh());
 			ApplyMesh(&(out->back()), node->GetMesh());
 		}
 	}
 	int childCnt = node->GetChildCount();
 	for (int i = 0; i < childCnt; ++i)
-		ApplyFbxRecursive(out, node->GetChild(i));
+		ApplyFbxRecursive(out, node->GetChild(i), track);
 }
 
 void MeshLoader::ApplyFbxRecursiveWithTextures(MeshData* out, FbxNode* node, std::vector<std::string>& textures)
 {
+	if (node->FindProperty("WOforwardTrackDirection").IsValid()
+		&&  !node->FindProperty("WOforwardTrackDirection").Get<FbxBool>())
+		return;
+
 	std::vector<Material*> mats;
 	FbxNodeAttribute* attr = node->GetNodeAttribute();
 	if (attr)
@@ -325,12 +340,27 @@ void MeshLoader::PrintFBXHeirachy(FbxNode* rootNode)
 	PrintFBXRecursive(rootNode, 0);
 }
 
-void MeshLoader::ApplyFBX(MeshData* out, FbxNode* rootNode, std::string meshName)
+void MeshLoader::ApplyFBX(MeshData* out, FbxNode* rootNode, std::string meshName, bool track)
 {
 	if (meshName == "")
-		ApplyFbxRecursive(out, rootNode);
+		ApplyFbxRecursive(out, rootNode, track);
 	else
-		ApplyFbxRecursive(out, rootNode->FindChild(meshName.c_str()));
+		ApplyFbxRecursive(out, rootNode->FindChild(meshName.c_str()), track);
+
+	if (track)
+	{
+		for (int i = 1; i < out->size(); ++i)
+		{
+			int idxOffset = (*out)[0].vertices.size();
+
+			for (int j = 0; j < (*out)[i].vertices.size(); ++j)
+				(*out)[0].vertices.push_back((*out)[i].vertices[j]);
+			for (int j = 0; j < (*out)[i].indices.size(); ++j)
+				(*out)[0].indices.push_back((*out)[i].indices[j] + idxOffset);
+		}
+
+		out->resize(1);
+	}
 }
 
 void MeshLoader::ApplyFBXWithTextures(MeshData* out, FbxNode* rootNode, std::string meshName, std::vector<std::string>& textures)

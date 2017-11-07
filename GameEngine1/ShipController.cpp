@@ -7,6 +7,7 @@
 #include "TrackLayout.h"
 #include <iostream>
 #include <tuple>
+#include <cmath>
 #include "MeshLoader.h"
 
 void ShipController::UpdateBase()
@@ -47,10 +48,13 @@ void ShipController::Update()
 	if (Input::InputManager::KeyIsPressed(Input::KeyW))
 	{
 		dpos += dist;
+
+		if (Input::InputManager::KeyIsPressed((Input::KeyF)))
+			dpos *= 10;
 	}
 	if (Input::InputManager::KeyIsPressed(Input::KeyS))
 	{
-		dpos -= dist;
+		dpos -= dist * 0.5f;
 	}
 	if (Input::InputManager::KeyIsPressed(Input::KeyQ))
 	{
@@ -189,14 +193,14 @@ void ShipController::Update()
 	DirectX::XMStoreFloat3(&facingDirection, facingDir);
 
 	//Get current normal
-	DirectX::XMVECTOR currentNormal = transform->GetUp();
+	DirectX::XMVECTOR currentNormal = norm;//transform->GetUp();
 
 	//Interpolate to find desired normal for this frame
-	float angle = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(norm, currentNormal));
+	/*float angle = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(norm, currentNormal));
 	float interpolate = alignSpeed * Time::TimeManager::DeltaT() / angle;
-	if (interpolate > 1.0f)
+	if (interpolate > 1.0f || interpolate < 0.0f || isnan(interpolate))
 		interpolate = 1.0f;
-	currentNormal = DirectX::XMVectorLerp(currentNormal, norm, interpolate);
+	currentNormal = DirectX::XMVectorLerp(currentNormal, norm, interpolate);*/
 
 	//Project facing direction onto plane of current normal
 	facingDir = DirectX::XMVector3Normalize(
@@ -267,18 +271,17 @@ void ShipController::Create()
 	//Init camera
 	cam.AttachComponent<Camera>();
 	cam.GetComponent<Transform>()->SetScale({ 1.0f,1.0f,1.0f });
-	GraphicsController::instance->SetCamera(cam.GetComponent<Camera>());
 
 	//Init model child object
 	MeshData* mesh = new MeshData;
 	FbxNode* fbxNode = MeshLoader::LoadFBX("test.fbx");
-	MeshLoader::ApplyFBX(mesh, fbxNode, "");
+	MeshLoader::ApplyFBX(mesh, fbxNode, "", false);
 
 	Transform* t = model.GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
-	t->SetParent(obj->GetComponent<Transform>());
+	t->parent = obj->GetComponent<Transform>();
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
