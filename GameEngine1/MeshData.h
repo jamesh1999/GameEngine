@@ -17,7 +17,7 @@ struct SubMesh
 	std::vector<int> indices;
 };
 
-typedef std::vector<SubMesh> MeshData;
+using MeshData = std::vector<SubMesh>;
 
 void CombineMesh(SubMesh*, SubMesh*);
 

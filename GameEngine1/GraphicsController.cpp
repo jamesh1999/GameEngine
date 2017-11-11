@@ -282,10 +282,10 @@ void GraphicsController::StartDraw()
 
 void GraphicsController::RenderObjects()
 {
-	for(int i = 0; i < renderers.size(); ++i)
+	for(auto it = renderers.begin(); it != renderers.end(); ++it)
 	{
-		FillBuffers(renderers[i],true);
-		if(!i) devContext->ClearDepthStencilView(depthBuffer,
+		FillBuffers(*it,true);
+		if(it == renderers.begin()) devContext->ClearDepthStencilView(depthBuffer,
 			D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 			1.0, 0);
 	}
@@ -300,8 +300,13 @@ void GraphicsController::EndDraw()
 
 void GraphicsController::AddRenderer(Renderer* r)
 {
-	renderers.push_back(r);
+	renderers.insert(r);
 	geomBuff.AddRenderer(r);
+}
+
+void GraphicsController::RemoveRenderer(Renderer* r)
+{
+	renderers.erase(r);
 }
 
 void GraphicsController::FillBuffers(Renderer* r, bool tex)

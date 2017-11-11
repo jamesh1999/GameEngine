@@ -18,7 +18,7 @@ struct Pred {
 	}
 };
 
-template<Component* T>
-typedef std::unordered_set<T, Hash, Pred> ComponentSet<T>;
+template<class T>
+using ComponentSet = std::unordered_set<T, Hash, Pred>;
 
 #endif

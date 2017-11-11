@@ -10,7 +10,7 @@ class GeometryBuffer
 {
 public:
 
-	typedef std::tuple<unsigned, unsigned> BufferLocation;
+	using BufferLocation = std::tuple<unsigned, unsigned>;
 
 private:
 

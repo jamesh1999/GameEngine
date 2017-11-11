@@ -36,7 +36,7 @@ class GraphicsController
 
 	
 
-	std::vector<Renderer*> renderers;
+	ComponentSet<Renderer*> renderers;
 
 	UINT numQualityLevels;
 	Camera* m_camera;
@@ -75,6 +75,7 @@ public:
 	void EndDraw();
 
 	void AddRenderer(Renderer*);
+	void RemoveRenderer(Renderer*);
 
 	void FillBuffers(Renderer*,bool);
 
