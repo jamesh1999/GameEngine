@@ -27,10 +27,13 @@ private:
 	std::vector<int> indexBack;
 	std::vector<Vertex> vertexBack;
 
+	ID3D11Device* dev;
+	ID3D11DeviceContext* devContext;
+
 public:
 
-	GeometryBuffer(bool);
-	GeometryBuffer() : GeometryBuffer(false) {};
+	GeometryBuffer(ID3D11Device*, ID3D11DeviceContext*, bool);
+	GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc) : GeometryBuffer(d, dc, false) {};
 	~GeometryBuffer();
 
 	GeometryBuffer(const GeometryBuffer&) = delete;
@@ -50,6 +53,11 @@ public:
 		m_static = other.m_static;
 		indexBack = other.indexBack;
 		vertexBack = other.vertexBack;
+
+		dev = other.dev;
+		devContext = other.devContext;
+		dev->AddRef();
+		devContext->AddRef();
 	};
 	GeometryBuffer& operator=(GeometryBuffer&& other)
 	{
@@ -66,6 +74,11 @@ public:
 		m_static = other.m_static;
 		indexBack = other.indexBack;
 		vertexBack = other.vertexBack;
+
+		dev = other.dev;
+		devContext = other.devContext;
+		dev->AddRef();
+		devContext->AddRef();
 	};
 
 	void Resize(int, int);

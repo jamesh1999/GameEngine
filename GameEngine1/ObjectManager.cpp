@@ -1,10 +1,11 @@
 #include "ObjectManager.h"
 #include <iostream>
 #include "CompositeObject.h"
+#include "World.h"
 
 ObjectManager* ObjectManager::instance = nullptr;
 
-ObjectManager::ObjectManager()
+ObjectManager::ObjectManager(GameEngine::Engine* e)
 {
 	if(instance != nullptr)
 	{
@@ -13,26 +14,6 @@ ObjectManager::ObjectManager()
 	}
 	else
 		instance = this;
-}
 
-void ObjectManager::Update()
-{
-	for (CompositeObject* obj : instance->objects)
-		obj->Update();
-}
-
-CompositeObject* ObjectManager::CreateObject()
-{
-	CompositeObject* obj = new CompositeObject;
-	instance->objects.push_back(obj);
-
-	return obj;
-}
-
-void ObjectManager::FreeObject(CompositeObject* obj)
-{
-	instance->objects.remove(obj);
-	for (Component* c : obj->m_components)
-		FreeComponent(c);
-	delete obj;
+	engine = e;
 }

@@ -2,9 +2,8 @@
 #include "GraphicsController.h"
 #include <minwinbase.h>
 #include <minwinbase.h>
-#include <minwinbase.h>
 
-Light::Light()
+void Light::Create()
 {
 	D3D11_TEXTURE2D_DESC tDsc;
 	ZeroMemory(&tDsc, sizeof(tDsc));
@@ -32,9 +31,9 @@ Light::Light()
 	srDsc.Texture2D.MipLevels = 1;
 	srDsc.Texture2D.MostDetailedMip = 0;
 
-	GraphicsController::instance->device->CreateTexture2D(&tDsc, NULL, &depthTex);
-	GraphicsController::instance->device->CreateRenderTargetView(depthTex, &rtvDsc, &renderTarget);
-	GraphicsController::instance->device->CreateShaderResourceView(depthTex, &srDsc, &shaderResource);
+	engine->graphics->device->CreateTexture2D(&tDsc, NULL, &depthTex);
+	engine->graphics->device->CreateRenderTargetView(depthTex, &rtvDsc, &renderTarget);
+	engine->graphics->device->CreateShaderResourceView(depthTex, &srDsc, &shaderResource);
 
 
 
@@ -52,7 +51,7 @@ Light::Light()
 	depthDesc.Width = 4096;
 
 	ID3D11Texture2D* pDepthBuffer;
-	GraphicsController::instance->device->CreateTexture2D(&depthDesc, NULL, &pDepthBuffer);
+	engine->graphics->device->CreateTexture2D(&depthDesc, NULL, &pDepthBuffer);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvD;
 	ZeroMemory(&dsvD, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -61,7 +60,7 @@ Light::Light()
 	dsvD.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvD.Texture2D.MipSlice = 0;
 
-	GraphicsController::instance->device->CreateDepthStencilView(pDepthBuffer, &dsvD, &depthBuff);
+	engine->graphics->device->CreateDepthStencilView(pDepthBuffer, &dsvD, &depthBuff);
 
 	ZeroMemory(&vp, sizeof(D3D11_VIEWPORT));
 	vp.Width = 4096;
@@ -87,7 +86,7 @@ Light::Light()
 	sD.MinLOD = 0;
 	sD.MaxLOD = D3D11_FLOAT32_MAX;
 
-	GraphicsController::instance->device->CreateSamplerState(&sD, &ss);
+	engine->graphics->device->CreateSamplerState(&sD, &ss);
 }
 
 Light::~Light()

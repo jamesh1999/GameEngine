@@ -6,8 +6,7 @@
 class Script : public Component
 {
 public:
-	virtual void Update() = 0;
-	virtual void Create() = 0;
+	virtual void Update() {};
 };
 
 #endif

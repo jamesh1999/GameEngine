@@ -9,9 +9,9 @@
 
 class Renderer : public Component
 {
-	friend class GraphicsController;
+	//friend class GraphicsController;
 
-private:
+public:
 	MaterialGroup mat;
 	MeshData* mesh;
 

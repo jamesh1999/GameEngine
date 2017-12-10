@@ -14,8 +14,10 @@ public:
 	ID3D11DepthStencilView* depthBuff;
 	D3D11_VIEWPORT vp;
 	ID3D11SamplerState* ss;
-	Light();
+
 	~Light();
+
+	void Create() override;
 
 	ID3D11RenderTargetView* GetRTV();
 	ID3D11ShaderResourceView* GetSRV();

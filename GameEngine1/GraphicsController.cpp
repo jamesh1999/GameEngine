@@ -8,7 +8,9 @@
 #include "Transform.h"
 #include "CompositeObject.h"
 
-GraphicsController* GraphicsController::instance = NULL;
+//GraphicsController* GraphicsController::instance = NULL;
+
+using namespace GameEngine::Graphics;
 
 typedef struct
 {
@@ -29,7 +31,7 @@ typedef struct
 GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	: hWnd(wnd), m_fullscreen(fullscreen), m_scrWidth(w), m_scrHeight(h)
 {
-	instance = this;
+	//instance = this;
 
 	//Create device and device context
 	D3D_FEATURE_LEVEL featureLevel;
@@ -210,6 +212,8 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	cBD.ByteWidth = sizeof(DirectX::XMFLOAT4X4A);
 
 	device->CreateBuffer(&cBD, NULL, &cBufferObject);
+
+	geomBuff = new GeometryBufferContainer(device, devContext);
 }
 
 GraphicsController::~GraphicsController()
@@ -225,6 +229,7 @@ GraphicsController::~GraphicsController()
 	backBuffer->Release();
 	depthBuffer->Release();
 
+	delete geomBuff;
 	for (auto r : renderers)
 		delete r;
 
@@ -285,7 +290,7 @@ void GraphicsController::RenderObjects()
 	for(auto it = renderers.begin(); it != renderers.end(); ++it)
 	{
 		FillBuffers(*it,true);
-		if(it == renderers.begin()) devContext->ClearDepthStencilView(depthBuffer,
+		if(false) devContext->ClearDepthStencilView(depthBuffer,
 			D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 			1.0, 0);
 	}
@@ -301,7 +306,7 @@ void GraphicsController::EndDraw()
 void GraphicsController::AddRenderer(Renderer* r)
 {
 	renderers.insert(r);
-	geomBuff.AddRenderer(r);
+	geomBuff->AddRenderer(r);
 }
 
 void GraphicsController::RemoveRenderer(Renderer* r)
@@ -342,7 +347,7 @@ void GraphicsController::FillBuffers(Renderer* r, bool tex)
 		}
 		else
 		{
-			GeometryBuffer::BufferLocation idxes = geomBuff.FindRenderer(r);
+			GeometryBuffer::BufferLocation idxes = geomBuff->FindRenderer(r);
 			devContext->DrawIndexed((*r->mesh)[0].indices.size(), std::get<0>(idxes), std::get<1>(idxes));
 		}
 	}

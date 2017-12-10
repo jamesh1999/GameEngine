@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <tuple>
+#include "Engine.h"
 
 struct TGAHeader
 {
@@ -26,6 +27,7 @@ struct TGAHeader
 class RenderPass
 {
 public:
+	GameEngine::Engine* engine;
 	ID3D11VertexShader* vs = nullptr;
 	ID3D11PixelShader* ps = nullptr;
 	ID3D11InputLayout* layout = nullptr;
@@ -49,13 +51,15 @@ class Material
 	void setTextureData(std::vector<TexData>);
 	std::tuple<uint8_t*, int, int> getTGAData(std::string);
 
+	GameEngine::Engine* engine;
+
 public:
 	std::vector<RenderPass> passes;
 
 	ID3D11ShaderResourceView* m_texView = nullptr;
 	ID3D11SamplerState* m_samplerState = nullptr;
 
-	Material() = default;
+	Material(GameEngine::Engine* e) : engine(e) {};
 	~Material();
 
 	Material(const Material&);

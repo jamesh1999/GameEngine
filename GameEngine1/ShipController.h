@@ -9,9 +9,9 @@
 class ShipController : public Script
 {
 private:
-	CompositeObject cam;
-	CompositeObject base;
-	CompositeObject model;
+	CompositeObject* cam;
+	CompositeObject* base;
+	CompositeObject* model;
 
 	DirectX::XMFLOAT3 curNorm;
 	DirectX::XMFLOAT3 facingDirection;

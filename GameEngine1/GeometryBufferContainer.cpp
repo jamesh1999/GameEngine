@@ -1,9 +1,12 @@
 #include "GeometryBufferContainer.h"
 #include "CompositeObject.h"
 
-GeometryBufferContainer::GeometryBufferContainer()
+GeometryBufferContainer::GeometryBufferContainer(ID3D11Device* d, ID3D11DeviceContext* dc) : dev(d), devContext(dc)
 {
-	m_buffers.emplace_back(true);
+	dev->AddRef();
+	devContext->AddRef();
+	//TODO: Release / Reference counting in individual buffers
+	m_buffers.emplace_back(dev, devContext, true);
 }
 
 void GeometryBufferContainer::AddRenderer(Renderer* r)
@@ -12,7 +15,7 @@ void GeometryBufferContainer::AddRenderer(Renderer* r)
 		m_lookup.insert(std::make_pair(r->GetID(), std::make_pair(0, m_buffers[0].AddRenderer(r))));
 	else
 	{
-		m_buffers.emplace_back();
+		m_buffers.emplace_back(dev, devContext);
 		m_lookup.insert(std::make_pair(r->GetID(), std::make_pair(m_buffers.size() - 1, m_buffers.back().AddRenderer(r))));
 	}
 }

@@ -7,22 +7,22 @@
 #include "Transform.h"
 #include "Script.h"
 #include "GCObject.h"
+#include "Element.h"
+#include "World.h"
 
-class CompositeObject : GCObject
+class CompositeObject : public GameEngine::ObjectSystem::Element, private GCObject
 {
 	friend class ObjectManager;
-private:
+public:
 	std::vector<Component*> m_components;
 	Transform* m_transform;
 
 public:
-	CompositeObject() 
-	{
-		m_transform = new Transform;
-	}
 
 	~CompositeObject()
 	{
+		engine->world->objects.remove(this);
+
 		//Cleanup
 		for (Component* c : m_components)
 			delete c;
@@ -62,8 +62,7 @@ public:
 		T* component = ObjectManager::CreateComponent<T>();
 		m_components.push_back(component);
 		reinterpret_cast<Component*>(component)->obj = this;
-		if (dynamic_cast<Script*>(component) != nullptr)
-			dynamic_cast<Script*>(component)->Create();
+		reinterpret_cast<Component*>(component)->Create();
 		return component;
 	}
 	template<>
@@ -77,8 +76,7 @@ public:
 	{
 		m_components.push_back(component);
 		reinterpret_cast<Component*>(component)->obj = this;
-		if (dynamic_cast<Script*>(component) != nullptr)
-			dynamic_cast<Script*>(component)->Create();
+		reinterpret_cast<Component*>(component)->Create();
 		return component;
 	}
 	template<>

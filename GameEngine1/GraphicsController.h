@@ -20,71 +20,78 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-enum SHADER_TYPE { Shader_Type_Vertex, Shader_Type_Pixel };
-
-class GraphicsController
+namespace GameEngine
 {
-	HWND hWnd;
-	HINSTANCE hInstance;
-	bool m_fullscreen;
-	
-	ID3D11Buffer* vertexBuffer;
-	ID3D11Buffer* indexBuffer;
-	ID3D11Buffer* cBufferFrame;
-	ID3D11Buffer* cBufferObject;
-	ID3D11Buffer* cBufferLight;
+	namespace Graphics
+	{
 
-	
+		enum SHADER_TYPE { Shader_Type_Vertex, Shader_Type_Pixel };
 
-	ComponentSet<Renderer*> renderers;
+		class GraphicsController
+		{
+			HWND hWnd;
+			HINSTANCE hInstance;
+			bool m_fullscreen;
 
-	UINT numQualityLevels;
-	Camera* m_camera;
-	Light* m_light;
-	D3D11_VIEWPORT vP;
+			ID3D11Buffer* vertexBuffer;
+			ID3D11Buffer* indexBuffer;
+			ID3D11Buffer* cBufferFrame;
+			ID3D11Buffer* cBufferObject;
+			ID3D11Buffer* cBufferLight;
 
-public:
-	GeometryBufferContainer geomBuff;
 
-	int m_scrWidth;
-	int m_scrHeight;
-	static GraphicsController* instance;
 
-	bool running = true;
+			ComponentSet<Renderer*> renderers;
 
-	ID3D11Device* device;
-	ID3D11DeviceContext* devContext;
-	IDXGISwapChain* swapChain;
-	ID3D11RenderTargetView* backBuffer;
-	ID3D11DepthStencilView* depthBuffer;
-	ID3D11DepthStencilState* depthState;
-	ID3D11RasterizerState* rasterizerState;
+			UINT numQualityLevels;
+			Camera* m_camera;
+			Light* m_light;
+			D3D11_VIEWPORT vP;
 
-	ID3D11VertexShader* dpthVtx;
-	ID3D11PixelShader* dpthPx;
-	ID3D11InputLayout* dpthILayout;
+		public:
+			GeometryBufferContainer* geomBuff;
 
-	GraphicsController(int, int, bool, HWND);
-	~GraphicsController();
-	
-	GraphicsController(const GraphicsController&) = delete;
-	GraphicsController& operator=(const GraphicsController&) = delete;
+			int m_scrWidth;
+			int m_scrHeight;
+			//static GraphicsController* instance;
 
-	void StartDraw();
-	void RenderObjects();
-	void EndDraw();
+			bool running = true;
 
-	void AddRenderer(Renderer*);
-	void RemoveRenderer(Renderer*);
+			ID3D11Device* device;
+			ID3D11DeviceContext* devContext;
+			IDXGISwapChain* swapChain;
+			ID3D11RenderTargetView* backBuffer;
+			ID3D11DepthStencilView* depthBuffer;
+			ID3D11DepthStencilState* depthState;
+			ID3D11RasterizerState* rasterizerState;
 
-	void FillBuffers(Renderer*,bool);
+			ID3D11VertexShader* dpthVtx;
+			ID3D11PixelShader* dpthPx;
+			ID3D11InputLayout* dpthILayout;
 
-	bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
+			GraphicsController(int, int, bool, HWND);
+			~GraphicsController();
 
-	void SetCamera(Camera*);
-	void SetLight(Light*);
+			GraphicsController(const GraphicsController&) = delete;
+			GraphicsController& operator=(const GraphicsController&) = delete;
 
-	void RenderLightDepth();
-};
+			void StartDraw();
+			void RenderObjects();
+			void EndDraw();
+
+			void AddRenderer(Renderer*);
+			void RemoveRenderer(Renderer*);
+
+			void FillBuffers(Renderer*, bool);
+
+			bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
+
+			void SetCamera(Camera*);
+			void SetLight(Light*);
+
+			void RenderLightDepth();
+		};
+	}
+}
 
 #endif

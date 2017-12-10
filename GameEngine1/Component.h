@@ -4,11 +4,12 @@
 #include <cstdlib>
 #include <malloc.h>
 #include <new>
+#include "Element.h"
 
 class CompositeObject;
 class ObjectManager;
 
-class alignas(16) Component
+class alignas(16) Component : public GameEngine::ObjectSystem::Element
 {
 	friend class ObjectManager;
 
@@ -38,6 +39,9 @@ public:
 	{
 		_aligned_free(ptr);
 	}
+
+	//Preferrable to constructor because initialisation has finished
+	virtual void Create() {};
 };
 
 #endif

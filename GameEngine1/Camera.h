@@ -6,7 +6,7 @@
 
 struct Camera : Component
 {
-	Camera();
+	void Create() override;
 };
 
 #endif

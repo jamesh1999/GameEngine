@@ -10,7 +10,7 @@ Generation::FractalFault* Generation::FractalFault::instance = nullptr;
 
 Generation::FractalFault::FractalFault()
 {
-	//Create fractal fault compute shader
+	/*//Create fractal fault compute shader
 	ID3D10Blob* cs;
 	D3DCompileFromFile(L"fractalfault.hlsl", NULL, NULL, "CS_Fault", "cs_5_0", D3DCOMPILE_DEBUG, 0, &cs, NULL);
 
@@ -42,14 +42,14 @@ Generation::FractalFault::FractalFault()
 	ID3D11Texture2D* tex;
 	GraphicsController::instance->device->CreateTexture2D(&txDesc, NULL, &tex);
 	GraphicsController::instance->device->CreateUnorderedAccessView(tex, NULL, &m_RWTex);
-	tex->Release();
+	tex->Release();*/
 }
 
 Generation::FractalFault::~FractalFault()
 {
-	m_shader->Release();
-	m_faults->Release();
-	m_RWTex->Release();
+	//m_shader->Release();
+	//m_faults->Release();
+	//m_RWTex->Release();
 }
 
 void Generation::FractalFault::Generate(float* out, int w, int h, int n)

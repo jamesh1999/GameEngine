@@ -161,6 +161,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ElementFactory.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FractalFault.cpp" />
     <ClCompile Include="GarbageCollector.cpp" />
     <ClCompile Include="GCObject.cpp" />
@@ -183,15 +185,19 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
-    <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="Clock.cpp" />
     <ClCompile Include="TrackLayout.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentContainers.h" />
     <ClInclude Include="CompositeObject.h" />
+    <ClInclude Include="Element.h" />
+    <ClInclude Include="ElementFactory.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="FractalFault.h" />
     <ClInclude Include="GarbageCollector.h" />
     <ClInclude Include="GCObject.h" />
@@ -216,9 +222,10 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureLoader.h" />
-    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="TrackLayout.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "GraphicsController.h"
 
-Camera::Camera()
+void Camera::Create()
 {
-	GraphicsController::instance->SetCamera(this);
+	engine->graphics->SetCamera(this);
 }

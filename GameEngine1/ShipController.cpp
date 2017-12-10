@@ -2,13 +2,15 @@
 #include "InputManager.h"
 #include "Transform.h"
 #include "CompositeObject.h"
-#include "TimeManager.h"
+#include "Clock.h"
 #include "GraphicsController.h"
 #include "TrackLayout.h"
 #include <iostream>
 #include <tuple>
 #include <cmath>
 #include "MeshLoader.h"
+#include "CompositeObject.h"
+#include "ElementFactory.h"
 
 void ShipController::UpdateBase()
 {
@@ -18,7 +20,7 @@ void ShipController::UpdateBase()
 	DirectX::XMVECTOR norm, basePos;
 	std::tie(norm, basePos, overTri) = TrackLayout::GetNormal(pos);
 
-	base.GetComponent<Transform>()->SetPosition(basePos);
+	base->GetComponent<Transform>()->SetPosition(basePos);
 	DirectX::XMStoreFloat3(&curNorm, norm);
 }
 
@@ -43,7 +45,7 @@ void ShipController::Update()
 
 	DirectX::XMVECTOR shipPos = transform->GetPosition();
 	float height = 0.0f;
-	float dist = Time::TimeManager::DeltaT() * 40.0;
+	float dist = engine->clock->DeltaT() * 40.0;
 	float dpos = 0.0f;
 	if (Input::InputManager::KeyIsPressed(Input::KeyW))
 	{
@@ -102,7 +104,7 @@ void ShipController::Update()
 
 	//Calculate track repulsion force
 	DirectX::XMFLOAT3 basepos;
-	DirectX::XMStoreFloat3(&basepos, base.GetComponent<Transform>()->GetPosition());
+	DirectX::XMStoreFloat3(&basepos, base->GetComponent<Transform>()->GetPosition());
 
 	if (overTri)
 	{
@@ -110,14 +112,14 @@ void ShipController::Update()
 			DirectX::XMVector3Dot(
 				DirectX::XMVectorSubtract(
 					shipPos,
-					base.GetComponent<Transform>()->GetPosition()),
+					base->GetComponent<Transform>()->GetPosition()),
 				norm
 			)) - 5.0f;
 		
-		if (vDist > Time::TimeManager::DeltaT() * vertSpeed)
-			vDist = Time::TimeManager::DeltaT() * vertSpeed;
-		else if (vDist < -Time::TimeManager::DeltaT() * vertSpeed)
-			vDist = -Time::TimeManager::DeltaT() * vertSpeed;
+		if (vDist > engine->clock->DeltaT() * vertSpeed)
+			vDist = engine->clock->DeltaT() * vertSpeed;
+		else if (vDist < -engine->clock->DeltaT() * vertSpeed)
+			vDist = -engine->clock->DeltaT() * vertSpeed;
 
 		//Add on repulsion force
 		shipPos = DirectX::XMVectorAdd(DirectX::XMVectorScale(norm, -vDist), shipPos);
@@ -125,7 +127,7 @@ void ShipController::Update()
 
 	shipPos = DirectX::XMVectorAdd(
 		shipPos,
-		DirectX::XMVectorScale(v, Time::TimeManager::DeltaT())
+		DirectX::XMVectorScale(v, engine->clock->DeltaT())
 	);
 	transform->SetPosition(shipPos);
 
@@ -135,7 +137,7 @@ void ShipController::Update()
 			DirectX::XMVectorPow(
 				v,
 				{ 2.0f, 2.0f, 2.0f }),
-			drag * Time::TimeManager::DeltaT()
+			drag * engine->clock->DeltaT()
 		);
 
 	DirectX::XMFLOAT3 manualD, manualV;
@@ -257,27 +259,34 @@ void ShipController::Update()
 		DirectX::XMVector3TransformCoord(
 	{ 0.0f, 3.0f, -20.0f },
 			transform->GetTransform());
-	cam.GetComponent<Transform>()->SetPosition(camPos);
-	cam.GetComponent<Transform>()->SetRotation(transform->GetRotation());
+	cam->GetComponent<Transform>()->SetPosition(camPos);
+	cam->GetComponent<Transform>()->SetRotation(transform->GetRotation());
 
-	model.GetComponent<Transform>()->SetRotation(DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
+	model->GetComponent<Transform>()->SetRotation(DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
 
 	//shipRot = DirectX::XMVectorSetByIndex(shipRot, roll, 2);
 	//transform->SetRotation(shipRot);
+
+	if (DirectX::XMVectorGetY(shipPos) > 8.0f && std::fabs(DirectX::XMVectorGetX(v)) > 0.001)
+		engine->graphics->RemoveRenderer(obj->GetComponent<Renderer>());
 }
 
 void ShipController::Create()
 {
+	cam = engine->elementFactory->Create<CompositeObject>();
+	model = engine->elementFactory->Create<CompositeObject>();
+	base = engine->elementFactory->Create<CompositeObject>();
+
 	//Init camera
-	cam.AttachComponent<Camera>();
-	cam.GetComponent<Transform>()->SetScale({ 1.0f,1.0f,1.0f });
+	cam->AttachComponent<Camera>();
+	cam->GetComponent<Transform>()->SetScale({ 1.0f,1.0f,1.0f });
 
 	//Init model child object
 	MeshData* mesh = new MeshData;
 	FbxNode* fbxNode = MeshLoader::LoadFBX("test.fbx");
 	MeshLoader::ApplyFBX(mesh, fbxNode, "", false);
 
-	Transform* t = model.GetComponent<Transform>();
+	Transform* t = model->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
@@ -290,17 +299,17 @@ void ShipController::Create()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	Material* mat = new Material;
+	Material* mat = new Material(engine);
 	mat->passes.push_back(RenderPass());
+	mat->passes[0].engine = engine;
 	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
 	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
 	mat->LoadTGA("test.tga");
 
-	Renderer* r = model.AttachComponent<Renderer>();
+	Renderer* r = model->AttachComponent<Renderer>();
 	MaterialGroup m;
 	m.AddMaterial(mat);
 	r->Init(m, mesh);
-	GraphicsController::instance->AddRenderer(r);
 
 	facingDirection = { 0.0f, 0.0f, 1.0f };
 	velocity = { 0.0f, 0.0f, 0.0f };

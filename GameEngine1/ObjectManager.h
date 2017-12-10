@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include "Component.h"
+#include "Engine.h"
 
 class CompositeObject;
 
@@ -15,22 +16,16 @@ private:
 	short componentCnt = 0;
 	std::vector<short> componentCnts;
 
-	std::list<CompositeObject*> objects;
+	GameEngine::Engine* engine;
 
 public:
-	ObjectManager();
-
-	static void Update();
+	ObjectManager(GameEngine::Engine*);
 
 	template<class T>
 	static short GetTypeID();
 
-	static CompositeObject* CreateObject();
-	static void FreeObject(CompositeObject*);
 	template<class T>
 	static T* CreateComponent();
-	template<class T>
-	static void FreeComponent(T*);
 };
 
 template <class T>
@@ -56,14 +51,8 @@ T* ObjectManager::CreateComponent()
 
 	T* comp = new T;
 	dynamic_cast<Component*>(comp)->id = fullID;
-
+	dynamic_cast<Component*>(comp)->engine = instance->engine;
 	return comp;
-}
-
-template <class T>
-void ObjectManager::FreeComponent(T* component)
-{
-	delete component;
 }
 
 #endif

@@ -9,22 +9,26 @@
 #include "Renderer.h"
 #include "Geometry.h"
 #include "InputManager.h"
-#include "TimeManager.h"
+#include "Clock.h"
 #include "MeshLoader.h"
 #include "Transform.h"
 #include "ShipController.h"
 #include "ObjectManager.h"
 #include "TrackLayout.h"
+#include "Engine.h"
+#include "World.h"
+#include "ElementFactory.h"
 
 int width = 1000;
 int height = 1000;
+GameEngine::Engine game;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	//Handle input messages
 	if (Input::HandleMessage(hWnd, message, wParam, lParam))
 		return message;
-	if (GraphicsController::instance->HandleMessage(hWnd, message, wParam, lParam))
+	if (game.HandleMessage(hWnd, message, wParam, lParam))
 		return message;
 
 	switch(message)
@@ -42,6 +46,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	//Random seed
 	srand(time(NULL));
 
 	//Allocate a console and bind cout/cerr to it
@@ -84,14 +89,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Finally show the windows
 	ShowWindow(hWnd, nCmdShow);
 
+	//Try to lock cursor?
 	RECT cursorPos = { 400, 400, 500, 500 };
-
 	ShowCursor(false);
 
-	Time::TimeManager time;
+	//-----------------
+	// Game Initialisation
+	//-----------------
+	
+	game.clock = new GameEngine::Time::Clock;
+	game.graphics = new GameEngine::Graphics::GraphicsController(width, height, false, hWnd);
+	game.world = new GameEngine::ObjectSystem::World();
+	game.elementFactory = new GameEngine::ObjectSystem::ElementFactory();
+	game.elementFactory->engine = &game;
+
 	Input::InputManager input;
 	MeshLoader meshLoader;
-	GraphicsController graphics(width, height, false, hWnd);
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
@@ -121,9 +134,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else if (err != nullptr)
 		err->Release();
-	graphics.device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &graphics.dpthVtx);
-	GraphicsController::instance->device->CreateInputLayout(
-		iLayout, 3, buff->GetBufferPointer(), buff->GetBufferSize(), &graphics.dpthILayout);
+	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->dpthVtx);
+	game.graphics->device->CreateInputLayout(
+		iLayout, 3, buff->GetBufferPointer(), buff->GetBufferSize(), &game.graphics->dpthILayout);
 	success = D3DCompileFromFile(
 		L"depth.hlsl",
 		NULL,
@@ -143,7 +156,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else if (err != nullptr)
 		err->Release();
-	graphics.device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &graphics.dpthPx);
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->dpthPx);
 
 	MeshData* mesh = new MeshData;
 	FbxNode* fbxNode = MeshLoader::LoadFBX("Track.fbx");
@@ -161,18 +174,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MeshLoader::ApplyFBX(track_layout, fbxNode, "", true);
 	TrackLayout::SetTrack(&(*track_layout)[0]);
 
-	ObjectManager om;
+	ObjectManager om(&game);
 
-	CompositeObject* co = om.CreateObject();
+	CompositeObject* co = game.elementFactory->Create<CompositeObject>();
 
 	Transform* t = co->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 	t->m_static = true;
 
-	//Initialize cylinder
-	Material* mat = new Material;
+	Material* mat = new Material(&game);
 	mat->passes.push_back(RenderPass());
+	mat->passes[0].engine = &game;
 
 	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
 	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
@@ -188,14 +201,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 
 	
-	CompositeObject* sky = om.CreateObject();
+	CompositeObject* sky = game.elementFactory->Create<CompositeObject>();
 	r = sky->AttachComponent<Renderer>();
 	t = sky->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 
-	Material* mat1 = new Material;
+	Material* mat1 = new Material(&game);
 	mat1->passes.push_back(RenderPass());
+	mat1->passes[0].engine = &game;
 
 	mat1->passes[0].LoadVS(L"shaders_skybox.hlsl", "VShader", iLayout, 3);
 	mat1->passes[0].LoadPS(L"shaders_skybox.hlsl", "PShaderTex");
@@ -205,26 +219,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MaterialGroup mg1;
 	mg1.AddMaterial(mat1);
 
-	r->Init(mg1, skybox);
-	graphics.AddRenderer(r);
-
-	graphics.AddRenderer(co->GetComponent<Renderer>());
+	//r->Init(mg1, skybox);
 
 
-	CompositeObject* ship = om.CreateObject();;
+	CompositeObject* ship = game.elementFactory->Create<CompositeObject>();
 	t = ship->GetComponent<Transform>();
 	t->SetPosition({ -707.0f, 13.0f, -78.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 
 	ship->AttachComponent<ShipController>();
-
-	//Add cylinder
 	
 
-	CompositeObject* root = om.CreateObject();;
+	CompositeObject* root = game.elementFactory->Create<CompositeObject>();
 
-	CompositeObject* light = om.CreateObject();;
+	CompositeObject* light = game.elementFactory->Create<CompositeObject>();
 	t = light->GetComponent<Transform>();
 	//t->SetPosition({ 0.0f, 120.0f, 0.0f });
 	//t->SetRotation(DirectX::XMQuaternionRotationAxis({ 1.0f, 0.0f, 0.0f }, DirectX::XM_PIDIV2));
@@ -238,9 +247,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//t->SetPosition({ -700.0f, 0.0f, 190.0f });
 	//t->SetRotation(DirectX::XMQuaternionIdentity());
 	//t->SetScale({ 1.0f, 1.0f, 1.0f });
-
 	light->AttachComponent<Light>();
-	graphics.SetLight(light->GetComponent<Light>());
+	game.graphics->SetLight(light->GetComponent<Light>());
 
 	MSG message;
 	while (true)
@@ -255,20 +263,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				break;
 		}
 		else
-		{
-			//double delta = Time::TimeManager::DeltaT();
-			//t->SetRotation(DirectX::XMQuaternionMultiply(t->GetRotation(), DirectX::XMQuaternionRotationAxis({ 0.0f, 0.0f, 1.0f }, delta / 4.0f)));
-			
-
-			ObjectManager::Update();
-			Input::InputManager::Update();
-			graphics.RenderLightDepth();
-			graphics.StartDraw();
-			graphics.RenderObjects();
-			graphics.EndDraw();
-			Time::TimeManager::EndFrame();
-			Time::TimeManager::StartFrame();
-		}
+			game.Loop();
 	}
 
 	//Clean up the console

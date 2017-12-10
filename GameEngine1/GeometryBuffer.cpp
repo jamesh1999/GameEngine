@@ -6,10 +6,16 @@
 #include <comdef.h>
 #include <iostream>
 
-GeometryBuffer::GeometryBuffer(bool s) : m_static(s) {}
+GeometryBuffer::GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc, bool s) : dev(d), devContext(dc), m_static(s)
+{
+	dev->AddRef();
+	devContext->AddRef();
+}
 
 GeometryBuffer::~GeometryBuffer()
 {
+ 	dev->Release();
+	devContext->Release();
 	if (vertexBuffer != nullptr)
 		vertexBuffer->Release();
 	if (indexBuffer != nullptr)
@@ -29,7 +35,7 @@ void GeometryBuffer::Resize(int vSize, int iSize)
 		vBD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		vBD.Usage = D3D11_USAGE_DYNAMIC;
 
-		GraphicsController::instance->device->CreateBuffer(&vBD, NULL, &vertexBuffer);
+		dev->CreateBuffer(&vBD, NULL, &vertexBuffer);
 
 		vertexSize = vSize;
 	}
@@ -45,7 +51,7 @@ void GeometryBuffer::Resize(int vSize, int iSize)
 		iBD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		iBD.Usage = D3D11_USAGE_DYNAMIC;
 
-		GraphicsController::instance->device->CreateBuffer(&iBD, NULL, &indexBuffer);
+		dev->CreateBuffer(&iBD, NULL, &indexBuffer);
 
 		indexSize = iSize;
 	}
@@ -72,13 +78,13 @@ GeometryBuffer::BufferLocation GeometryBuffer::AddRenderer(Renderer* r)
 	}
 
 	D3D11_MAPPED_SUBRESOURCE mp;
-	GraphicsController::instance->devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
+	devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
 	memcpy(mp.pData, &(*vData)[0], vData->size() * sizeof(Vertex));
-	GraphicsController::instance->devContext->Unmap(vertexBuffer, 0);
+	devContext->Unmap(vertexBuffer, 0);
 
-	GraphicsController::instance->devContext->Map(indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
+	devContext->Map(indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
 	memcpy(mp.pData, &(*iData)[0], iData->size() * sizeof(unsigned));
-	GraphicsController::instance->devContext->Unmap(indexBuffer, 0);
+	devContext->Unmap(indexBuffer, 0);
 
 	GeometryBuffer::BufferLocation ret = std::make_tuple(vertexPos, indexPos);
 
@@ -92,6 +98,6 @@ void GeometryBuffer::Select()
 {
 	unsigned stride = sizeof(Vertex);
 	unsigned offset = 0;
-	GraphicsController::instance->devContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	GraphicsController::instance->devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	devContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 }

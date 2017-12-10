@@ -32,9 +32,9 @@ void RenderPass::LoadVS(std::wstring filename, std::string entry, D3D11_INPUT_EL
 		err->Release();
 
 	//Create shader and input layout
-	GraphicsController::instance->device->CreateVertexShader(
+	engine->graphics->device->CreateVertexShader(
 		buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &vs);
-	GraphicsController::instance->device->CreateInputLayout(
+	engine->graphics->device->CreateInputLayout(
 		inputDesc, numElements, buff->GetBufferPointer(), buff->GetBufferSize(), &layout);
 }
 
@@ -65,7 +65,7 @@ void RenderPass::LoadPS(std::wstring filename, std::string entry)
 		err->Release();
 
 	//Create shader
-	GraphicsController::instance->device->CreatePixelShader(
+	engine->graphics->device->CreatePixelShader(
 		buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &ps);
 }
 
@@ -108,6 +108,7 @@ Material::Material(const Material& other)
 	m_texView->AddRef();
 	m_samplerState = other.m_samplerState;
 	m_samplerState->AddRef();
+	engine = other.engine;
 }
 
 Material::Material(Material&& other) noexcept
@@ -121,6 +122,7 @@ Material::Material(Material&& other) noexcept
 	other.m_texView = nullptr;
 	m_samplerState = other.m_samplerState;
 	other.m_samplerState = nullptr;
+	engine = other.engine;
 }
 
 Material& Material::operator=(const Material& other)
@@ -143,6 +145,7 @@ Material& Material::operator=(const Material& other)
 	m_texView->AddRef();
 	m_samplerState = other.m_samplerState;
 	m_samplerState->AddRef();
+	engine = other.engine;
 
 	return *this;
 }
@@ -158,6 +161,7 @@ Material& Material::operator=(Material&& other) noexcept
 	other.m_texView = nullptr;
 	m_samplerState = other.m_samplerState;
 	other.m_samplerState = nullptr;
+	engine = other.engine;
 
 	return *this;
 }
@@ -336,7 +340,7 @@ void Material::setTextureData(std::vector<TexData> textures)
 		texData[i].pSysMem = textures[i].data;
 	}
 
-	GraphicsController::instance->device->CreateTexture2D(&tD, texData, &m_tex);
+	engine->graphics->device->CreateTexture2D(&tD, texData, &m_tex);
 
 
 
@@ -345,7 +349,7 @@ void Material::setTextureData(std::vector<TexData> textures)
 	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 	srvD.Texture2D.MipLevels = -1;
 	srvD.Texture2D.MostDetailedMip = 0;
-	GraphicsController::instance->device->CreateShaderResourceView(m_tex, NULL, &m_texView);
+	engine->graphics->device->CreateShaderResourceView(m_tex, NULL, &m_texView);
 	//GraphicsController::instance->devContext->GenerateMips(m_texView);
 
 	D3D11_SAMPLER_DESC sD;
@@ -363,7 +367,7 @@ void Material::setTextureData(std::vector<TexData> textures)
 	sD.MinLOD = 0;
 	sD.MaxLOD = D3D11_FLOAT32_MAX;
 
-	GraphicsController::instance->device->CreateSamplerState(&sD, &m_samplerState);
+	engine->graphics->device->CreateSamplerState(&sD, &m_samplerState);
 
 	for (TexData tex : textures)
 		delete[] tex.data;
