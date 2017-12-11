@@ -9,81 +9,86 @@
 #include "Element.h"
 #include "World.h"
 
-class CompositeObject : public GameEngine::ObjectSystem::Element, private GCObject
+namespace GameEngine
 {
-
-public:
-	std::vector<Component*> m_components;
-	Transform* m_transform;
-
-public:
-
-	~CompositeObject()
+	namespace ObjectSystem
 	{
-		engine->world->objects.remove(this);
-
-		//Cleanup
-		for (Component* c : m_components)
-			delete c;
-
-		delete m_transform;
-	}
-
-	void Update()
-	{
-		for (int i = 0; i < m_components.size(); ++i)
+		class CompositeObject : public Element, private GCObject
 		{
-			if (dynamic_cast<Script*>(m_components[i]) != nullptr)
-				dynamic_cast<Script*>(m_components[i])->Update();
-		}
-	}
 
-	template <class T>
-	T* GetComponent()
-	{
-		for (int i = 0; i < m_components.size(); ++i)
-		{
-			if (dynamic_cast<T*>(m_components[i]) != nullptr)
-				return dynamic_cast<T*>(m_components[i]);
-		}
+		public:
+			std::vector<Component*> m_components;
+			Transform* m_transform;
 
-		return nullptr;
-	}
-	template <>
-	Transform* GetComponent<Transform>()
-	{
-		return m_transform;
-	}
+		public:
 
-	template<class T>
-	T* AttachComponent()
-	{
-		T* component = engine->elementFactory->Create<T>();
-		m_components.push_back(component);
-		dynamic_cast<Component*>(component)->obj = this;
-		dynamic_cast<Component*>(component)->Create();
-		return component;
-	}
-	template<>
-	Transform* AttachComponent<Transform>()
-	{
-		exit(-1);
-	}
+			~CompositeObject()
+			{
+				engine->world->objects.remove(this);
 
-	template<class T>
-	T* AttachComponent(T* component)
-	{
-		m_components.push_back(component);
-		dynamic_cast<Component*>(component)->obj = this;
-		dynamic_cast<Component*>(component)->Create();
-		return component;
-	}
-	template<>
-	Transform* AttachComponent<Transform>(Transform* component)
-	{
-		exit(-1);
-	}
-};
+				//Cleanup
+				for (Component* c : m_components)
+					delete c;
 
+				delete m_transform;
+			}
+
+			void Update()
+			{
+				for (int i = 0; i < m_components.size(); ++i)
+				{
+					if (dynamic_cast<Script*>(m_components[i]) != nullptr)
+						dynamic_cast<Script*>(m_components[i])->Update();
+				}
+			}
+
+			template <class T>
+			T* GetComponent()
+			{
+				for (int i = 0; i < m_components.size(); ++i)
+				{
+					if (dynamic_cast<T*>(m_components[i]) != nullptr)
+						return dynamic_cast<T*>(m_components[i]);
+				}
+
+				return nullptr;
+			}
+			template <>
+			Transform* GetComponent<Transform>()
+			{
+				return m_transform;
+			}
+
+			template<class T>
+			T* AttachComponent()
+			{
+				T* component = engine->elementFactory->Create<T>();
+				m_components.push_back(component);
+				dynamic_cast<Component*>(component)->obj = this;
+				dynamic_cast<Component*>(component)->Create();
+				return component;
+			}
+			template<>
+			Transform* AttachComponent<Transform>()
+			{
+				exit(-1);
+			}
+
+			template<class T>
+			T* AttachComponent(T* component)
+			{
+				m_components.push_back(component);
+				dynamic_cast<Component*>(component)->obj = this;
+				dynamic_cast<Component*>(component)->Create();
+				return component;
+			}
+			template<>
+			Transform* AttachComponent<Transform>(Transform* component)
+			{
+				exit(-1);
+			}
+		};
+	}
+}
 
 #endif

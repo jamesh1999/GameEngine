@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include "Component.h"
 
-struct Camera : Component
+struct Camera : GameEngine::ObjectSystem::Component
 {
 	void Create() override;
 };

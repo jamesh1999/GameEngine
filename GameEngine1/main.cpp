@@ -173,7 +173,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MeshLoader::ApplyFBX(track_layout, fbxNode, "", true);
 	TrackLayout::SetTrack(&(*track_layout)[0]);
 
-	CompositeObject* co = game.elementFactory->Create<CompositeObject>();
+	GameEngine::ObjectSystem::CompositeObject* co = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
 
 	Transform* t = co->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -198,7 +198,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 
 	
-	CompositeObject* sky = game.elementFactory->Create<CompositeObject>();
+	GameEngine::ObjectSystem::CompositeObject* sky = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
 	r = sky->AttachComponent<Renderer>();
 	t = sky->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -219,7 +219,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//r->Init(mg1, skybox);
 
 
-	CompositeObject* ship = game.elementFactory->Create<CompositeObject>();
+	GameEngine::ObjectSystem::CompositeObject* ship = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
 	t = ship->GetComponent<Transform>();
 	t->SetPosition({ -707.0f, 13.0f, -78.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
@@ -228,9 +228,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ship->AttachComponent<ShipController>();
 	
 
-	CompositeObject* root = game.elementFactory->Create<CompositeObject>();
+	GameEngine::ObjectSystem::CompositeObject* root = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
 
-	CompositeObject* light = game.elementFactory->Create<CompositeObject>();
+	GameEngine::ObjectSystem::CompositeObject* light = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
 	t = light->GetComponent<Transform>();
 	//t->SetPosition({ 0.0f, 120.0f, 0.0f });
 	//t->SetRotation(DirectX::XMQuaternionRotationAxis({ 1.0f, 0.0f, 0.0f }, DirectX::XM_PIDIV2));

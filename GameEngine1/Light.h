@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include "Component.h"
 
-class Light : public Component
+class Light : public GameEngine::ObjectSystem::Component
 {
 	ID3D11Texture2D* depthTex;
 	ID3D11RenderTargetView* renderTarget;

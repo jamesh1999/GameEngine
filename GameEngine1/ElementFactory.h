@@ -44,6 +44,6 @@ T* GameEngine::ObjectSystem::ElementFactory::Create()
 }
 
 template <>
-CompositeObject* GameEngine::ObjectSystem::ElementFactory::Create<CompositeObject>();
+GameEngine::ObjectSystem::CompositeObject* GameEngine::ObjectSystem::ElementFactory::Create<GameEngine::ObjectSystem::CompositeObject>();
 
 #endif

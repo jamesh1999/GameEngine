@@ -273,9 +273,9 @@ void ShipController::Update()
 
 void ShipController::Create()
 {
-	cam = engine->elementFactory->Create<CompositeObject>();
-	model = engine->elementFactory->Create<CompositeObject>();
-	base = engine->elementFactory->Create<CompositeObject>();
+	cam = engine->elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
+	model = engine->elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
+	base = engine->elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
 
 	//Init camera
 	cam->AttachComponent<Camera>();

@@ -3,11 +3,12 @@
 
 #include <list>
 
-class CompositeObject;
 namespace GameEngine
 {
 	namespace ObjectSystem
 	{
+		class CompositeObject;
+
 		class World
 		{
 		public:
