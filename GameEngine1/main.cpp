@@ -13,7 +13,6 @@
 #include "MeshLoader.h"
 #include "Transform.h"
 #include "ShipController.h"
-#include "ObjectManager.h"
 #include "TrackLayout.h"
 #include "Engine.h"
 #include "World.h"
@@ -173,8 +172,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//fbxNode = MeshLoader::LoadFBX("Track_Outline.fbx");
 	MeshLoader::ApplyFBX(track_layout, fbxNode, "", true);
 	TrackLayout::SetTrack(&(*track_layout)[0]);
-
-	ObjectManager om(&game);
 
 	CompositeObject* co = game.elementFactory->Create<CompositeObject>();
 

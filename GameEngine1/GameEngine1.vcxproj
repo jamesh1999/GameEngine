@@ -176,7 +176,6 @@
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -212,7 +211,6 @@
     <ClInclude Include="LODGenerator.h" />
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="MeshLoader.h" />
-    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="Perlin.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Material.h" />

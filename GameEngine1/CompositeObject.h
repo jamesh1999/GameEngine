@@ -2,7 +2,6 @@
 #define __COMPOSITE_OBJECT_INCLUDED__
 
 #include <vector>
-#include "ObjectManager.h"
 #include "Component.h"
 #include "Transform.h"
 #include "Script.h"
@@ -12,7 +11,7 @@
 
 class CompositeObject : public GameEngine::ObjectSystem::Element, private GCObject
 {
-	friend class ObjectManager;
+
 public:
 	std::vector<Component*> m_components;
 	Transform* m_transform;
@@ -59,10 +58,10 @@ public:
 	template<class T>
 	T* AttachComponent()
 	{
-		T* component = ObjectManager::CreateComponent<T>();
+		T* component = engine->elementFactory->Create<T>();
 		m_components.push_back(component);
-		reinterpret_cast<Component*>(component)->obj = this;
-		reinterpret_cast<Component*>(component)->Create();
+		dynamic_cast<Component*>(component)->obj = this;
+		dynamic_cast<Component*>(component)->Create();
 		return component;
 	}
 	template<>
@@ -75,8 +74,8 @@ public:
 	T* AttachComponent(T* component)
 	{
 		m_components.push_back(component);
-		reinterpret_cast<Component*>(component)->obj = this;
-		reinterpret_cast<Component*>(component)->Create();
+		dynamic_cast<Component*>(component)->obj = this;
+		dynamic_cast<Component*>(component)->Create();
 		return component;
 	}
 	template<>

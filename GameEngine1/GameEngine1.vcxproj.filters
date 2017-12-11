@@ -84,9 +84,6 @@
     <ClCompile Include="TrackLayout.cpp">
       <Filter>Source Files\GameCode</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>Source Files\Engine\Base</Filter>
-    </ClCompile>
     <ClCompile Include="GCObject.cpp">
       <Filter>Source Files\Engine\Base\Garbage Collection</Filter>
     </ClCompile>
@@ -171,9 +168,6 @@
       <Filter>Header Files\GameCode</Filter>
     </ClInclude>
     <ClInclude Include="CompositeObject.h">
-      <Filter>Header Files\Engine\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectManager.h">
       <Filter>Header Files\Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="GarbageCollector.h">

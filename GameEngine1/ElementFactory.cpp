@@ -2,8 +2,10 @@
 
 using namespace GameEngine::ObjectSystem;
 
+int ElementFactory::id = 0;
+
 template <>
-CompositeObject* GameEngine::ObjectSystem::ElementFactory::Create<CompositeObject>()
+CompositeObject* ElementFactory::Create<CompositeObject>()
 {
 	//static_assert(std::is_base_of<Element, T>::value);
 

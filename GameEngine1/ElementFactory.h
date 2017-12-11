@@ -19,6 +19,7 @@ namespace GameEngine
 		{
 		public:
 			Engine* engine;
+			static int id;
 
 		public:
 			template <class T>
@@ -33,9 +34,10 @@ T* GameEngine::ObjectSystem::ElementFactory::Create()
 	//static_assert(std::is_base_of<Element, T>::value);
 
 	T* elem = new T;
-	reinterpret_cast<Element*>(elem)->engine = engine;
+	dynamic_cast<Element*>(elem)->engine = engine;
 
 	//Components just need a unique ID
+	dynamic_cast<Component*>(elem)->id = id++;
 
 
 	return elem;

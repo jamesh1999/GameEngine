@@ -7,11 +7,19 @@
 #include "Element.h"
 
 class CompositeObject;
-class ObjectManager;
+
+namespace GameEngine
+{
+	namespace ObjectSystem
+	{
+		class ElementFactory;
+	}
+}
 
 class alignas(16) Component : public GameEngine::ObjectSystem::Element
 {
-	friend class ObjectManager;
+public:
+	friend class GameEngine::ObjectSystem::ElementFactory;
 
 private:
 	unsigned id = 0;
