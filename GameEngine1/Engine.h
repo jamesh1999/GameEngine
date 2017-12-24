@@ -29,6 +29,12 @@ namespace GameEngine
 		ObjectSystem::World* world = nullptr;
 		ObjectSystem::ElementFactory* elementFactory = nullptr;
 
+		Engine();
+
+		~Engine();
+		Engine(const Engine&) = delete;
+		Engine& operator=(const Engine&) = delete;
+
 		void Loop();
 		bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
 	};

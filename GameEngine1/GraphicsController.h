@@ -15,6 +15,7 @@
 #include "Light.h"
 #include "GeometryBufferContainer.h"
 #include "ComponentContainers.h"
+#include "PriorityQueue.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -41,7 +42,7 @@ namespace GameEngine
 
 
 
-			ComponentSet<Renderer*> renderers;
+			Utils::PriorityQueue<Renderer*> renderers;
 
 			UINT numQualityLevels;
 			Camera* m_camera;

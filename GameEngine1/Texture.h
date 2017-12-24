@@ -3,13 +3,19 @@
 
 #include <DirectXMath.h>
 
-class TextureLoader;
+namespace GameEngine
+{
+	namespace Resources
+	{
+		class TextureLoader;
+	}
+}
 
 namespace Texture
 {
 	class Texture
 	{
-	friend class TextureLoader;
+	friend class GameEngine::Resources::TextureLoader;
 
 	private:
 		float* data;

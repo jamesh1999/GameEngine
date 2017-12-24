@@ -8,87 +8,93 @@
 #include <vector>
 #include <list>
 
-class TextureLoader
+namespace GameEngine
 {
-private:
-
-	//TGA
-
-	struct TGAHeader
+	namespace Resources
 	{
-		uint8_t idSize;
-		uint8_t colourMap;
-		uint8_t image;
+		class TextureLoader
+		{
+		private:
 
-		//Colour map
-		uint16_t colourIdx;
-		uint16_t entries;
-		uint8_t entryBpp;
+			//TGA
 
-		//Image
-		uint16_t xPos;
-		uint16_t yPos;
-		uint16_t width;
-		uint16_t height;
-		uint8_t bpp;
-		uint8_t alpha;
-	};
+			struct TGAHeader
+			{
+				uint8_t idSize;
+				uint8_t colourMap;
+				uint8_t image;
 
-	struct TGA
-	{
-		TGAHeader header;
-		std::unique_ptr<char[]> id;
-		std::unique_ptr<uint8_t[]> colourMap;
-		std::unique_ptr<uint8_t[]> image;
-	};
+				//Colour map
+				uint16_t colourIdx;
+				uint16_t entries;
+				uint8_t entryBpp;
 
-	static std::unique_ptr<TGA> ReadTGA(std::ifstream&);
+				//Image
+				uint16_t xPos;
+				uint16_t yPos;
+				uint16_t width;
+				uint16_t height;
+				uint8_t bpp;
+				uint8_t alpha;
+			};
 
-	//PNG
-	struct PNGChunk
-	{
-		uint32_t length;
-		char type[4];
-		std::unique_ptr<uint8_t[]> data;
-		uint32_t crc;
-	};
+			struct TGA
+			{
+				TGAHeader header;
+				std::unique_ptr<char[]> id;
+				std::unique_ptr<uint8_t[]> colourMap;
+				std::unique_ptr<uint8_t[]> image;
+			};
 
-	struct PNGChunkIHDR
-	{
-		uint32_t width;
-		uint32_t height;
-		uint8_t depth;
-		uint8_t colour;
-		uint8_t compression;
-		uint8_t filter;
-		uint8_t interlace;
-	};
+			static std::unique_ptr<TGA> ReadTGA(std::ifstream&);
 
-	struct PNGChunkPLTE
-	{
-		
-	};
+			//PNG
+			struct PNGChunk
+			{
+				uint32_t length;
+				char type[4];
+				std::unique_ptr<uint8_t[]> data;
+				uint32_t crc;
+			};
 
-	struct PNGChunkIDAT
-	{
-		
-	};
+			struct PNGChunkIHDR
+			{
+				uint32_t width;
+				uint32_t height;
+				uint8_t depth;
+				uint8_t colour;
+				uint8_t compression;
+				uint8_t filter;
+				uint8_t interlace;
+			};
 
-	struct PNGChunkIEND
-	{
-		
-	};
+			struct PNGChunkPLTE
+			{
 
-	const static uint64_t pngSignature = 0x89504e470d0a1a0a;
+			};
 
-	static std::list<PNGChunk> ReadPNG(std::ifstream&);
+			struct PNGChunkIDAT
+			{
 
-public:
-	static Texture::Texture* LoadTGA(std::ifstream&);
+			};
 
-	static Texture::Texture* LoadPNG(std::ifstream&);
+			struct PNGChunkIEND
+			{
 
-	static Texture::Texture* LoadTexture(const std::string&);
-};
+			};
+
+			const static uint64_t pngSignature = 0x89504e470d0a1a0a;
+
+			static std::list<PNGChunk> ReadPNG(std::ifstream&);
+
+		public:
+			static Texture::Texture* LoadTGA(std::ifstream&);
+
+			static Texture::Texture* LoadPNG(std::ifstream&);
+
+			static Texture::Texture* LoadTexture(const std::string&);
+		};
+	}
+}
 
 #endif

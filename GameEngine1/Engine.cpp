@@ -3,8 +3,27 @@
 #include "Clock.h"
 #include "InputManager.h"
 #include "World.h"
+#include "ElementFactory.h"
 
 using namespace GameEngine;
+
+Engine::Engine()
+{
+	elementFactory = new ObjectSystem::ElementFactory;
+	elementFactory->engine = this;
+}
+
+Engine::~Engine()
+{
+	if (clock != nullptr)
+		delete clock;
+	if (graphics != nullptr)
+		delete graphics;
+	if (world != nullptr)
+		delete world;
+	if (elementFactory != nullptr)
+		delete elementFactory;
+}
 
 void Engine::Loop()
 {

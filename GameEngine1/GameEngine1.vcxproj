@@ -211,10 +211,13 @@
     <ClInclude Include="LODGenerator.h" />
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="MeshLoader.h" />
+    <ClInclude Include="OrderedContainer.h" />
     <ClInclude Include="Perlin.h" />
+    <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshData.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="ShipController.h" />
     <ClInclude Include="Terrain.h" />

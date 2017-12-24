@@ -8,7 +8,7 @@
 
 namespace GameEngine
 {
-	namespace ObjectSystem
+	namespace Elements
 	{
 		class ElementFactory;
 		class CompositeObject;

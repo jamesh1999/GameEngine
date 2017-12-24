@@ -1,5 +1,7 @@
 #include "TextureLoader.h"
 
+using namespace GameEngine::Resources;
+
 /*
  * Targa Images .tga
  */

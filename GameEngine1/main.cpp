@@ -98,9 +98,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	game.clock = new GameEngine::Time::Clock;
 	game.graphics = new GameEngine::Graphics::GraphicsController(width, height, false, hWnd);
-	game.world = new GameEngine::ObjectSystem::World();
-	game.elementFactory = new GameEngine::ObjectSystem::ElementFactory();
-	game.elementFactory->engine = &game;
+	game.world = new GameEngine::Elements::World;
 
 	Input::InputManager input;
 	MeshLoader meshLoader;
@@ -173,7 +171,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MeshLoader::ApplyFBX(track_layout, fbxNode, "", true);
 	TrackLayout::SetTrack(&(*track_layout)[0]);
 
-	GameEngine::ObjectSystem::CompositeObject* co = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
+	GameEngine::Elements::CompositeObject* co = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
 	Transform* t = co->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -192,14 +190,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MaterialGroup mg;
 	mg.AddMaterial(mat);
 
-	Renderer* r = co->AttachComponent<Renderer>();
-	r->Init(mg, mesh);
-
-	
-
-	
-	GameEngine::ObjectSystem::CompositeObject* sky = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
-	r = sky->AttachComponent<Renderer>();
+	GameEngine::Elements::CompositeObject* sky = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	Renderer* r = sky->AttachComponent<Renderer>();
 	t = sky->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
@@ -216,10 +208,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MaterialGroup mg1;
 	mg1.AddMaterial(mat1);
 
-	//r->Init(mg1, skybox);
+	r->Init(mg1, skybox);
+
+	r = co->AttachComponent<Renderer>();
+	r->Init(mg, mesh);
 
 
-	GameEngine::ObjectSystem::CompositeObject* ship = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
+	GameEngine::Elements::CompositeObject* ship = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	t = ship->GetComponent<Transform>();
 	t->SetPosition({ -707.0f, 13.0f, -78.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
@@ -228,9 +223,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ship->AttachComponent<ShipController>();
 	
 
-	GameEngine::ObjectSystem::CompositeObject* root = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
+	GameEngine::Elements::CompositeObject* root = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
-	GameEngine::ObjectSystem::CompositeObject* light = game.elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
+	GameEngine::Elements::CompositeObject* light = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	t = light->GetComponent<Transform>();
 	//t->SetPosition({ 0.0f, 120.0f, 0.0f });
 	//t->SetRotation(DirectX::XMQuaternionRotationAxis({ 1.0f, 0.0f, 0.0f }, DirectX::XM_PIDIV2));

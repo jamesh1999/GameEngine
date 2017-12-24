@@ -3,7 +3,7 @@
 
 #include "Component.h"
 
-class Script : public GameEngine::ObjectSystem::Component
+class Script : public GameEngine::Elements::Component
 {
 public:
 	virtual void Update() {};
