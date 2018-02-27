@@ -242,6 +242,7 @@ void GraphicsController::StartDraw()
 		1.0, 0);
 	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devContext->RSSetViewports(1, &vP);
+	devContext->OMSetDepthStencilState(depthState, 1);
 
 	//Fill per frame buffer
 	PerFrameBuffer data;

@@ -13,8 +13,9 @@ namespace GameEngine
 	namespace Graphics
 	{
 		class GraphicsController;
+		class ParticleSystem;
 	}
-	namespace ObjectSystem
+	namespace Elements
 	{
 		class World;
 		class ElementFactory;
@@ -26,8 +27,9 @@ namespace GameEngine
 	public:
 		Time::Clock* clock = nullptr;
 		Graphics::GraphicsController* graphics = nullptr;
-		ObjectSystem::World* world = nullptr;
-		ObjectSystem::ElementFactory* elementFactory = nullptr;
+		Graphics::ParticleSystem* particleSystem = nullptr;
+		Elements::World* world = nullptr;
+		Elements::ElementFactory* elementFactory = nullptr;
 
 		Engine();
 

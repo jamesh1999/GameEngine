@@ -10,7 +10,21 @@ using namespace GameEngine::Resources;
 std::unique_ptr<TextureLoader::TGA> TextureLoader::ReadTGA(std::ifstream& stream)
 {
 	std::unique_ptr<TGA> img = std::make_unique<TGA>();
-	stream.read(reinterpret_cast<char*>(&img->header), sizeof(TGAHeader));
+
+	stream.read(reinterpret_cast<char*>(&img->header.idSize), 1);
+	stream.read(reinterpret_cast<char*>(&img->header.colourMap), 1);
+	stream.read(reinterpret_cast<char*>(&img->header.image), 1);
+
+	stream.read(reinterpret_cast<char*>(&img->header.colourIdx), 2);
+	stream.read(reinterpret_cast<char*>(&img->header.entries), 2);
+	stream.read(reinterpret_cast<char*>(&img->header.entryBpp), 1);
+
+	stream.read(reinterpret_cast<char*>(&img->header.xPos), 2);
+	stream.read(reinterpret_cast<char*>(&img->header.yPos), 2);
+	stream.read(reinterpret_cast<char*>(&img->header.width), 2);
+	stream.read(reinterpret_cast<char*>(&img->header.height), 2);
+	stream.read(reinterpret_cast<char*>(&img->header.bpp), 1);
+	stream.read(reinterpret_cast<char*>(&img->header.alpha), 1);
 
 	img->id = std::make_unique<char[]>(img->header.idSize);
 	stream.read(img->id.get(), img->header.idSize);

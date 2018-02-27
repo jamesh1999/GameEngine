@@ -5,14 +5,14 @@
 #include "Component.h"
 
 struct Hash {
-	size_t operator()(const GameEngine::ObjectSystem::Component* c) const
+	size_t operator()(const GameEngine::Elements::Component* c) const
 	{
 		return c->GetID();
 	}
 };
 
 struct Pred {
-	bool operator()(const GameEngine::ObjectSystem::Component* a, const GameEngine::ObjectSystem::Component* b) const
+	bool operator()(const GameEngine::Elements::Component* a, const GameEngine::Elements::Component* b) const
 	{
 		return a->GetID() == b->GetID();
 	}

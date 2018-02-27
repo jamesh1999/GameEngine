@@ -11,6 +11,7 @@
 #include "MeshLoader.h"
 #include "CompositeObject.h"
 #include "ElementFactory.h"
+#include "ParticleSystem.h"
 
 void ShipController::UpdateBase()
 {
@@ -269,13 +270,20 @@ void ShipController::Update()
 
 	if (DirectX::XMVectorGetY(shipPos) > 8.0f && std::fabs(DirectX::XMVectorGetX(v)) > 0.001)
 		engine->graphics->RemoveRenderer(obj->GetComponent<Renderer>());
+
+	if (Input::InputManager::KeyIsPressed(Input::KeyZ))
+	{
+		DirectX::XMFLOAT3 wp;
+		DirectX::XMStoreFloat3(&wp, transform->GetPosition());
+		engine->particleSystem->Initialise(wp);
+	}
 }
 
 void ShipController::Create()
 {
-	cam = engine->elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
-	model = engine->elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
-	base = engine->elementFactory->Create<GameEngine::ObjectSystem::CompositeObject>();
+	cam = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	model = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	base = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
 	//Init camera
 	cam->AttachComponent<Camera>();

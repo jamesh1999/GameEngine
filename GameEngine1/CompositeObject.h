@@ -11,7 +11,7 @@
 
 namespace GameEngine
 {
-	namespace ObjectSystem
+	namespace Elements
 	{
 		class CompositeObject : public Element, private GCObject
 		{

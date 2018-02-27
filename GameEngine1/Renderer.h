@@ -7,7 +7,7 @@
 #include "Material.h"
 #include "MeshData.h"
 
-class Renderer : public GameEngine::ObjectSystem::Component
+class Renderer : public GameEngine::Elements::Component
 {
 	//friend class GraphicsController;
 

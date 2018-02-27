@@ -12,7 +12,7 @@ namespace GameEngine
 {
 	class Engine;
 
-	namespace ObjectSystem
+	namespace Elements
 	{
 		//Handles initialisation of Elements i.e. objects within the world heirarchy
 		class ElementFactory
@@ -29,7 +29,7 @@ namespace GameEngine
 }
 
 template <class T>
-T* GameEngine::ObjectSystem::ElementFactory::Create()
+T* GameEngine::Elements::ElementFactory::Create()
 {
 	//static_assert(std::is_base_of<Element, T>::value);
 
@@ -44,6 +44,6 @@ T* GameEngine::ObjectSystem::ElementFactory::Create()
 }
 
 template <>
-GameEngine::ObjectSystem::CompositeObject* GameEngine::ObjectSystem::ElementFactory::Create<GameEngine::ObjectSystem::CompositeObject>();
+GameEngine::Elements::CompositeObject* GameEngine::Elements::ElementFactory::Create<GameEngine::Elements::CompositeObject>();
 
 #endif

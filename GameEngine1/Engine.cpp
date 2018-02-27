@@ -4,15 +4,18 @@
 #include "InputManager.h"
 #include "World.h"
 #include "ElementFactory.h"
+#include "ParticleSystem.h"
 
 using namespace GameEngine;
 
+//Initialise factories with a reference to the engine
 Engine::Engine()
 {
-	elementFactory = new ObjectSystem::ElementFactory;
+	elementFactory = new Elements::ElementFactory;
 	elementFactory->engine = this;
 }
 
+//Clean up dynamic allocation
 Engine::~Engine()
 {
 	if (clock != nullptr)
@@ -25,18 +28,22 @@ Engine::~Engine()
 		delete elementFactory;
 }
 
+//One complete loop of the game
 void Engine::Loop()
 {
 	world->Update();
+	particleSystem->Update();
 	Input::InputManager::Update();
 	graphics->RenderLightDepth();
 	graphics->StartDraw();
 	graphics->RenderObjects();
+	particleSystem->Draw();
 	graphics->EndDraw();
 	clock->EndFrame();
 	clock->StartFrame();
 }
 
+//Handles messages from WndProc()
 bool GameEngine::Engine::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (graphics->HandleMessage(hWnd, message, wParam, lParam)) return true;

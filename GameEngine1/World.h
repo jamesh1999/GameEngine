@@ -5,7 +5,7 @@
 
 namespace GameEngine
 {
-	namespace ObjectSystem
+	namespace Elements
 	{
 		class CompositeObject;
 

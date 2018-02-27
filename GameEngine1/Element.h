@@ -3,11 +3,15 @@
 #include "Engine.h"
 namespace GameEngine
 {
-	namespace ObjectSystem
+	namespace Elements
 	{
+		class ElementFactory;
+
 		class Element
 		{
-		public:
+			friend class ElementFactory;
+
+		protected:
 			Engine* engine;
 		};
 	}

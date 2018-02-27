@@ -176,6 +176,7 @@
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="OrderedContainer.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Perlin.h" />
     <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="Renderer.h" />

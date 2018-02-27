@@ -165,6 +165,9 @@
     <ClCompile Include="ElementFactory.cpp">
       <Filter>Source Files\Engine\Base</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShipController.h">
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="OrderedContainer.h">
       <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

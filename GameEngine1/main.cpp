@@ -17,6 +17,7 @@
 #include "Engine.h"
 #include "World.h"
 #include "ElementFactory.h"
+#include "ParticleSystem.h"
 
 int width = 1000;
 int height = 1000;
@@ -241,6 +242,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//t->SetScale({ 1.0f, 1.0f, 1.0f });
 	light->AttachComponent<Light>();
 	game.graphics->SetLight(light->GetComponent<Light>());
+
+	game.particleSystem = new GameEngine::Graphics::ParticleSystem(&game);
+	//game.particleSystem->engine = &game;
 
 	MSG message;
 	while (true)

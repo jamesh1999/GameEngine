@@ -1,6 +1,6 @@
 #include "ElementFactory.h"
 
-using namespace GameEngine::ObjectSystem;
+using namespace GameEngine::Elements;
 
 int ElementFactory::id = 0;
 

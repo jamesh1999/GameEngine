@@ -17,7 +17,7 @@ namespace Texture
 	{
 	friend class GameEngine::Resources::TextureLoader;
 
-	private:
+	public :
 		float* data;
 		int w;
 		int h;

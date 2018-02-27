@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "DirectXMath.h"
 
-class Transform : public GameEngine::ObjectSystem::Component
+class Transform : public GameEngine::Elements::Component
 {
 private:
 	

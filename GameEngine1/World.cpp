@@ -1,7 +1,7 @@
 #include "World.h"
 #include "CompositeObject.h"
 
-using namespace GameEngine::ObjectSystem;
+using namespace GameEngine::Elements;
 
 void World::Update()
 {

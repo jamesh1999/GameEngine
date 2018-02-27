@@ -45,7 +45,9 @@ namespace GameEngine
 			Utils::PriorityQueue<Renderer*> renderers;
 
 			UINT numQualityLevels;
+		public:
 			Camera* m_camera;
+		private:
 			Light* m_light;
 			D3D11_VIEWPORT vP;
 
