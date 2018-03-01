@@ -340,7 +340,8 @@ void GraphicsController::FillBuffers(Renderer* r, bool tex)
 		if (tex)
 		{
 			devContext->PSSetSamplers(0, 1, &r->mat[i]->m_samplerState);
-			devContext->PSSetShaderResources(0, 1, &r->mat[i]->m_texView);
+			ID3D11ShaderResourceView* srv = r->mat[i]->GetTexture();
+			devContext->PSSetShaderResources(0, 1, &srv);
 
 			r->Render(i);
 		}

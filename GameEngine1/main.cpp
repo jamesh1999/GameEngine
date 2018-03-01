@@ -18,6 +18,7 @@
 #include "World.h"
 #include "ElementFactory.h"
 #include "ParticleSystem.h"
+#include "ResourceTable.h"
 
 int width = 1000;
 int height = 1000;
@@ -100,6 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game.clock = new GameEngine::Time::Clock;
 	game.graphics = new GameEngine::Graphics::GraphicsController(width, height, false, hWnd);
 	game.world = new GameEngine::Elements::World;
+	game.resources = new GameEngine::Resources::ResourceTable;
 
 	Input::InputManager input;
 	MeshLoader meshLoader;

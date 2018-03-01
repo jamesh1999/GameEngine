@@ -1,4 +1,6 @@
 #include "TextureLoader.h"
+#include <cctype>
+#include <algorithm>
 
 using namespace GameEngine::Resources;
 
@@ -70,12 +72,14 @@ std::list<TextureLoader::PNGChunk> TextureLoader::ReadPNG(std::ifstream& stream)
 }
 
 //Load a .tga from stream to memory
-Texture::Texture* TextureLoader::LoadTGA(std::ifstream& stream)
+Texture* TextureLoader::LoadTGA(std::ifstream& stream)
 {
 	std::unique_ptr<TGA> img = ReadTGA(stream);
 
-	Texture::Texture* tex = new Texture::Texture;
-	tex->data = new float[img->header.width * img->header.height * 4];
+	Texture* tex = new Texture;
+	tex->m_h = img->header.height;
+	tex->m_w = img->header.width;
+	tex->m_data = new float[img->header.width * img->header.height * 4];
 
 	bool useColourMap = img->header.colourMap == 1;
 	int colourBpp = useColourMap ? img->header.entryBpp : img->header.bpp;
@@ -83,7 +87,7 @@ Texture::Texture* TextureLoader::LoadTGA(std::ifstream& stream)
 	for(int y = 0; y < img->header.height; ++y)
 		for(int x = 0; x < img->header.width; ++x)
 		{
-			uint8_t* pixelPtr = img->image.get() + (img->header.width * y + x) * (img->header.bpp >> 3);
+			uint8_t* pixelPtr = img->image.get() + (img->header.width * (img->header.height - y - 1) + x) * (img->header.bpp >> 3);
 			if (useColourMap)
 			{
 				switch(img->header.bpp)
@@ -102,23 +106,23 @@ Texture::Texture* TextureLoader::LoadTGA(std::ifstream& stream)
 			case 16:
 				{
 					uint16_t colour = *reinterpret_cast<uint16_t*>(pixelPtr);
-					tex->data[(y * img->header.width + x) * 4 + 0] = (colour >> 15 & 31) / 31.0f;
-					tex->data[(y * img->header.width + x) * 4 + 1] = (colour >> 10 & 31) / 31.0f;
-					tex->data[(y * img->header.width + x) * 4 + 2] = (colour >> 5 & 31) / 31.0f;
-					tex->data[(y * img->header.width + x) * 4 + 3] = (colour >> 15 & 1) / 1.0f;
+					tex->m_data[(y * img->header.width + x) * 4 + 0] = (colour >> 15 & 31) / 31.0f;
+					tex->m_data[(y * img->header.width + x) * 4 + 1] = (colour >> 10 & 31) / 31.0f;
+					tex->m_data[(y * img->header.width + x) * 4 + 2] = (colour >> 5 & 31) / 31.0f;
+					tex->m_data[(y * img->header.width + x) * 4 + 3] = (colour >> 15 & 1) / 1.0f;
 				}
 				break;
 			case 24:
-				tex->data[(y * img->header.width + x) * 4 + 0] = *(pixelPtr + 2) / 255.0f;
-				tex->data[(y * img->header.width + x) * 4 + 1] = *(pixelPtr + 1) / 255.0f;
-				tex->data[(y * img->header.width + x) * 4 + 2] = *(pixelPtr + 0) / 255.0f;
-				tex->data[(y * img->header.width + x) * 4 + 3] = 1.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 0] = *(pixelPtr + 2) / 255.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 1] = *(pixelPtr + 1) / 255.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 2] = *(pixelPtr + 0) / 255.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 3] = 1.0f;
 				break;
 			case 32:
-				tex->data[(y * img->header.width + x) * 4 + 0] = *(pixelPtr + 2) / 255.0f;
-				tex->data[(y * img->header.width + x) * 4 + 1] = *(pixelPtr + 1) / 255.0f;
-				tex->data[(y * img->header.width + x) * 4 + 2] = *(pixelPtr + 0) / 255.0f;
-				tex->data[(y * img->header.width + x) * 4 + 3] = *(pixelPtr + 3) / 255.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 0] = *(pixelPtr + 2) / 255.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 1] = *(pixelPtr + 1) / 255.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 2] = *(pixelPtr + 0) / 255.0f;
+				tex->m_data[(y * img->header.width + x) * 4 + 3] = *(pixelPtr + 3) / 255.0f;
 				break;
 			}
 		}
@@ -126,19 +130,20 @@ Texture::Texture* TextureLoader::LoadTGA(std::ifstream& stream)
 	return tex;
 }
 
-Texture::Texture* TextureLoader::LoadPNG(std::ifstream& stream)
+Texture* TextureLoader::LoadPNG(std::ifstream& stream)
 {
 	//std::list<PNGChunk> img = ReadPNG(stream);
 
-	Texture::Texture* tex = new Texture::Texture;
+	Texture* tex = new Texture;
 	return tex;
 }
 
 //Identify the type of texture (from extension) and load to memory
-Texture::Texture* TextureLoader::LoadTexture(const std::string& filename)
+Texture* TextureLoader::LoadTexture(const std::string& filename)
 {
 	int idx = filename.find_last_of('.');
 	std::string extension = filename.substr(idx + 1, filename.size() - idx - 1);
+	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
 	std::ifstream stream(filename, std::ios::binary);
 

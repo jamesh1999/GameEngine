@@ -168,6 +168,12 @@
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="TextureArray.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFactory.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShipController.h">
@@ -283,6 +289,21 @@
     </ClInclude>
     <ClInclude Include="ParticleSystem.h">
       <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializable.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFactory.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceTable.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArray.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceRef.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

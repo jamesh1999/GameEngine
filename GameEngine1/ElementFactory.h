@@ -7,17 +7,19 @@
 #include "CompositeObject.h"
 #include "Component.h"
 #include "Transform.h"
+#include "Engine.h"
 
 namespace GameEngine
 {
-	class Engine;
 
 	namespace Elements
 	{
 		//Handles initialisation of Elements i.e. objects within the world heirarchy
 		class ElementFactory
 		{
-		public:
+			friend class Engine;
+
+		private:
 			Engine* engine;
 			static int id;
 

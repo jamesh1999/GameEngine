@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include <iostream>
 #include "Texture.h"
+#include "ResourceFactory.h"
 
 using namespace GameEngine::Graphics;
 
@@ -13,36 +14,7 @@ ParticleSystem::ParticleSystem(GameEngine::Engine* engine)
 {
 	this->engine = engine;
 
-	t = Resources::TextureLoader::LoadTexture("Z:\\WipeoutPSP\\PS2\\Data\\Psys\\Tex\\explosion_01_64x64.tga");
-	t->h = 64;
-	t->w = 64;
-
-	D3D11_TEXTURE2D_DESC tD;
-	ZeroMemory(&tD, sizeof(D3D11_TEXTURE2D_DESC));
-	tD.Usage = D3D11_USAGE_IMMUTABLE;
-	tD.ArraySize = 1;
-	tD.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	tD.Height = t->h;
-	tD.Width = t->w;
-	tD.MiscFlags = 0;
-	tD.MipLevels = 1;
-	tD.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	tD.SampleDesc.Count = 1;
-	tD.SampleDesc.Quality = 0;
-
-	D3D11_SUBRESOURCE_DATA texData;
-		texData.SysMemSlicePitch = 4 * 4 * t->h * t->w;
-		texData.SysMemPitch = 4 * 4 * t->w;
-		texData.pSysMem = t->data;
-
-	engine->graphics->device->CreateTexture2D(&tD, &texData, &m_tex);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
-	srvD.Format = tD.Format;
-	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-	srvD.Texture2D.MipLevels = -1;
-	srvD.Texture2D.MostDetailedMip = 0;
-	engine->graphics->device->CreateShaderResourceView(m_tex, NULL, &m_texView);
+	m_texture = engine->resourceFactory->Create<Resources::Texture>("Z:\\WipeoutPSP\\PS2\\Data\\Psys\\Tex\\explosion_01_64x64.tga");
 
 	D3D11_BUFFER_DESC vBD;
 	ZeroMemory(&vBD, sizeof(D3D11_BUFFER_DESC));
@@ -212,7 +184,8 @@ void ParticleSystem::Draw()
 	engine->graphics->devContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	engine->graphics->devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	engine->graphics->devContext->PSSetShaderResources(0, 1, &m_texView);
+	ID3D11ShaderResourceView* srv = m_texture->GetSRV();
+	engine->graphics->devContext->PSSetShaderResources(0, 1, &srv);
 
 	engine->graphics->devContext->OMSetBlendState(blendState, NULL, 0xffffffff);
 	engine->graphics->devContext->OMSetDepthStencilState(depthState, 1);

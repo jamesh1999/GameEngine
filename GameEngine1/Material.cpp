@@ -4,6 +4,7 @@
 #include "GraphicsController.h"
 #include <Windows.h>
 #include <iostream>
+#include "ResourceFactory.h"
 
 void RenderPass::LoadVS(std::wstring filename, std::string entry, D3D11_INPUT_ELEMENT_DESC* inputDesc, int numElements)
 {
@@ -80,11 +81,6 @@ Material::~Material()
 
 	passes.clear();
 
-	//No assigned texture
-	if (m_tex == nullptr) return;
-
-	m_tex->Release();
-	m_texView->Release();
 	m_samplerState->Release();
 }
 
@@ -99,13 +95,8 @@ Material::Material(const Material& other)
 		passes[i].vs->AddRef();
 	}
 
-	//No assigned texture
-	if (other.m_tex == nullptr) return;
+	m_textures = other.m_textures;
 
-	m_tex = other.m_tex;
-	m_tex->AddRef();
-	m_texView = other.m_texView;
-	m_texView->AddRef();
 	m_samplerState = other.m_samplerState;
 	m_samplerState->AddRef();
 	engine = other.engine;
@@ -116,10 +107,8 @@ Material::Material(Material&& other) noexcept
 	passes = other.passes;
 	other.passes.clear();
 
-	m_tex = other.m_tex;
-	other.m_tex = nullptr;
-	m_texView = other.m_texView;
-	other.m_texView = nullptr;
+	m_textures = other.m_textures;
+
 	m_samplerState = other.m_samplerState;
 	other.m_samplerState = nullptr;
 	engine = other.engine;
@@ -136,13 +125,8 @@ Material& Material::operator=(const Material& other)
 		passes[i].vs->AddRef();
 	}
 
-	//No assigned texture
-	if (other.m_tex == nullptr) return *this;
+	m_textures = other.m_textures;
 
-	m_tex = other.m_tex;
-	m_tex->AddRef();
-	m_texView = other.m_texView;
-	m_texView->AddRef();
 	m_samplerState = other.m_samplerState;
 	m_samplerState->AddRef();
 	engine = other.engine;
@@ -155,10 +139,8 @@ Material& Material::operator=(Material&& other) noexcept
 	passes = other.passes;
 	other.passes.clear();
 
-	m_tex = other.m_tex;
-	other.m_tex = nullptr;
-	m_texView = other.m_texView;
-	other.m_texView = nullptr;
+	m_textures = other.m_textures;
+
 	m_samplerState = other.m_samplerState;
 	other.m_samplerState = nullptr;
 	engine = other.engine;
@@ -168,7 +150,7 @@ Material& Material::operator=(Material&& other) noexcept
 
 ID3D11ShaderResourceView* Material::GetTexture() const
 {
-	return m_texView;
+	return m_textures->GetSRV();
 }
 
 ID3D11SamplerState* Material::GetSampler() const
@@ -178,21 +160,51 @@ ID3D11SamplerState* Material::GetSampler() const
 
 void Material::LoadTGA(std::string filename)
 {
-	auto dat = getTGAData(filename);
-	setTextureData(std::get<0>(dat), std::get<1>(dat), std::get<2>(dat));
+	m_textures = engine->resourceFactory->Create<GameEngine::Resources::TextureArray>("");
+	m_textures->Add(engine->resourceFactory->Create<GameEngine::Resources::Texture>(filename));
+
+	D3D11_SAMPLER_DESC sD;
+	sD.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sD.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sD.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sD.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sD.MipLODBias = 0.0f;
+	sD.MaxAnisotropy = 1;
+	sD.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	sD.BorderColor[0] = 0;
+	sD.BorderColor[1] = 0;
+	sD.BorderColor[2] = 0;
+	sD.BorderColor[3] = 0;
+	sD.MinLOD = 0;
+	sD.MaxLOD = D3D11_FLOAT32_MAX;
+
+	engine->graphics->device->CreateSamplerState(&sD, &m_samplerState);
 }
 
 void Material::LoadTGAArray(std::vector<std::string> paths)
 {
-	std::vector<TexData> textures;
-
-	for(std::string filename : paths)
+	m_textures = engine->resourceFactory->Create<GameEngine::Resources::TextureArray>("");
+	for (auto path : paths)
 	{
-		auto dat = getTGAData(filename);
-		textures.push_back({ std::get<0>(dat), std::get<1>(dat), std::get<2>(dat) });
+		m_textures->Add(engine->resourceFactory->Create<GameEngine::Resources::Texture>(path));
 	}
 
-	setTextureData(textures);
+	D3D11_SAMPLER_DESC sD;
+	sD.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sD.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sD.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sD.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sD.MipLODBias = 0.0f;
+	sD.MaxAnisotropy = 1;
+	sD.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	sD.BorderColor[0] = 0;
+	sD.BorderColor[1] = 0;
+	sD.BorderColor[2] = 0;
+	sD.BorderColor[3] = 0;
+	sD.MinLOD = 0;
+	sD.MaxLOD = D3D11_FLOAT32_MAX;
+
+	engine->graphics->device->CreateSamplerState(&sD, &m_samplerState);
 }
 
 
@@ -209,7 +221,7 @@ void Material::SetTexture(DirectX::XMFLOAT3* data, int x, int y)
 			textureData[(i * x + j) * 4 + 3] = 1.0f;
 		}
 
-	setTextureData(textureData, x, y);
+	//setTextureData(textureData, x, y);
 }
 
 MaterialGroup::~MaterialGroup()
@@ -265,190 +277,4 @@ int MaterialGroup::Size() const
 void MaterialGroup::AddMaterial(Material* m)
 {
 	materials.push_back(m);
-}
-
-void Material::setTextureData(uint8_t* data, int w, int h)
-{
-	std::vector<TexData> vec;
-	vec.push_back({ data, w, h });
-	setTextureData(vec);
-}
-
-void texcpy(void* dest, void* src, int size, int yscale, int xscale, int nrows, int ncols)//, int row_offset, int col_offset)
-{
-	uint8_t* udest = static_cast<uint8_t*>(dest);
-	uint8_t* usrc = static_cast<uint8_t*>(src);
-
-	for(int i = 0; i < nrows; ++i)
-		for(int j = 0; j < ncols; ++j)
-		{
-			udest[(i * ncols + j) * size] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size];
-			udest[(i * ncols + j) * size + 1] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 1];
-			udest[(i * ncols + j) * size + 2] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 2];
-			udest[(i * ncols + j) * size + 3] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 3];
-		}
-}
-
-void Material::setTextureData(std::vector<TexData> textures)
-{
-	if(m_tex != nullptr)
-	{
-		m_tex->Release();
-		m_texView->Release();
-		m_samplerState->Release();
-	}
-
-	int w_max = INT_MIN;
-	int h_max = INT_MIN;
-	for(TexData tex : textures)
-	{
-		if (tex.h > h_max)
-			h_max = tex.h;
-		if (tex.w > w_max)
-			w_max = tex.w;
-	}
-
-	for (TexData& tex : textures)
-	{
-		uint8_t* n_data = new uint8_t[w_max * h_max * 4];
-		texcpy(n_data, tex.data, 4, h_max / tex.h, w_max / tex.w, h_max, w_max);
-
-		delete[] tex.data;
-		tex.data = n_data;
-	}
-
-
-
-	D3D11_TEXTURE2D_DESC tD;
-	ZeroMemory(&tD, sizeof(D3D11_TEXTURE2D_DESC));
-	tD.Usage = D3D11_USAGE_IMMUTABLE;
-	tD.ArraySize = textures.size();
-	tD.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	tD.Height = h_max;
-	tD.Width = w_max;
-	tD.MiscFlags = 0;
-	tD.MipLevels = 1;
-	tD.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	tD.SampleDesc.Count = 1;
-	tD.SampleDesc.Quality = 0;
-
-	D3D11_SUBRESOURCE_DATA* texData = new D3D11_SUBRESOURCE_DATA[textures.size()];
-	for(int i = 0; i < textures.size(); ++i)
-	{
-		texData[i].SysMemSlicePitch = 4 * w_max * h_max;
-		texData[i].SysMemPitch = 4 * w_max;
-		texData[i].pSysMem = textures[i].data;
-	}
-
-	engine->graphics->device->CreateTexture2D(&tD, texData, &m_tex);
-
-
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
-	srvD.Format = tD.Format;
-	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-	srvD.Texture2D.MipLevels = -1;
-	srvD.Texture2D.MostDetailedMip = 0;
-	engine->graphics->device->CreateShaderResourceView(m_tex, NULL, &m_texView);
-	//GraphicsController::instance->devContext->GenerateMips(m_texView);
-
-	D3D11_SAMPLER_DESC sD;
-	sD.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sD.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sD.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sD.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sD.MipLODBias = 0.0f;
-	sD.MaxAnisotropy = 1;
-	sD.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sD.BorderColor[0] = 0;
-	sD.BorderColor[1] = 0;
-	sD.BorderColor[2] = 0;
-	sD.BorderColor[3] = 0;
-	sD.MinLOD = 0;
-	sD.MaxLOD = D3D11_FLOAT32_MAX;
-
-	engine->graphics->device->CreateSamplerState(&sD, &m_samplerState);
-
-	for (TexData tex : textures)
-		delete[] tex.data;
-}
-
-std::tuple<uint8_t*, int, int> Material::getTGAData(std::string filename)
-{
-	std::ifstream in(filename, std::ios::binary);
-
-	TGAHeader h;
-	in.read(reinterpret_cast<char*>(&h), sizeof(TGAHeader));
-
-	uint8_t* colourMap = nullptr;
-	if (h.image == 1)
-	{
-		colourMap = new uint8_t[h.entries * h.entryBpp / 8];
-
-		in.read(reinterpret_cast<char*>(colourMap), h.entries * h.entryBpp / 8);
-	}
-
-	uint8_t* tgadata = nullptr;
-	//32 bits per pixel
-	if (h.bpp == 32)
-	{
-		tgadata = new uint8_t[h.width * h.height * 4];
-		in.read(reinterpret_cast<char*>(tgadata), h.width * h.height * 4);
-	}
-	//24 bits per pixel
-	else if (h.bpp == 24)
-	{
-		tgadata = new uint8_t[h.width * h.height * 3];
-		in.read(reinterpret_cast<char*>(tgadata), h.width * h.height * 3);
-	}
-	else if (h.image == 1)
-	{
-		tgadata = new uint8_t[h.width * h.height];
-		in.read(reinterpret_cast<char*>(tgadata), h.width * h.height);
-	}
-
-	in.close();
-
-	uint8_t* textureData = new uint8_t[h.width * h.height * 4];
-	for (int i = 0; i < h.height; ++i)
-	{
-		for (int j = 0; j < h.width; ++j)
-		{
-			if (h.bpp == 32)
-			{
-				textureData[(i * h.width + j) * 4] = tgadata[((h.height - i - 1) * h.width + j) * 4 + 2];
-				textureData[(i * h.width + j) * 4 + 1] = tgadata[((h.height - i - 1) * h.width + j) * 4 + 1];
-				textureData[(i * h.width + j) * 4 + 2] = tgadata[((h.height - i - 1) * h.width + j) * 4];
-				textureData[(i * h.width + j) * 4 + 3] = tgadata[((h.height - i - 1) * h.width + j) * 4 + 3];
-			}
-			else if (h.bpp == 24)
-			{
-				textureData[(i * h.width + j) * 4] = tgadata[((h.height - i - 1) * h.width + j) * 3 + 2];
-				textureData[(i * h.width + j) * 4 + 1] = tgadata[((h.height - i - 1) * h.width + j) * 3 + 1];
-				textureData[(i * h.width + j) * 4 + 2] = tgadata[((h.height - i - 1) * h.width + j) * 3];
-				textureData[(i * h.width + j) * 4 + 3] = 255;
-			}
-			else if(h.image == 1)
-			{
-				textureData[(i * h.width + j) * 4] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4 + 2];
-				textureData[(i * h.width + j) * 4 + 1] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4 + 1];
-				textureData[(i * h.width + j) * 4 + 2] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4];
-				textureData[(i * h.width + j) * 4 + 3] = colourMap[tgadata[(h.height - i - 1) * h.width + j] * 4 + 3];
-			}
-			else
-			{
-				textureData[(i * h.width + j) * 4] = 0;
-				textureData[(i * h.width + j) * 4 + 1] = 0;
-				textureData[(i * h.width + j) * 4 + 2] = 0;
-				textureData[(i * h.width + j) * 4 + 3] = 0;
-			}
-		}
-	}
-
-	if(tgadata != nullptr)
-		delete[] tgadata;
-	if (colourMap != nullptr)
-		delete[] colourMap;
-
-	return std::tuple<uint8_t*, int, int>(textureData, h.width, h.height);
 }

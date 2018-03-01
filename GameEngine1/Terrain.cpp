@@ -95,7 +95,7 @@ void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, SubMe
 		}
 	}
 
-	Texture::GaussianBlur(out, x, y, 4.0f);
+	//Texture::GaussianBlur(out, x, y, 4.0f);
 
 	for(int i = 0; i < x * y; ++i)
 	{

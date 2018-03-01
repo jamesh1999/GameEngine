@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "Texture.h"
 #include "MeshData.h"
+#include "ResourceRef.h"
 
 namespace GameEngine
 {
@@ -25,9 +26,7 @@ namespace GameEngine
 			ID3D11Buffer* vertexBuffer = nullptr;
 			ID3D11Buffer* indexBuffer = nullptr;
 
-			Texture::Texture* t;
-			ID3D11Texture2D* m_tex;
-			ID3D11ShaderResourceView* m_texView;
+			Resources::ResourceRef<Resources::Texture> m_texture;
 
 			ID3D11BlendState* blendState;
 			ID3D11DepthStencilState* depthState;

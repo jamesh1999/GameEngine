@@ -5,6 +5,7 @@
 #include "World.h"
 #include "ElementFactory.h"
 #include "ParticleSystem.h"
+#include "ResourceFactory.h"
 
 using namespace GameEngine;
 
@@ -13,6 +14,9 @@ Engine::Engine()
 {
 	elementFactory = new Elements::ElementFactory;
 	elementFactory->engine = this;
+
+	resourceFactory = new Resources::ResourceFactory;
+	resourceFactory->engine = this;
 }
 
 //Clean up dynamic allocation
@@ -26,6 +30,8 @@ Engine::~Engine()
 		delete world;
 	if (elementFactory != nullptr)
 		delete elementFactory;
+	if (resourceFactory != nullptr)
+		delete resourceFactory;
 }
 
 //One complete loop of the game

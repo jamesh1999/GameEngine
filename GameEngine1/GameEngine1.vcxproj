@@ -181,9 +181,11 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="ShipController.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureArray.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="TrackLayout.cpp" />
@@ -220,10 +222,15 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceFactory.h" />
+    <ClInclude Include="ResourceRef.h" />
+    <ClInclude Include="ResourceTable.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="Serializable.h" />
     <ClInclude Include="ShipController.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureArray.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="TrackLayout.h" />

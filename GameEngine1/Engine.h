@@ -20,6 +20,11 @@ namespace GameEngine
 		class World;
 		class ElementFactory;
 	}
+	namespace Resources
+	{
+		class ResourceFactory;
+		class ResourceTable;
+	}
 
 	class Engine
 	{
@@ -30,6 +35,8 @@ namespace GameEngine
 		Graphics::ParticleSystem* particleSystem = nullptr;
 		Elements::World* world = nullptr;
 		Elements::ElementFactory* elementFactory = nullptr;
+		Resources::ResourceFactory* resourceFactory = nullptr;
+		Resources::ResourceTable* resources = nullptr;
 
 		Engine();
 

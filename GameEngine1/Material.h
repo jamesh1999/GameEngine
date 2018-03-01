@@ -8,21 +8,8 @@
 #include <string>
 #include <tuple>
 #include "Engine.h"
-
-struct TGAHeader
-{
-	char d1;
-	char colourMap;
-	char image;
-	char d2[2];
-	short entries;
-	char entryBpp;
-	char d3[3];
-	short width;
-	short height;
-	char bpp;
-	char d4;
-};
+#include "ResourceRef.h"
+#include "TextureArray.h"
 
 class RenderPass
 {
@@ -38,25 +25,13 @@ public:
 
 class Material
 {
-	typedef struct
-	{
-		uint8_t* data;
-		int w;
-		int h;
-	} TexData;
-
-	ID3D11Texture2D* m_tex = nullptr;
-
-	void setTextureData(uint8_t*, int, int);
-	void setTextureData(std::vector<TexData>);
-	std::tuple<uint8_t*, int, int> getTGAData(std::string);
+	GameEngine::Resources::ResourceRef<GameEngine::Resources::TextureArray> m_textures;
 
 	GameEngine::Engine* engine;
 
 public:
 	std::vector<RenderPass> passes;
 
-	ID3D11ShaderResourceView* m_texView = nullptr;
 	ID3D11SamplerState* m_samplerState = nullptr;
 
 	Material(GameEngine::Engine* e) : engine(e) {};
