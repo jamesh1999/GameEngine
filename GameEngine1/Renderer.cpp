@@ -58,7 +58,8 @@ void Renderer::SetTexture(Resources::Texture* tex)
 
 Resources::Mesh* Renderer::GetMesh()
 {
-	return *mesh;
+	//return *mesh;
+	return mesh;
 }
 
 bool Renderer::GetTransparent()

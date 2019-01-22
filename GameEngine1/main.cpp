@@ -122,6 +122,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
 	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
 
+	mat = game.resourceFactory->Create<Material>("Default Glow");
+	mat->passes.push_back(RenderPass());
+	mat->passes[0].engine = &game;
+
+	mat->passes[0].LoadVS(L"shaders_glow.hlsl", "VShader", iLayout, 3);
+	mat->passes[0].LoadPS(L"shaders_glow.hlsl", "PShaderTex");
+
 	//HACK: Need to refactor
 	ID3D10Blob *buff = nullptr, *err = nullptr;
 	HRESULT success = D3DCompileFromFile(
@@ -189,6 +196,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	t->m_static = true;
 
 	GameEngine::Elements::CompositeObject* scn = GameEngine::Resources::SceneLoader::LoadFBX(&game, "Track.fbx");
+
+	for (GameEngine::Renderer* r : game.graphics->rq)
+	{
+		std::string id = (*r->m_textures)[0].GetIdentifier();
+		if (id.find("GLOW") == -1) continue;
+		r->mat = game.resourceFactory->Create<Material>("Default Glow");
+	}
+
 	StaticBatcher::BatchFrom(scn, &game);
 
 	GameEngine::Elements::CompositeObject* sky = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();

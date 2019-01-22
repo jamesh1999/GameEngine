@@ -67,9 +67,9 @@ Texture* Texture::Resize(int width, int height)
 			int col_y1 = static_cast<int>(std::ceilf(orig_y));
 
 			float coeff_x0 = 1.0f - (orig_x - col_x0);
-			float coeff_x1 = 1.0f - (col_x1 - orig_x);
+			float coeff_x1 = 1.0f - coeff_x0;//1.0f - (col_x1 - orig_x);
 			float coeff_y0 = 1.0f - (orig_y - col_y0);
-			float coeff_y1 = 1.0f - (col_y1 - orig_y);
+			float coeff_y1 = 1.0f - coeff_y0;//1.0f - (col_y1 - orig_y);
 
 			//Edge pixels
 			if (col_x0 < 0)

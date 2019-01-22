@@ -46,7 +46,12 @@ namespace GameEngine
 				std::unique_ptr<uint8_t[]> image;
 			};
 
+			static TGAHeader ReadHeaderTGA(std::ifstream&);
+			static std::unique_ptr<uint8_t[]> ReadColourMapTGA(const TGAHeader&, std::ifstream&);
+			static std::unique_ptr<uint8_t[]> ReadImageTGA(const TGAHeader&, std::ifstream&);
+			static std::unique_ptr<uint8_t[]> ReadRLEImageTGA(const TGAHeader&, std::ifstream&);
 			static std::unique_ptr<TGA> ReadTGA(std::ifstream&);
+			static void GetPixelTGA(float*, int, int, TGA*);
 
 			//PNG
 			struct PNGChunk

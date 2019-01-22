@@ -2,6 +2,7 @@
 #include "GraphicsController.h"
 #include "ResourceFactory.h"
 #include <sstream>
+#include <iostream>
 
 using namespace GameEngine::Resources;
 
@@ -68,6 +69,11 @@ void TextureArray::Push()
 			&& tex->GetHeight() == max_height) continue;
 
 		tex = tex->Resize(max_width, max_height);
+
+		//for (int x = 0; x < tex->GetWidth(); ++x)
+			//for (int y = 0; y < tex->GetHeight(); ++y)
+				//if (tex->m_data[(y * tex->GetWidth() + x) * 4 + 2] > 1.1f)
+					//std::cout << "haha" << std::endl;
 	}
 		
 	D3D11_TEXTURE2D_DESC tD;

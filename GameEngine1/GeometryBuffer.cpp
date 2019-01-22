@@ -6,6 +6,42 @@
 #include <comdef.h>
 #include <iostream>
 
+GeometryBuffer::GeometryBuffer(GeometryBuffer&& other)
+{
+	std::swap(vertexBuffer, other.vertexBuffer);
+	std::swap(indexBuffer, other.indexBuffer);
+
+	vertexPos = other.vertexPos;
+	indexPos = other.indexPos;
+	vertexSize = other.vertexSize;
+	indexSize = other.indexSize;
+
+	m_static = other.m_static;
+	m_renderers = other.m_renderers;
+
+	std::swap(devContext, other.devContext);
+	std::swap(dev, other.dev);
+}
+
+GeometryBuffer& GeometryBuffer::operator=(GeometryBuffer&& other)
+{
+	std::swap(vertexBuffer, other.vertexBuffer);
+	std::swap(indexBuffer, other.indexBuffer);
+
+	vertexPos = other.vertexPos;
+	indexPos = other.indexPos;
+	vertexSize = other.vertexSize;
+	indexSize = other.indexSize;
+
+	m_static = other.m_static;
+	m_renderers = other.m_renderers;
+
+	std::swap(devContext, other.devContext);
+	std::swap(dev, other.dev);
+
+	return *this;
+}
+
 void GeometryBuffer::Push()
 {
 	Resize(vertexPos, indexPos);
@@ -48,8 +84,8 @@ GeometryBuffer::GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc, bool s)
 
 GeometryBuffer::~GeometryBuffer()
 {
- 	dev->Release();
-	devContext->Release();
+ 	if (dev != nullptr) dev->Release();
+	if (devContext != nullptr) devContext->Release();
 	if (vertexBuffer != nullptr)
 		vertexBuffer->Release();
 	if (indexBuffer != nullptr)

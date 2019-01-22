@@ -479,6 +479,7 @@ void GraphicsController::RenderLightDepth()
 	for (auto r : rq)
 	{
 		if (!r->m_active) continue;
+		if (r->GetTransparent()) continue;
 		FillBuffers(r, false);
 	}
 

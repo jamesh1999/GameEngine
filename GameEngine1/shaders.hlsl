@@ -116,7 +116,7 @@ float4 PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 vi
 
 		    if(intensity > 0.0)
 		    {
-		        c += intensity * float4(0.75, 0.8, 0.85, 1.0) * multiplier;
+		        c += intensity * float4(0.75, 0.8, 0.85, 1.0) * multiplier * 0.5;
 
 		        float3 reflection = normalize(-lightDir + 2 * intensity * norm); 
 		        specular = float4(1.0, 1.0, 1.0, 0.0) * pow(saturate(dot(reflection, view)), 10.0) * 0.1 * multiplier;

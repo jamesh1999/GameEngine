@@ -44,8 +44,9 @@ namespace GameEngine
 
 
 			//Utils::PriorityQueue<GameEngine::Renderer*> renderers;
+		public:
 			RenderQueue rq;
-
+		private:
 			UINT numQualityLevels;
 		public:
 			Camera* m_camera;
