@@ -3,14 +3,14 @@
 
 DirectX::XMMATRIX Transform::GetTransform() const
 {
-	if(parent != nullptr)
+	if(m_parent != nullptr)
 		return DirectX::XMMatrixMultiply(
 		DirectX::XMMatrixMultiply(
 		DirectX::XMMatrixMultiply(
 			DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&m_rotation)),
 			DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_scale))),
 		DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3(&m_position))),
-		parent->GetTransform());
+		m_parent->GetTransform());
 	else
 		return DirectX::XMMatrixMultiply(
 			DirectX::XMMatrixMultiply(
@@ -21,30 +21,30 @@ DirectX::XMMATRIX Transform::GetTransform() const
 
 DirectX::XMVECTOR Transform::GetPosition() const
 {
-	if(parent != nullptr)
+	if(m_parent != nullptr)
 		return DirectX::XMVector3TransformCoord(
 			DirectX::XMLoadFloat3A(&m_position),
-			parent->GetTransform());
+			m_parent->GetTransform());
 	else
 		return DirectX::XMLoadFloat3A(&m_position);
 }
 
 DirectX::XMVECTOR Transform::GetRotation() const
 {
-	if (parent != nullptr)
+	if (m_parent != nullptr)
 		return DirectX::XMQuaternionMultiply(
 			DirectX::XMLoadFloat4A(&m_rotation),
-			parent->GetRotation());
+			m_parent->GetRotation());
 	else
 		return DirectX::XMLoadFloat4A(&m_rotation);
 }
 
 DirectX::XMVECTOR Transform::GetScale() const
 {
-	if (parent != nullptr)
+	if (m_parent != nullptr)
 		return DirectX::XMVector3TransformNormal(
 			DirectX::XMLoadFloat3A(&m_position),
-			parent->GetTransform());
+			m_parent->GetTransform());
 	else
 		return DirectX::XMLoadFloat3A(&m_scale);
 }
@@ -120,4 +120,17 @@ void Transform::SetRotation(const DirectX::XMVECTOR& nRotation)
 void Transform::SetScale(const DirectX::XMVECTOR& nScale)
 {
 	DirectX::XMStoreFloat3A(&m_scale, nScale);
+}
+
+void Transform::SetParent(Transform* parent)
+{
+	if (m_parent != nullptr)
+	{
+		auto it = std::find(m_parent->m_children.begin(), m_parent->m_children.end(), this);
+		m_parent->m_children.erase(it);
+	}
+
+	m_parent = parent;
+	
+	if (parent != nullptr) parent->m_children.push_back(this);
 }

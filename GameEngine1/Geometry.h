@@ -1,14 +1,14 @@
 #ifndef __GEOMETRY_INCLUDED__
 #define __GEOMETRY_INCLUDED__
 
-#include "MeshData.h"
+#include "Mesh.h"
 
 namespace Geometry
 {
-	void GenerateCuboid(SubMesh*, float, float, float);
-	void GenerateSphere(SubMesh*, float, int, int);
-	void GenerateCylinder(SubMesh*, float, float, float, int, int);
-	void GenerateQuad(SubMesh*, float, float, int, int);
+	void GenerateCuboid(GameEngine::Resources::Mesh*, float, float, float);
+	void GenerateSphere(GameEngine::Resources::Mesh*, float, int, int);
+	void GenerateCylinder(GameEngine::Resources::Mesh*, float, float, float, int, int);
+	void GenerateQuad(GameEngine::Resources::Mesh*, float, float, int, int);
 }
 
 #endif

@@ -92,7 +92,7 @@ namespace GameEngine
 
 			static Texture* LoadPNG(std::ifstream&);
 
-			static Texture* LoadTexture(const std::string&);
+			static Texture* Load(const std::string&);
 		};
 	}
 }

@@ -10,6 +10,7 @@
 #include "Engine.h"
 #include "ResourceRef.h"
 #include "TextureArray.h"
+#include "Resource.h"
 
 class RenderPass
 {
@@ -23,50 +24,21 @@ public:
 	void LoadPS(std::wstring filename, std::string entry);
 };
 
-class Material
+class Material : public GameEngine::Resources::Resource
 {
-	GameEngine::Resources::ResourceRef<GameEngine::Resources::TextureArray> m_textures;
 
-	GameEngine::Engine* engine;
+protected:
+	Material* CloneResource();
 
 public:
 	std::vector<RenderPass> passes;
 
 	ID3D11SamplerState* m_samplerState = nullptr;
+	bool m_pushed = false;
 
-	Material(GameEngine::Engine* e) : engine(e) {};
 	~Material();
 
-	Material(const Material&);
-	Material(Material&&) noexcept;
-	Material& operator=(const Material&);
-	Material& operator=(Material&&) noexcept;
-
-	ID3D11ShaderResourceView* GetTexture() const;
-	ID3D11SamplerState* GetSampler() const;
-	void LoadTGA(std::string);
-	void LoadTGAArray(std::vector<std::string>);
-	void SetTexture(DirectX::XMFLOAT3*, int, int);
-};
-
-class MaterialGroup
-{
-private:
-	std::vector<Material*> materials;
-
-public:
-	MaterialGroup() = default;
-	~MaterialGroup();
-
-	MaterialGroup(const MaterialGroup&);
-	MaterialGroup(MaterialGroup&&) noexcept;
-	MaterialGroup& operator=(const MaterialGroup&);
-	MaterialGroup& operator=(MaterialGroup&&) noexcept;
-
-	Material* operator[](int);
-	int Size() const;
-
-	void AddMaterial(Material*);
+	ID3D11SamplerState* GetSampler();
 };
 
 #endif

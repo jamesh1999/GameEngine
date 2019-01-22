@@ -50,8 +50,7 @@ void Light::Create()
 	depthDesc.Height = 4096;
 	depthDesc.Width = 4096;
 
-	ID3D11Texture2D* pDepthBuffer;
-	engine->graphics->device->CreateTexture2D(&depthDesc, NULL, &pDepthBuffer);
+	engine->graphics->device->CreateTexture2D(&depthDesc, NULL, &depthBuffer);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvD;
 	ZeroMemory(&dsvD, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -60,7 +59,7 @@ void Light::Create()
 	dsvD.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvD.Texture2D.MipSlice = 0;
 
-	engine->graphics->device->CreateDepthStencilView(pDepthBuffer, &dsvD, &depthBuff);
+	engine->graphics->device->CreateDepthStencilView(depthBuffer, &dsvD, &depthBuff);
 
 	ZeroMemory(&vp, sizeof(D3D11_VIEWPORT));
 	vp.Width = 4096;
@@ -94,6 +93,9 @@ Light::~Light()
 	depthTex->Release();
 	renderTarget->Release();
 	shaderResource->Release();
+	ss->Release();
+	depthBuff->Release();
+	depthBuffer->Release();
 }
 
 ID3D11RenderTargetView* Light::GetRTV()

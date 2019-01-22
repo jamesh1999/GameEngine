@@ -1,10 +1,30 @@
 #include "Texture.h"
 #include <cmath>
 #include "GraphicsController.h"
+#include "ResourceFactory.h"
 
 #define TEX_E 2.718281828459
 
 using namespace GameEngine::Resources;
+
+Texture::~Texture()
+{
+	if (m_data == nullptr) return;
+	delete[] m_data;
+}
+
+Texture* Texture::CloneResource()
+{
+	Texture* nTex = engine->resourceFactory->Create<Texture>();
+
+	nTex->m_h = m_h;
+	nTex->m_w = m_w;
+	nTex->m_opaque = m_opaque;
+	nTex->m_data = new float[m_h * m_w * 4];
+	memcpy(m_data, nTex->m_data, m_h * m_w * 4 * sizeof(float));
+
+	return nTex;
+}
 
 int Texture::GetWidth() const
 {
@@ -16,10 +36,21 @@ int Texture::GetHeight() const
 	return m_h;
 }
 
-//Resize the texture using bilinear filtering
-void Texture::Resize(int width, int height)
+bool GameEngine::Resources::Texture::IsOpaque() const
 {
-	float* new_data = new float[4 * width * height];
+	return m_opaque;
+}
+
+//Resize the texture using bilinear filtering
+Texture* Texture::Resize(int width, int height)
+{
+	Texture* nTex = engine->resourceFactory->Create<Texture>();
+
+	nTex->m_h = width;
+	nTex->m_w = height;
+	nTex->m_opaque = m_opaque;
+
+	nTex->m_data = new float[4 * width * height];
 
 	//Bilinear filtering
 	for (int y = 0; y < height; ++y)
@@ -70,73 +101,29 @@ void Texture::Resize(int width, int height)
 			}
 
 			//Blending
-			new_data[4 * (width * y + x) + 0] =
+			nTex->m_data[4 * (width * y + x) + 0] =
 				coeff_x0 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x0) + 0]
 				+ coeff_x1 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x1) + 0]
 				+ coeff_x0 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x0) + 0]
 				+ coeff_x1 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x1) + 0];
-			new_data[4 * (width * y + x) + 1] =
+			nTex->m_data[4 * (width * y + x) + 1] =
 				coeff_x0 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x0) + 1]
 				+ coeff_x1 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x1) + 1]
 				+ coeff_x0 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x0) + 1]
 				+ coeff_x1 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x1) + 1];
-			new_data[4 * (width * y + x) + 2] =
+			nTex->m_data[4 * (width * y + x) + 2] =
 				coeff_x0 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x0) + 2]
 				+ coeff_x1 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x1) + 2]
 				+ coeff_x0 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x0) + 2]
 				+ coeff_x1 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x1) + 2];
-			new_data[4 * (width * y + x) + 3] =
+			nTex->m_data[4 * (width * y + x) + 3] =
 				coeff_x0 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x0) + 3]
 				+ coeff_x1 * coeff_y0 * m_data[4 * (m_w * col_y0 + col_x1) + 3]
 				+ coeff_x0 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x0) + 3]
 				+ coeff_x1 * coeff_y1 * m_data[4 * (m_w * col_y1 + col_x1) + 3];
 		}
 
-	delete m_data;
-	m_data = new_data;
-	m_w = width;
-	m_h = height;
-}
-
-void Texture::Push()
-{
-	//Clear existing
-	if (m_texture) m_texture->Release();
-	if (m_SRV) m_SRV->Release();
-	m_pushed = true;
-
-	D3D11_TEXTURE2D_DESC tD;
-	ZeroMemory(&tD, sizeof(D3D11_TEXTURE2D_DESC));
-	tD.ArraySize = 1;
-	tD.Usage = D3D11_USAGE_IMMUTABLE;
-	tD.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	tD.Height = m_h;
-	tD.Width = m_w;
-	tD.MiscFlags = 0;
-	tD.MipLevels = 1;
-	tD.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	tD.SampleDesc.Count = 1;
-	tD.SampleDesc.Quality = 0;
-
-	D3D11_SUBRESOURCE_DATA texData;
-	texData.SysMemSlicePitch = 4 * sizeof(float) * m_h * m_w;
-	texData.SysMemPitch = 4 * sizeof(float) * m_w;
-	texData.pSysMem = m_data;
-
-	engine->graphics->device->CreateTexture2D(&tD, &texData, &m_texture);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
-	srvD.Format = tD.Format;
-	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvD.Texture2D.MipLevels = -1;
-	srvD.Texture2D.MostDetailedMip = 0;
-	engine->graphics->device->CreateShaderResourceView(m_texture, NULL, &m_SRV);
-}
-
-ID3D11ShaderResourceView* Texture::GetSRV()
-{
-	if (!m_pushed) Push();
-	return m_SRV;
+	return nTex;
 }
 
 void GaussianBlur(DirectX::XMFLOAT3** tex, int x, int y, float sigma)
@@ -188,6 +175,7 @@ void GaussianBlur(DirectX::XMFLOAT3** tex, int x, int y, float sigma)
 		}
 
 	delete[] *tex;
+	delete[] coefficients;
 
 	*tex = new_tex;
 }

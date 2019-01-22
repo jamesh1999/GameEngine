@@ -14,7 +14,9 @@ ParticleSystem::ParticleSystem(GameEngine::Engine* engine)
 {
 	this->engine = engine;
 
-	m_texture = engine->resourceFactory->Create<Resources::Texture>("Z:\\WipeoutPSP\\PS2\\Data\\Psys\\Tex\\explosion_01_64x64.tga");
+	auto tex = engine->resourceFactory->Create<Resources::Texture>("Z:\\WipeoutPSP\\PS2\\Data\\Psys\\Tex\\explosion_01_64x64.tga");
+	m_texture = engine->resourceFactory->Create<Resources::TextureArray>("");
+	m_texture = m_texture->Add(tex);
 
 	D3D11_BUFFER_DESC vBD;
 	ZeroMemory(&vBD, sizeof(D3D11_BUFFER_DESC));

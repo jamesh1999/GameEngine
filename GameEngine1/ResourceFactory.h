@@ -4,6 +4,10 @@
 #include "Engine.h"
 #include "ResourceTable.h"
 #include "Texture.h"
+#include "Mesh.h"
+#include "TextureArray.h"
+#include <unordered_map>
+#include <sstream>
 
 namespace GameEngine
 {
@@ -15,6 +19,7 @@ namespace GameEngine
 
 		private:
 			Engine* engine;
+			uint64_t resourceCount = 0;
 
 			template <class TResource>
 			TResource* Load(const std::string&);
@@ -22,19 +27,37 @@ namespace GameEngine
 		public:
 
 			template <class TResource>
-			TResource* Create(const std::string&);
+			TResource* Create(std::string = "");
 		};
 
 		//Set up resource
 		template <class TResource>
-		TResource* ResourceFactory::Create(const std::string& filename)
+		TResource* ResourceFactory::Create(std::string identifier)
 		{
 			static_assert(std::is_base_of<Resource, TResource>::value, "");
 
-			TResource* resource = Load<TResource>(filename);
-			static_cast<Resource*>(resource)->engine = engine;
+			// Resource is already loaded
+			if (engine->resources->resources.find(identifier) != engine->resources->resources.end())
+				return static_cast<TResource*>(engine->resources->resources[identifier]);
 
-			engine->resources->resources.push_back(static_cast<Resource*>(resource));
+			TResource* resource = Load<TResource>(identifier);
+
+			// For unnamed resources generate a unique identifier
+			if (identifier == "")
+			{
+				std::stringstream ss;
+				ss << resourceCount;
+				identifier = ss.str();
+
+				++resourceCount;
+			}
+
+			// Don't store failed resources
+			if (resource == nullptr) return nullptr;
+
+			static_cast<Resource*>(resource)->m_identifier = identifier;
+			static_cast<Resource*>(resource)->engine = engine;
+			engine->resources->resources[identifier] = static_cast<Resource*>(resource);
 
 			return resource;
 		}
@@ -48,6 +71,12 @@ namespace GameEngine
 
 		template <>
 		Texture* ResourceFactory::Load<Texture>(const std::string&);
+
+		template <>
+		TextureArray* ResourceFactory::Load<TextureArray>(const std::string&);
+
+		template <>
+		Mesh* ResourceFactory::Load<Mesh>(const std::string&);
 	}
 }
 

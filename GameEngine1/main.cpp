@@ -19,6 +19,9 @@
 #include "ElementFactory.h"
 #include "ParticleSystem.h"
 #include "ResourceTable.h"
+#include "ResourceFactory.h"
+#include "SceneLoader.h"
+#include "StaticBatcher.h"
 
 int width = 1000;
 int height = 1000;
@@ -104,7 +107,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game.resources = new GameEngine::Resources::ResourceTable;
 
 	Input::InputManager input;
-	MeshLoader meshLoader;
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
@@ -112,6 +114,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
+
+	Material* mat = game.resourceFactory->Create<Material>("Default Phong");
+	mat->passes.push_back(RenderPass());
+	mat->passes[0].engine = &game;
+
+	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
+	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
 
 	//HACK: Need to refactor
 	ID3D10Blob *buff = nullptr, *err = nullptr;
@@ -158,21 +167,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->dpthPx);
 
-	MeshData* mesh = new MeshData;
-	FbxNode* fbxNode = MeshLoader::LoadFBX("Track.fbx");
-	MeshLoader::PrintFBXHeirachy(fbxNode);
+	//Mesh* mesh = MeshLoader::Load("Track.fbx");
 	std::vector<std::string> tex;
-	MeshLoader::ApplyFBXWithTextures(mesh, fbxNode, "", tex);
+	//MeshLoader::ApplyFBXWithTextures(mesh, fbxNode, "", tex);
 	
-	MeshData* skybox = new MeshData;
-	std::vector<std::string> tex_skybox;
-	MeshLoader::ApplyFBXWithTextures(skybox, fbxNode, "skycube1_nolight", tex_skybox);
+	//MeshData* skybox = new MeshData;
+	//std::vector<std::string> tex_skybox;
+	//MeshLoader::ApplyFBXWithTextures(skybox, fbxNode, "skycube1_nolight", tex_skybox);
 
 	TrackLayout tl;
-	MeshData* track_layout = new MeshData;
+	//MeshData* track_layout = new MeshData;
 	//fbxNode = MeshLoader::LoadFBX("Track_Outline.fbx");
-	MeshLoader::ApplyFBX(track_layout, fbxNode, "", true);
-	TrackLayout::SetTrack(&(*track_layout)[0]);
+	//MeshLoader::ApplyFBX(track_layout, fbxNode, "", true);
+	//TrackLayout::SetTrack(&(*track_layout)[0]);
 
 	GameEngine::Elements::CompositeObject* co = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
@@ -181,40 +188,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 	t->m_static = true;
 
-	Material* mat = new Material(&game);
-	mat->passes.push_back(RenderPass());
-	mat->passes[0].engine = &game;
-
-	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
-	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
-
-	mat->LoadTGAArray(tex);
-
-	MaterialGroup mg;
-	mg.AddMaterial(mat);
+	GameEngine::Elements::CompositeObject* scn = GameEngine::Resources::SceneLoader::LoadFBX(&game, "Track.fbx");
+	StaticBatcher::BatchFrom(scn, &game);
 
 	GameEngine::Elements::CompositeObject* sky = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
-	Renderer* r = sky->AttachComponent<Renderer>();
+	GameEngine::Renderer* r = sky->AttachComponent<GameEngine::Renderer>();
 	t = sky->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 
-	Material* mat1 = new Material(&game);
+	Material* mat1 = game.resourceFactory->Create<Material>("");
 	mat1->passes.push_back(RenderPass());
 	mat1->passes[0].engine = &game;
 
 	mat1->passes[0].LoadVS(L"shaders_skybox.hlsl", "VShader", iLayout, 3);
 	mat1->passes[0].LoadPS(L"shaders_skybox.hlsl", "PShaderTex");
 
-	mat1->LoadTGAArray(tex_skybox);
+	//mat1->LoadTGAArray(tex_skybox);
 
-	MaterialGroup mg1;
-	mg1.AddMaterial(mat1);
+	//r->Init(mat1, skybox);
 
-	r->Init(mg1, skybox);
-
-	r = co->AttachComponent<Renderer>();
-	r->Init(mg, mesh);
+	//r = co->AttachComponent<Renderer>();
+	//r->Init(mat, mesh);
 
 
 	GameEngine::Elements::CompositeObject* ship = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
@@ -224,26 +219,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 
 	ship->AttachComponent<ShipController>();
-	
-
-	GameEngine::Elements::CompositeObject* root = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
-
-	GameEngine::Elements::CompositeObject* light = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
-	t = light->GetComponent<Transform>();
-	//t->SetPosition({ 0.0f, 120.0f, 0.0f });
-	//t->SetRotation(DirectX::XMQuaternionRotationAxis({ 1.0f, 0.0f, 0.0f }, DirectX::XM_PIDIV2));
-	//t->SetScale({ 1.0f, 1.0f, 1.0f });
-	t->parent = ship->GetComponent<Transform>();
-	t->SetRotation(DirectX::XMQuaternionIdentity());
-	t->SetPosition({0.0f, 0.0f, 10.0f});
-	t->SetScale({ 1.0f, 1.0f, 1.0f });
-
-	//t = root.GetComponent<Transform>();
-	//t->SetPosition({ -700.0f, 0.0f, 190.0f });
-	//t->SetRotation(DirectX::XMQuaternionIdentity());
-	//t->SetScale({ 1.0f, 1.0f, 1.0f });
-	light->AttachComponent<Light>();
-	game.graphics->SetLight(light->GetComponent<Light>());
 
 	game.particleSystem = new GameEngine::Graphics::ParticleSystem(&game);
 	//game.particleSystem->engine = &game;

@@ -12,6 +12,7 @@
 #include "CompositeObject.h"
 #include "ElementFactory.h"
 #include "ParticleSystem.h"
+#include "ResourceFactory.h"
 
 void ShipController::UpdateBase()
 {
@@ -268,8 +269,8 @@ void ShipController::Update()
 	//shipRot = DirectX::XMVectorSetByIndex(shipRot, roll, 2);
 	//transform->SetRotation(shipRot);
 
-	if (DirectX::XMVectorGetY(shipPos) > 8.0f && std::fabs(DirectX::XMVectorGetX(v)) > 0.001)
-		engine->graphics->RemoveRenderer(obj->GetComponent<Renderer>());
+	//if (DirectX::XMVectorGetY(shipPos) > 8.0f && std::fabs(DirectX::XMVectorGetX(v)) > 0.001)
+		//engine->graphics->RemoveRenderer(obj->GetComponent<GameEngine::Renderer>());
 
 	if (Input::InputManager::KeyIsPressed(Input::KeyZ))
 	{
@@ -284,21 +285,20 @@ void ShipController::Create()
 	cam = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	model = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	base = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	light = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
 	//Init camera
 	cam->AttachComponent<Camera>();
 	cam->GetComponent<Transform>()->SetScale({ 1.0f,1.0f,1.0f });
 
 	//Init model child object
-	MeshData* mesh = new MeshData;
-	FbxNode* fbxNode = MeshLoader::LoadFBX("test.fbx");
-	MeshLoader::ApplyFBX(mesh, fbxNode, "", false);
+	GameEngine::Resources::Mesh* mesh = engine->resourceFactory->Create<GameEngine::Resources::Mesh>("test.fbx;lodGroup1/ship/");
 
 	Transform* t = model->GetComponent<Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
-	t->parent = obj->GetComponent<Transform>();
+	t->SetParent(obj->GetComponent<Transform>());
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
@@ -307,17 +307,26 @@ void ShipController::Create()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	Material* mat = new Material(engine);
+	Material* mat = engine->resourceFactory->Create<Material>("");
 	mat->passes.push_back(RenderPass());
 	mat->passes[0].engine = engine;
 	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
 	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
-	mat->LoadTGA("test.tga");
 
-	Renderer* r = model->AttachComponent<Renderer>();
-	MaterialGroup m;
-	m.AddMaterial(mat);
-	r->Init(m, mesh);
+	GameEngine::Renderer* r = model->AttachComponent<GameEngine::Renderer>();
+	r->Init(mat, mesh);
+	GameEngine::Resources::Texture* tex = engine->resourceFactory->Create<GameEngine::Resources::Texture>("test.tga");
+	r->SetTexture(tex);
+
+	//Init light
+	t = light->GetComponent<Transform>();
+	t->SetRotation(DirectX::XMQuaternionIdentity());
+	t->SetPosition({ 0.0f, 0.0f, 10.0f });
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	t->SetParent(obj->GetComponent<Transform>());
+
+	light->AttachComponent<Light>();
+	engine->graphics->SetLight(light->GetComponent<Light>());
 
 	facingDirection = { 0.0f, 0.0f, 1.0f };
 	velocity = { 0.0f, 0.0f, 0.0f };

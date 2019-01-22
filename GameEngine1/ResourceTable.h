@@ -1,7 +1,8 @@
 #ifndef __RESOURCE_TABLE_INCLUDED__
 #define __RESOURCE_TABLE_INCLUDED__
 
-#include <vector>
+#include <unordered_map>
+#include <string>
 
 namespace GameEngine
 {
@@ -12,7 +13,7 @@ namespace GameEngine
 		class ResourceTable
 		{
 		public:
-			std::vector<Resource*> resources;
+			std::unordered_map<std::string, Resource*> resources;
 		};
 	}
 }

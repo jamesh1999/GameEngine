@@ -57,15 +57,15 @@ void GeometryBuffer::Resize(int vSize, int iSize)
 	}
 }
 
-GeometryBuffer::BufferLocation GeometryBuffer::AddRenderer(Renderer* r)
+GeometryBuffer::BufferLocation GeometryBuffer::AddRenderer(GameEngine::Renderer* r)
 {
 	Resize(
-		vertexPos + (*r->GetMesh())[0].vertices.size(),
-		indexPos + (*r->GetMesh())[0].indices.size()
+		vertexPos + r->GetMesh()->vertices.size(),
+		indexPos + r->GetMesh()->indices.size()
 	);
 
-	auto vData = &(*r->GetMesh())[0].vertices;
-	auto iData = &(*r->GetMesh())[0].indices;
+	auto vData = &r->GetMesh()->vertices;
+	auto iData = &r->GetMesh()->indices;
 	if (m_static)
 	{
 		for (auto v : *vData)
@@ -88,8 +88,8 @@ GeometryBuffer::BufferLocation GeometryBuffer::AddRenderer(Renderer* r)
 
 	GeometryBuffer::BufferLocation ret = std::make_tuple(vertexPos, indexPos);
 
-	vertexPos += (*r->GetMesh())[0].vertices.size();
-	indexPos += (*r->GetMesh())[0].indices.size();
+	vertexPos += r->GetMesh()->vertices.size();
+	indexPos += r->GetMesh()->indices.size();
 
 	return ret;
 }

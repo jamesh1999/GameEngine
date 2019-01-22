@@ -12,6 +12,7 @@ namespace GameEngine
 		class TextureLoader;
 		class TextureArray;
 
+		// CPU-side individual texture
 		class Texture : public Resource
 		{
 			friend class GameEngine::Resources::TextureLoader;
@@ -23,21 +24,21 @@ namespace GameEngine
 			float* m_data;
 			int m_w;
 			int m_h;
+			bool m_opaque = true;
 
-			//GPU resource
-			bool m_pushed = false;
-			ID3D11Texture2D* m_texture;
-			ID3D11ShaderResourceView* m_SRV;
+		protected:
+
+			Texture* CloneResource();
 
 		public:
 
+			~Texture();
+
 			int GetWidth() const;
 			int GetHeight() const;
+			bool IsOpaque() const;
 
-			void Resize(int, int);
-
-			void Push();
-			ID3D11ShaderResourceView* GetSRV();
+			Texture* Resize(int, int);
 		};
 	}
 }

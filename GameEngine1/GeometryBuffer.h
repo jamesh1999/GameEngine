@@ -82,7 +82,7 @@ public:
 	};
 
 	void Resize(int, int);
-	BufferLocation AddRenderer(Renderer*);
+	BufferLocation AddRenderer(GameEngine::Renderer*);
 	void Select();
 };
 

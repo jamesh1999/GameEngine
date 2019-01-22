@@ -9,7 +9,7 @@ TrackLayout::TrackLayout()
 	instance = this;
 }
 
-void TrackLayout::SetTrack(SubMesh* mesh)
+void TrackLayout::SetTrack(GameEngine::Resources::Mesh* mesh)
 {
 	instance->m_trackSegments.clear();
 

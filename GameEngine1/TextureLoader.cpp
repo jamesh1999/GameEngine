@@ -125,6 +125,8 @@ Texture* TextureLoader::LoadTGA(std::ifstream& stream)
 				tex->m_data[(y * img->header.width + x) * 4 + 3] = *(pixelPtr + 3) / 255.0f;
 				break;
 			}
+
+			if (tex->m_data[(y * img->header.width + x) * 4 + 3] < 1.0f) tex->m_opaque = false;
 		}
 
 	return tex;
@@ -139,8 +141,10 @@ Texture* TextureLoader::LoadPNG(std::ifstream& stream)
 }
 
 //Identify the type of texture (from extension) and load to memory
-Texture* TextureLoader::LoadTexture(const std::string& filename)
+Texture* TextureLoader::Load(const std::string& filename)
 {
+	if (filename == "") return new Texture;
+
 	int idx = filename.find_last_of('.');
 	std::string extension = filename.substr(idx + 1, filename.size() - idx - 1);
 	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);

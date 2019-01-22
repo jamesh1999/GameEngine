@@ -1,23 +1,56 @@
 #include "TextureArray.h"
 #include "GraphicsController.h"
+#include "ResourceFactory.h"
+#include <sstream>
 
 using namespace GameEngine::Resources;
 
-void TextureArray::Add(Texture* tex)
+TextureArray::~TextureArray()
 {
-	m_textures.push_back(tex);
+	if (!m_pushed) return;
+	m_texture->Release();
+	m_SRV->Release();
+}
+
+TextureArray* TextureArray::CloneResource()
+{
+	TextureArray* nTA = engine->resourceFactory->Create<TextureArray>();
+
+	nTA->m_textures = m_textures;
+
+	return nTA;
+}
+
+TextureArray* TextureArray::Add(Texture* tex)
+{
+	std::stringstream ss;
+	ss << '[';
+	
+	if (m_textures.size())
+	{
+		std::string identifier = GetIdentifier();
+		ss << identifier.substr(1, identifier.size() - 2);
+		ss << ';';
+	}
+	ss << tex->GetIdentifier();
+	ss << ']';
+
+	return engine->resourceFactory->Create<TextureArray>(ss.str());
 }
 
 Texture* TextureArray::operator[](int idx)
 {
-	return m_textures[idx];
+	return *m_textures[idx];
 }
 
 void TextureArray::Push()
 {
 	//Clear existing
-	if (m_texture) m_texture->Release();
-	if (m_SRV) m_SRV->Release();
+	if (m_pushed)
+	{
+		m_texture->Release();
+		m_SRV->Release();
+	}
 	m_pushed = true;
 
 	//Resize all textures to a common maximum size
@@ -29,12 +62,12 @@ void TextureArray::Push()
 		if (tex->GetHeight() > max_height) max_height = tex->GetHeight();
 	}
 
-	for (auto tex : m_textures)
+	for (auto& tex : m_textures)
 	{
 		if (tex->GetWidth() == max_width
 			&& tex->GetHeight() == max_height) continue;
 
-		tex->Resize(max_width, max_height);
+		tex = tex->Resize(max_width, max_height);
 	}
 		
 	D3D11_TEXTURE2D_DESC tD;
@@ -60,6 +93,8 @@ void TextureArray::Push()
 	}
 
 	engine->graphics->device->CreateTexture2D(&tD, texData, &m_texture);
+
+	delete[] texData;
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
 	srvD.Format = tD.Format;

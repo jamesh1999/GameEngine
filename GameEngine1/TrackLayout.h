@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <tuple>
-#include "MeshData.h"
+#include "Mesh.h"
 
 typedef struct
 {
@@ -30,7 +30,7 @@ private:
 public:
 	TrackLayout();
 
-	static void SetTrack(SubMesh*);
+	static void SetTrack(GameEngine::Resources::Mesh*);
 	static std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR, bool> GetNormal(DirectX::XMVECTOR);
 };
 

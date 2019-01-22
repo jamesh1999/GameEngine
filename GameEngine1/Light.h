@@ -9,6 +9,7 @@ class Light : public GameEngine::Elements::Component
 	ID3D11Texture2D* depthTex;
 	ID3D11RenderTargetView* renderTarget;
 	ID3D11ShaderResourceView* shaderResource;
+	ID3D11Texture2D* depthBuffer;
 
 public:
 	ID3D11DepthStencilView* depthBuff;

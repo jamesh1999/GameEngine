@@ -129,14 +129,8 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialManager.cpp">
-      <Filter>Source Files\Engine\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshData.cpp">
-      <Filter>Source Files\Engine\Resources</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Source Files\Engine\Base</Filter>
@@ -174,6 +168,24 @@
     <ClCompile Include="ResourceFactory.cpp">
       <Filter>Source Files\Engine\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="SceneLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureArrayLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderQueue.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticBatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShipController.h">
@@ -207,9 +219,6 @@
       <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Header Files\Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialManager.h">
       <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
@@ -272,9 +281,6 @@
     <ClInclude Include="CompositeObject.h">
       <Filter>Header Files\Engine\Base\Elements</Filter>
     </ClInclude>
-    <ClInclude Include="MeshData.h">
-      <Filter>Header Files\Engine\Base\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files\Engine\Base\Resources</Filter>
     </ClInclude>
@@ -304,6 +310,27 @@
     </ClInclude>
     <ClInclude Include="ResourceRef.h">
       <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoader.h">
+      <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArrayLoader.h">
+      <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorParser.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="LazyOrderedContainer.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderQueue.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticBatcher.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

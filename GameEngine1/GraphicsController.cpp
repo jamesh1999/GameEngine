@@ -8,8 +8,6 @@
 #include "Transform.h"
 #include "CompositeObject.h"
 
-//GraphicsController* GraphicsController::instance = NULL;
-
 using namespace GameEngine::Graphics;
 
 typedef struct
@@ -134,6 +132,14 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	device->CreateDepthStencilState(&dsD, &depthState);
 	devContext->OMSetDepthStencilState(depthState, 1);
 
+	dsD.DepthEnable = true;
+	dsD.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	dsD.DepthFunc = D3D11_COMPARISON_LESS;
+
+	dsD.StencilEnable = false;
+
+	device->CreateDepthStencilState(&dsD, &depthStateDisabled);
+
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvD;
 	ZeroMemory(&dsvD, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
@@ -152,7 +158,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	ZeroMemory(&rsD, sizeof(D3D11_RASTERIZER_DESC));
 
 	rsD.AntialiasedLineEnable = false;
-	rsD.CullMode = D3D11_CULL_NONE;
+	rsD.CullMode = D3D11_CULL_BACK;
 	rsD.DepthBias = 0.0;
 	rsD.DepthBiasClamp = 0.0;
 	rsD.DepthClipEnable = true;
@@ -214,6 +220,23 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	device->CreateBuffer(&cBD, NULL, &cBufferObject);
 
 	geomBuff = new GeometryBufferContainer(device, devContext);
+
+	D3D11_BLEND_DESC bDsc;
+	ZeroMemory(&bDsc, sizeof(D3D11_BLEND_DESC));
+	bDsc.AlphaToCoverageEnable = false;
+	bDsc.IndependentBlendEnable = false;
+	bDsc.RenderTarget[0].BlendEnable = true;
+	bDsc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	bDsc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_MAX;
+	bDsc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	bDsc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+	bDsc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	bDsc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	bDsc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	ID3D11BlendState* blendState;
+	device->CreateBlendState(&bDsc, &blendState);
+	devContext->OMSetBlendState(blendState, NULL, 0xffffffff);
 }
 
 GraphicsController::~GraphicsController()
@@ -223,15 +246,13 @@ GraphicsController::~GraphicsController()
 	cBufferFrame->Release();
 	cBufferObject->Release();
 
+	delete geomBuff;
+
 	device->Release();
 	devContext->Release();
 	swapChain->Release();
 	backBuffer->Release();
 	depthBuffer->Release();
-
-	delete geomBuff;
-	for (auto r : renderers)
-		delete r.second;
 }
 
 void GraphicsController::StartDraw()
@@ -262,6 +283,9 @@ void GraphicsController::StartDraw()
 
 	devContext->VSSetConstantBuffers(0, 1, &cBufferFrame);
 
+	DirectX::XMVECTOR viewDir = m_camera->obj->GetComponent<Transform>()->GetForwards();
+	rq.Refresh(viewDir);
+
 	//Fill light buffer
 	LightBuffer light;
 
@@ -282,16 +306,17 @@ void GraphicsController::StartDraw()
 	ID3D11ShaderResourceView* srv = m_light->GetSRV();
 	devContext->PSSetShaderResources(1, 1, &srv);
 	devContext->PSSetSamplers(1, 1, &m_light->ss);
+
+
+	devContext->VSSetConstantBuffers(1, 1, &cBufferObject);
 }
 
 void GraphicsController::RenderObjects()
 {
-	for(auto r : renderers)
+	for(auto r : rq)
 	{
-		FillBuffers(r.second,true);
-		if(r.first == 0) devContext->ClearDepthStencilView(depthBuffer,
-			D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-			1.0, 0);
+		if (!r->m_active) continue;
+		FillBuffers(r,true);
 	}
 }
 
@@ -302,54 +327,50 @@ void GraphicsController::EndDraw()
 	devContext->PSSetShaderResources(1, 1, &nullSRV);
 }
 
-void GraphicsController::AddRenderer(Renderer* r)
+void GraphicsController::AddRenderer(GameEngine::Renderer* r)
 {
-	renderers.Insert(std::make_pair(renderers.Size(), r));
+	//renderers.Insert(std::make_pair(renderers.Size(), r));
+	rq.AddRenderer(r);
 	geomBuff->AddRenderer(r);
 }
 
-void GraphicsController::RemoveRenderer(Renderer* r)
+void GraphicsController::RemoveRenderer(GameEngine::Renderer* r)
 {
-	//renderers.erase(r);
+	rq.RemoveRenderer(r);
 }
 
-void GraphicsController::FillBuffers(Renderer* r, bool tex)
+void GraphicsController::FillBuffers(GameEngine::Renderer* r, bool tex)
 {
 	D3D11_MAPPED_SUBRESOURCE mp;
 
-	for (int i = 0; i < r->mesh->size(); ++i)
-	{
+	if (r->GetTransparent()) DisableDepthWrite();
 		
-		/*devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
-		memcpy(mp.pData, &(*r->mesh)[i].vertices[0], (*r->mesh)[i].vertices.size() * sizeof(Vertex));
-		devContext->Unmap(vertexBuffer, 0);
+	/*devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
+	memcpy(mp.pData, &(*r->mesh)[i].vertices[0], (*r->mesh)[i].vertices.size() * sizeof(Vertex));
+	devContext->Unmap(vertexBuffer, 0);
 
-		devContext->Map(indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
-		memcpy(mp.pData, &(*r->mesh)[i].indices[0], (*r->mesh)[i].indices.size() * sizeof(unsigned));
-		devContext->Unmap(indexBuffer, 0);*/
+	devContext->Map(indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
+	memcpy(mp.pData, &(*r->mesh)[i].indices[0], (*r->mesh)[i].indices.size() * sizeof(unsigned));
+	devContext->Unmap(indexBuffer, 0);*/
 
-		DirectX::XMFLOAT4X4A data[1];
-		DirectX::XMStoreFloat4x4A(data, DirectX::XMMatrixTranspose(r->obj->GetComponent<Transform>()->GetTransform()));
+	DirectX::XMFLOAT4X4A data[1];
+	DirectX::XMStoreFloat4x4A(data, DirectX::XMMatrixTranspose(r->obj->GetComponent<Transform>()->GetTransform()));
 
-		devContext->Map(cBufferObject, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
-		memcpy(mp.pData, data, sizeof(DirectX::XMFLOAT4X4A));
-		devContext->Unmap(cBufferObject, 0);
+	devContext->Map(cBufferObject, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
+	memcpy(mp.pData, data, sizeof(DirectX::XMFLOAT4X4A));
+	devContext->Unmap(cBufferObject, 0);
 
-		devContext->VSSetConstantBuffers(1, 1, &cBufferObject);
 
-		if (tex)
-		{
-			devContext->PSSetSamplers(0, 1, &r->mat[i]->m_samplerState);
-			ID3D11ShaderResourceView* srv = r->mat[i]->GetTexture();
-			devContext->PSSetShaderResources(0, 1, &srv);
-
-			r->Render(i);
-		}
-		else
-		{
-			GeometryBuffer::BufferLocation idxes = geomBuff->FindRenderer(r);
-			devContext->DrawIndexed((*r->mesh)[0].indices.size(), std::get<0>(idxes), std::get<1>(idxes));
-		}
+	if (tex)
+	{
+		ID3D11SamplerState* smpl = r->mat->GetSampler();
+		devContext->PSSetSamplers(0, 1, &smpl);
+		r->Render(0);
+	}
+	else
+	{
+		GeometryBuffer::BufferLocation idxes = geomBuff->FindRenderer(r);
+		devContext->DrawIndexed(r->mesh->indices.size(), std::get<0>(idxes), std::get<1>(idxes));
 	}
 }
 
@@ -455,8 +476,21 @@ void GraphicsController::RenderLightDepth()
 
 	devContext->VSSetConstantBuffers(0, 1, &cBufferFrame);
 
-	for (auto r : renderers)
-		FillBuffers(r.second, false);
+	for (auto r : rq)
+	{
+		if (!r->m_active) continue;
+		FillBuffers(r, false);
+	}
 
 	devContext->OMSetRenderTargets(1, &backBuffer, depthBuffer);
+}
+
+void GraphicsController::EnableDepthWrite()
+{
+	devContext->OMSetDepthStencilState(depthState, 1);
+}
+
+void GraphicsController::DisableDepthWrite()
+{
+	//devContext->OMSetDepthStencilState(depthStateDisabled, 1);
 }

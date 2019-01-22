@@ -43,7 +43,7 @@ VOut VShader(float4 position : POSITION, float3 color : NORMAL, float3 tex : TEX
     position.w = 1.0;
     float4 worldPos = mul(position, objWorldTransform);
     output.position = mul(mul(worldPos, worldViewMatrix), projectionMatrix);
-    output.normal = normalize(mul(float4(color, 0.0), objWorldTransform));   
+    output.normal = normalize(mul(float4(color, 0.0), objWorldTransform)).xyz;   
     output.tex = tex;
     output.viewDir = normalize(cameraWorldPos - mul(position, objWorldTransform).xyz);
     output.color = float3(1.0, 1.0, 1.0);
@@ -93,7 +93,7 @@ float4 PShader(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view 
 
 float4 PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view : TEXCOORD1, float3 tex : TEXCOORD0, float3 color : TEXCOORD2, float4 lightViewPos : TEXCOORD3, float3 lightPos : TEXCOORD4) : SV_TARGET
 {
-    float4 c = float4(0.15, 0.3, 0.25, 1.0);
+    float4 c = float4(0.04, 0.05, 0.07, 1.0);
     float4 specular = float4(0.0,0.0,0.0,0.0);
 
     float2 lightTexCoord;
@@ -112,19 +112,19 @@ float4 PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 vi
 
     		float3 lightDir = normalize(lightPos);
     		float intensity = dot(lightDir, norm);
-    		float multiplier = rsqrt(length(lightPos) / 60.0);
+    		float multiplier = pow(length(lightPos) / 100.0, -2.0);
 
 		    if(intensity > 0.0)
 		    {
-		        c += intensity * float4(0.7, 0.8, 0.85, 1.0) * multiplier;
+		        c += intensity * float4(0.75, 0.8, 0.85, 1.0) * multiplier;
 
 		        float3 reflection = normalize(-lightDir + 2 * intensity * norm); 
-		        specular = pow(saturate(dot(reflection, view)), 10.0) * 1.2 * multiplier;
+		        specular = float4(1.0, 1.0, 1.0, 0.0) * pow(saturate(dot(reflection, view)), 10.0) * 0.1 * multiplier;
 		    }
 		}
 	}
 
-    float4 texCol = shaderTexture.Sample(samplerWrap, tex);
+    float4 texCol = pow(shaderTexture.Sample(samplerWrap, tex), 2.2);
 
-    return texCol * c + specular;
+    return pow(texCol * c + specular,1/2.2);
 }

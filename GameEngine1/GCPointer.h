@@ -1,5 +1,5 @@
 #ifndef __GCPOINTER_INCLUDED__
-#define __GCPOINtER_INCLUDED__
+#define __GCPOINTER_INCLUDED__
 
 #include <type_traits>
 #include <exception>

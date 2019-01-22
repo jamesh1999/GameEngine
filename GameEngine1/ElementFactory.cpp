@@ -16,6 +16,7 @@ CompositeObject* ElementFactory::Create<CompositeObject>()
 	engine->world->objects.push_back(obj);
 	Transform* t = Create<Transform>();
 	obj->m_transform = t;
+	t->obj = obj;
 
 	return obj;
 }

@@ -16,6 +16,7 @@
 #include "GeometryBufferContainer.h"
 #include "ComponentContainers.h"
 #include "PriorityQueue.h"
+#include "RenderQueue.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -42,7 +43,8 @@ namespace GameEngine
 
 
 
-			Utils::PriorityQueue<Renderer*> renderers;
+			//Utils::PriorityQueue<GameEngine::Renderer*> renderers;
+			RenderQueue rq;
 
 			UINT numQualityLevels;
 		public:
@@ -66,6 +68,7 @@ namespace GameEngine
 			ID3D11RenderTargetView* backBuffer;
 			ID3D11DepthStencilView* depthBuffer;
 			ID3D11DepthStencilState* depthState;
+			ID3D11DepthStencilState* depthStateDisabled;
 			ID3D11RasterizerState* rasterizerState;
 
 			ID3D11VertexShader* dpthVtx;
@@ -82,10 +85,10 @@ namespace GameEngine
 			void RenderObjects();
 			void EndDraw();
 
-			void AddRenderer(Renderer*);
-			void RemoveRenderer(Renderer*);
+			void AddRenderer(GameEngine::Renderer*);
+			void RemoveRenderer(GameEngine::Renderer*);
 
-			void FillBuffers(Renderer*, bool);
+			void FillBuffers(GameEngine::Renderer*, bool);
 
 			bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
 
@@ -93,6 +96,8 @@ namespace GameEngine
 			void SetLight(Light*);
 
 			void RenderLightDepth();
+			void DisableDepthWrite();
+			void EnableDepthWrite();
 		};
 	}
 }

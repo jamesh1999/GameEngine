@@ -2,7 +2,7 @@
 #define __LOD_GENERATOR_INCLUDED__
 
 #include <vector>
-#include "MeshData.h"
+#include "Mesh.h"
 
 class LODGenerator
 {

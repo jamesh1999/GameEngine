@@ -108,6 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\FBXSDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,13 +150,14 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\FBXSDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\FBXSDK\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\FBXSDK\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -173,19 +175,23 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LODGenerator.cpp" />
-    <ClCompile Include="MaterialManager.cpp" />
-    <ClCompile Include="MeshData.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="RenderQueue.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceFactory.cpp" />
+    <ClCompile Include="SceneLoader.cpp" />
     <ClCompile Include="ShipController.cpp" />
+    <ClCompile Include="StaticBatcher.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureArray.cpp" />
+    <ClCompile Include="TextureArrayLoader.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="TrackLayout.cpp" />
@@ -197,6 +203,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentContainers.h" />
     <ClInclude Include="CompositeObject.h" />
+    <ClInclude Include="DescriptorParser.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementFactory.h" />
     <ClInclude Include="Engine.h" />
@@ -210,9 +217,9 @@
     <ClInclude Include="GeometryBufferContainer.h" />
     <ClInclude Include="GraphicsController.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LazyOrderedContainer.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LODGenerator.h" />
-    <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="OrderedContainer.h" />
     <ClInclude Include="ParticleSystem.h" />
@@ -220,17 +227,21 @@
     <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="MeshData.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="RenderQueue.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceFactory.h" />
     <ClInclude Include="ResourceRef.h" />
     <ClInclude Include="ResourceTable.h" />
+    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="Serializable.h" />
     <ClInclude Include="ShipController.h" />
+    <ClInclude Include="StaticBatcher.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureArray.h" />
+    <ClInclude Include="TextureArrayLoader.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="TrackLayout.h" />
