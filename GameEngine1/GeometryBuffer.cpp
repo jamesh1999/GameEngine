@@ -6,6 +6,40 @@
 #include <comdef.h>
 #include <iostream>
 
+void GeometryBuffer::Push()
+{
+	Resize(vertexPos, indexPos);
+
+	D3D11_MAPPED_SUBRESOURCE mpV;
+	devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mpV);
+
+	D3D11_MAPPED_SUBRESOURCE mpI;
+	devContext->Map(indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mpI);
+
+	int vPos = 0;
+	int iPos = 0;
+	for (GameEngine::Renderer* r : m_renderers)
+	{
+		auto vData = &r->GetMesh()->vertices;
+		auto iData = &r->GetMesh()->indices;
+
+		memcpy(reinterpret_cast<uint8_t*>(mpV.pData) + vPos * sizeof(Vertex),
+			&(*vData)[0],
+			vData->size() * sizeof(Vertex));
+		memcpy(reinterpret_cast<uint8_t*>(mpI.pData) + iPos * sizeof(unsigned),
+			&(*iData)[0],
+			iData->size() * sizeof(unsigned));
+
+		vPos += r->GetMesh()->vertices.size();
+		iPos += r->GetMesh()->indices.size();
+	}
+
+	devContext->Unmap(indexBuffer, 0);
+	devContext->Unmap(vertexBuffer, 0);
+
+	m_pushed = true;
+}
+
 GeometryBuffer::GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc, bool s) : dev(d), devContext(dc), m_static(s)
 {
 	dev->AddRef();
@@ -59,32 +93,8 @@ void GeometryBuffer::Resize(int vSize, int iSize)
 
 GeometryBuffer::BufferLocation GeometryBuffer::AddRenderer(GameEngine::Renderer* r)
 {
-	Resize(
-		vertexPos + r->GetMesh()->vertices.size(),
-		indexPos + r->GetMesh()->indices.size()
-	);
-
-	auto vData = &r->GetMesh()->vertices;
-	auto iData = &r->GetMesh()->indices;
-	if (m_static)
-	{
-		for (auto v : *vData)
-			vertexBack.push_back(v);
-		for (auto i : *iData)
-			indexBack.push_back(i);
-
-		//vData = &vertexBack;
-		//iData = &indexBack;
-	}
-
-	D3D11_MAPPED_SUBRESOURCE mp;
-	devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
-	memcpy(mp.pData, &(*vData)[0], vData->size() * sizeof(Vertex));
-	devContext->Unmap(vertexBuffer, 0);
-
-	devContext->Map(indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
-	memcpy(mp.pData, &(*iData)[0], iData->size() * sizeof(unsigned));
-	devContext->Unmap(indexBuffer, 0);
+	m_pushed = false;
+	m_renderers.push_back(r);
 
 	GeometryBuffer::BufferLocation ret = std::make_tuple(vertexPos, indexPos);
 
@@ -96,6 +106,8 @@ GeometryBuffer::BufferLocation GeometryBuffer::AddRenderer(GameEngine::Renderer*
 
 void GeometryBuffer::Select()
 {
+	if (!m_pushed) Push();
+
 	unsigned stride = sizeof(Vertex);
 	unsigned offset = 0;
 	devContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);

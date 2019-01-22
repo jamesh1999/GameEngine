@@ -16,6 +16,8 @@ private:
 
 	bool m_static;
 
+	bool m_pushed = false;
+
 	ID3D11Buffer* vertexBuffer = nullptr;
 	ID3D11Buffer* indexBuffer = nullptr;
 
@@ -24,11 +26,12 @@ private:
 	unsigned vertexSize = 0;
 	unsigned indexSize = 0;
 
-	std::vector<int> indexBack;
-	std::vector<Vertex> vertexBack;
+	std::vector<GameEngine::Renderer*> m_renderers;
 
-	ID3D11Device* dev;
-	ID3D11DeviceContext* devContext;
+	ID3D11Device* dev = nullptr;
+	ID3D11DeviceContext* devContext = nullptr;
+
+	void Push();
 
 public:
 
@@ -40,6 +43,8 @@ public:
 	GeometryBuffer& operator=(const GeometryBuffer&) = delete;
 	GeometryBuffer(GeometryBuffer&& other)
 	{
+		if (vertexBuffer) vertexBuffer->Release();
+		if (indexBuffer) indexBuffer->Release();
 		vertexBuffer = other.vertexBuffer;
 		other.vertexBuffer = nullptr;
 		indexBuffer = other.indexBuffer;
@@ -51,9 +56,10 @@ public:
 		indexSize = other.indexSize;
 
 		m_static = other.m_static;
-		indexBack = other.indexBack;
-		vertexBack = other.vertexBack;
+		m_renderers = other.m_renderers;
 
+		//if (dev) dev->Release();
+		//if (devContext) devContext->Release();
 		dev = other.dev;
 		devContext = other.devContext;
 		dev->AddRef();
@@ -61,6 +67,8 @@ public:
 	};
 	GeometryBuffer& operator=(GeometryBuffer&& other)
 	{
+		if (vertexBuffer) vertexBuffer->Release();
+		if (indexBuffer) indexBuffer->Release();
 		vertexBuffer = other.vertexBuffer;
 		other.vertexBuffer = nullptr;
 		indexBuffer = other.indexBuffer;
@@ -72,9 +80,10 @@ public:
 		indexSize = other.indexSize;
 
 		m_static = other.m_static;
-		indexBack = other.indexBack;
-		vertexBack = other.vertexBack;
+		m_renderers = other.m_renderers;
 
+		//if (dev) dev->Release();
+		//if (devContext) devContext->Release();
 		dev = other.dev;
 		devContext = other.devContext;
 		dev->AddRef();
