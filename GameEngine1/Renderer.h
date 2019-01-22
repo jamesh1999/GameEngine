@@ -1,5 +1,5 @@
-#ifndef __GRAPHICS_OBJECT_INCLUDED___
-#define __GRAPHICS_OBJECT_INCLUDED___
+#ifndef __RENDERER_INCLUDED___
+#define __RENDERER_INCLUDED___
 
 #include <DirectXMath.h>
 #include <vector>
@@ -17,12 +17,14 @@ namespace GameEngine
 
 	public:
 		Resources::ResourceRef<Material> mat;
-		Resources::Mesh* mesh;
+		Resources::ResourceRef<Resources::Mesh> mesh;
 		Resources::ResourceRef<Resources::TextureArray> m_textures;
 		bool m_active = true;
+		bool m_init = false;
 
 	public:
 
+		~Renderer();
 
 		void Render(int);
 

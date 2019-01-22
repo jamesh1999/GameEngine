@@ -90,7 +90,7 @@ Material::~Material()
 
 	passes.clear();
 
-	m_samplerState->Release();
+	if (m_pushed) m_samplerState->Release();
 }
 
 ID3D11SamplerState* Material::GetSampler()

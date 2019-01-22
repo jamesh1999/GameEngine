@@ -47,6 +47,8 @@ namespace GameEngine
 
 			//Preferrable to constructor because initialisation has finished
 			virtual void Create() {};
+
+			void Destroy();
 		};
 	}
 }

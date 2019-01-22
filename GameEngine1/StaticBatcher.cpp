@@ -31,8 +31,6 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 	for (auto r : renderers)
 	{
 		if (r->GetTransparent()) continue;
-		r->m_active = false;
-		engine->graphics->RemoveRenderer(r);
 
 		int* map = new int[r->m_textures->Size()];
 		for (int i = 0; i < r->m_textures->Size(); ++i)
@@ -62,8 +60,6 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 	for (auto r : renderers)
 	{
 		if (!r->GetTransparent()) continue;
-		r->m_active = false;
-		engine->graphics->RemoveRenderer(r);
 
 		int* map = new int[r->m_textures->Size()];
 		for (int i = 0; i < r->m_textures->Size(); ++i)
@@ -90,11 +86,14 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 		delete[] map;
 	}
 
-	for (auto r : renderers)
-		r->m_textures = nullptr;
-
 	nr->m_textures = ta;
 	nr->Init(*renderers[0]->mat, m);
+
+	for (auto r : renderers)
+	{
+		engine->graphics->RemoveRenderer(r);
+		r->Destroy();
+	}
 }
 
 void StaticBatcher::CullHeirarchy(GameEngine::Elements::CompositeObject* root)

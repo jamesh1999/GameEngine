@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="ElementFactory.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FractalFault.cpp" />

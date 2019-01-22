@@ -4,6 +4,11 @@
 
 using namespace GameEngine;
 
+Renderer::~Renderer()
+{
+	if (m_init) engine->graphics->RemoveRenderer(this);
+}
+
 void Renderer::Render(int i)
 {
 	GeometryBuffer::BufferLocation idxes = engine->graphics->geomBuff->FindRenderer(this);
@@ -27,6 +32,7 @@ void Renderer::Init(Material* material, Resources::Mesh* m)
 	mat = material;
 	mesh = m;
 	engine->graphics->AddRenderer(this);
+	m_init = true;
 }
 
 void Renderer::SetMaterial(Material* m)
@@ -52,7 +58,7 @@ void Renderer::SetTexture(Resources::Texture* tex)
 
 Resources::Mesh* Renderer::GetMesh()
 {
-	return mesh;
+	return *mesh;
 }
 
 bool Renderer::GetTransparent()
