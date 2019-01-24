@@ -34,12 +34,6 @@
     <Filter Include="Source Files\Engine\Base">
       <UniqueIdentifier>{4abf8ac3-7ea1-458d-90ae-704baeaa34e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\Base\Garbage Collection">
-      <UniqueIdentifier>{d0f2ac03-e788-401b-b1da-fb049c0866b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Base\Garbage Collection">
-      <UniqueIdentifier>{940c0c4b-9245-4d73-bf59-449cf02c4af8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\GameCode\Scripts">
       <UniqueIdentifier>{154586f9-b1e5-4b68-8bdb-4baaf773fd63}</UniqueIdentifier>
     </Filter>
@@ -89,12 +83,6 @@
     </ClCompile>
     <ClCompile Include="TrackLayout.cpp">
       <Filter>Source Files\GameCode</Filter>
-    </ClCompile>
-    <ClCompile Include="GCObject.cpp">
-      <Filter>Source Files\Engine\Base\Garbage Collection</Filter>
-    </ClCompile>
-    <ClCompile Include="GarbageCollector.cpp">
-      <Filter>Source Files\Engine\Base\Garbage Collection</Filter>
     </ClCompile>
     <ClCompile Include="FractalFault.cpp">
       <Filter>Source Files\Engine\Generation</Filter>
@@ -205,18 +193,6 @@
     </ClInclude>
     <ClInclude Include="TrackLayout.h">
       <Filter>Header Files\GameCode</Filter>
-    </ClInclude>
-    <ClInclude Include="GarbageCollector.h">
-      <Filter>Header Files\Engine\Base\Garbage Collection</Filter>
-    </ClInclude>
-    <ClInclude Include="GCObject.h">
-      <Filter>Header Files\Engine\Base\Garbage Collection</Filter>
-    </ClInclude>
-    <ClInclude Include="GCPointer.h">
-      <Filter>Header Files\Engine\Base\Garbage Collection</Filter>
-    </ClInclude>
-    <ClInclude Include="GCSettings.h">
-      <Filter>Header Files\Engine\Base\Garbage Collection</Filter>
     </ClInclude>
     <ClInclude Include="GeometryBuffer.h">
       <Filter>Header Files\Engine\Graphics</Filter>

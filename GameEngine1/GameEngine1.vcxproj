@@ -169,8 +169,6 @@
     <ClCompile Include="ElementPtr.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FractalFault.cpp" />
-    <ClCompile Include="GarbageCollector.cpp" />
-    <ClCompile Include="GCObject.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GeometryBuffer.cpp" />
     <ClCompile Include="GeometryBufferContainer.cpp" />
@@ -213,10 +211,6 @@
     <ClInclude Include="ElementPtr.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FractalFault.h" />
-    <ClInclude Include="GarbageCollector.h" />
-    <ClInclude Include="GCObject.h" />
-    <ClInclude Include="GCPointer.h" />
-    <ClInclude Include="GCSettings.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryBuffer.h" />
     <ClInclude Include="GeometryBufferContainer.h" />
