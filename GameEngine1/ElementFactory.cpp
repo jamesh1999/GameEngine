@@ -13,10 +13,11 @@ CompositeObject* ElementFactory::Create<CompositeObject>()
 	obj->engine = engine;
 
 	//For CompositeObjects assign a unique ID & add them to the active World
-	engine->world->objects.push_back(obj);
+	engine->world->objects.insert(obj);
 	Transform* t = Create<Transform>();
 	obj->m_transform = t;
 	t->obj = obj;
+	t->Create();
 
 	return obj;
 }

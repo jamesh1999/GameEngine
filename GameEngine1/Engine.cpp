@@ -6,6 +6,7 @@
 #include "ElementFactory.h"
 #include "ParticleSystem.h"
 #include "ResourceFactory.h"
+#include "GarbageCollector.h"
 
 using namespace GameEngine;
 

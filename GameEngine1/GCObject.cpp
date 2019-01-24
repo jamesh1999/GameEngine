@@ -5,3 +5,8 @@ GCObject::GCObject()
 {
 	GarbageCollector::RegisterObject(this);
 }
+
+void GCObject::Destroy()
+{
+	m_alive = false;
+}

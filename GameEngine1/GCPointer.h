@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <exception>
+#include <cassert>
 #include "GCObject.h"
 
 class GarbageCollector;
@@ -13,47 +14,142 @@ class GCPointer
 	friend class GarbageCollector;
 
 private:
-	T* m_object = nullptr;
+	mutable T* m_object = nullptr;
 	GCObject* m_parent = nullptr;
 
+#ifndef NDEBUG
 	bool m_initialized = false;
+#endif
 
 public:
 
-	GCPointer()
-	{
-		if (!m_initialized) return;
-		
-		throw std::exception("GCPointer already initialized");
-	}
+	GCPointer() = default;
 
-	explicit GCPointer(GCObject* parent)
+	explicit GCPointer(GCObject* parent, T* object)
 	{
-		if(m_initialized)
-			throw std::exception("GCPointer already initialized");
+		static_assert(std::is_base_of<GCObject, T>::value, "");
 
+		m_object = object;
 		m_parent = parent;
-		m_parent->childGCPs.push_back(reinterpret_cast<GCPointer<void>*>(this));
+		m_parent->childGCPs.push_back(reinterpret_cast<GCPointer<GCObject>*>(this));
 
+#ifndef NDEBUG
 		m_initialized = true;
+#endif
 	}
+
+	explicit GCPointer(GCObject* parent) : GCPointer(parent, nullptr) {};
 
 	~GCPointer()
 	{
-		if (!m_initialized) return;
+#ifndef NDEBUG
+		assert(m_initialized);
+#endif
+		m_parent->childGCPs.remove(reinterpret_cast<GCPointer<GCObject>*>(this));
+	}
 
-		m_parent->childGCPs.remove(reinterpret_cast<GCPointer<void>*>(this));
+	GCPointer(const GCPointer<T>& other)
+	{
+#ifndef NDEBUG
+		assert(other.m_initialized);
+#endif
+		m_object = other.m_object;
+		m_parent = other.m_parent;
+		m_parent->childGCPs.push_back(reinterpret_cast<GCPointer<GCObject>*>(this));
+#ifndef NDEBUG
+		m_initialized = true;
+#endif
+	}
+
+	GCPointer& operator=(const GCPointer<T>& other)
+	{
+#ifndef NDEBUG
+		assert(m_initialized);
+		assert(other.m_initialized);
+#endif
+		m_object = other.m_object;
+		return *this;
+	}
+
+	GCPointer(GCPointer<T>&& other)
+	{
+#ifndef NDEBUG
+		assert(other.m_initialized);
+#endif
+		m_object = other.m_object;
+		m_parent = other.m_parent;
+		m_parent->childGCPs.push_back(reinterpret_cast<GCPointer<GCObject>*>(this));
+#ifndef NDEBUG
+		m_initialized = true;
+#endif
+	}
+
+	GCPointer& operator=(GCPointer<T>&& other)
+	{
+#ifndef NDEBUG
+		assert(m_initialized);
+		assert(other.m_initialized);
+#endif
+		m_object = other.m_object;
+		return *this;
 	}
 
 	GCPointer& operator=(T* gcObject)
 	{
-		static_assert(std::is_base_of<GCObject, std::remove_pointer<T>>::value, "");
+#ifndef NDEBUG
+		assert(m_initialized);
+#endif
 		m_object = gcObject;
-
 		return *this;
+	}
+
+	void _Initialize(GCObject* parent)
+	{
+		m_parent = parent;
+#ifndef NDEBUG
+		m_initialized = true;
+#endif
+	}
+
+	T* Get() const
+	{
+		// Break dead references
+		if (m_object == nullptr || m_object->m_alive) return m_object;
+		m_object = nullptr;
+		return m_object;
+	}
+
+	T* operator->() const
+	{
+		return Get();
+	}
+
+	T& operator*() const
+	{
+		return *Get();
+	}
+
+	bool operator==(T* other) const
+	{
+		return Get() == other;
+	}
+
+	bool operator==(GCPointer<T>& other) const
+	{
+		return Get() == other.Get();
+	}
+
+	bool operator!=(T* other) const
+	{
+		return Get() != other;
+	}
+
+	bool operator!=(GCPointer<T>& other) const
+	{
+		return Get() != other.Get();
 	}
 };
 
-#define InitGCPointer(gcp) (gcp = GCPointer(dynamic_cast<GCObject*>(this)))
+#define InitGCPointer(gcp) (gcp._Initialize(dynamic_cast<GCObject*>(this)))
 
 #endif

@@ -12,7 +12,7 @@ private:
 	static GCSettings settings;
 
 	static std::vector<GCObject*> objects;
-	static std::vector<GCObject*> tracked;
+	static std::vector<GCObject*> base;
 
 	static int curID;
 
@@ -20,6 +20,7 @@ private:
 
 public:
 	static void RegisterBaseObject(GCObject*);
+	static void RemoveBaseObject(GCObject*);
 	static void RegisterObject(GCObject*);
 	static void RunCollector();
 	static void RefreshTracked();

@@ -1,3 +1,4 @@
+#include "Component.h"
 #include "SceneLoader.h"
 #include "ElementFactory.h"
 #include "Transform.h"
@@ -7,6 +8,7 @@
 #include "Material.h"
 #include "MeshLoader.h"
 #include "ResourceFactory.h"
+#include "PropertyDict.h"
 #include <DirectXMath.h>
 #include <iostream>
 
@@ -18,7 +20,7 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 	Elements::CompositeObject* co = engine->elementFactory->Create<Elements::CompositeObject>();
 
 	// Set node transform values
-	Transform* t = co->GetComponent<Transform>();
+	Elements::Transform* t = co->GetComponent<Elements::Transform>();
 	DirectX::XMFLOAT3A v;
 	DirectX::XMVECTOR vec;
 
@@ -48,7 +50,15 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 	for (int i = 0; i < childCnt; ++i)
 	{
 		Elements::CompositeObject* child = ApplyFBXRecursively(engine, node->GetChild(i));
-		child->GetComponent<Transform>()->SetParent(t);
+		child->GetComponent<Elements::Transform>()->SetParent(t);
+	}
+
+	// Add properties to PropertyDict
+	FbxProperty prop = node->FindProperty("WOforwardTrackDirection");
+	if (prop.IsValid())
+	{
+		auto dict = co->AttachComponent<Elements::PropertyDict>();
+		dict->SetProperty("WOforwardTrackDirection", prop.Get<FbxBool>() ? "true" : "false");
 	}
 
 	// Determine type of this node
@@ -112,18 +122,18 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 							std::string name = fTex->GetFileName();
 							Resources::Texture* tex = engine->resourceFactory->Create<Resources::Texture>(name);
 
-							Resources::ResourceRef<Resources::TextureArray> texArray = engine->resourceFactory->Create<Resources::TextureArray>();
+							Resources::ResourcePtr<Resources::TextureArray> texArray = engine->resourceFactory->Create<Resources::TextureArray>();
 							texArray = texArray->Add(tex);
 
 							Elements::CompositeObject* ro = engine->elementFactory->Create<Elements::CompositeObject>();
-							ro->GetComponent<Transform>()->SetPosition({ 0.0f, 0.0f, 0.0f });
-							ro->GetComponent<Transform>()->SetRotation({ 0.0f, 0.0f, 0.0f });
-							ro->GetComponent<Transform>()->SetScale({ 1.0f, 1.0f, 1.0f });
-							ro->GetComponent<Transform>()->SetParent(co->GetComponent<Transform>());
+							ro->GetComponent<Elements::Transform>()->SetPosition({ 0.0f, 0.0f, 0.0f });
+							ro->GetComponent<Elements::Transform>()->SetRotation({ 0.0f, 0.0f, 0.0f });
+							ro->GetComponent<Elements::Transform>()->SetScale({ 1.0f, 1.0f, 1.0f });
+							ro->GetComponent<Elements::Transform>()->SetParent(co->GetComponent<Elements::Transform>());
 
 							Renderer* r = ro->AttachComponent<Renderer>();
 
-							r->SetTexture(*texArray);
+							r->SetTexture(texArray.Get());
 							Mesh* mm = new Mesh;
 
 							int polySize = node->GetMesh()->GetPolygonSize(j);

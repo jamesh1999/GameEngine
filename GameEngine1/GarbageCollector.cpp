@@ -1,59 +1,82 @@
 #include "GarbageCollector.h"
+#include "Component.h"
 
 GCSettings GarbageCollector::settings;
 std::vector<GCObject*> GarbageCollector::objects;
-std::vector<GCObject*> GarbageCollector::tracked;
+std::vector<GCObject*> GarbageCollector::base;
 int GarbageCollector::curID = 0;
 
 void GarbageCollector::recurseObjectTree(GCObject* obj)
 {
 	obj->flags = GCObject::WHITE;
 	
-	for (GCPointer<void>* child : obj->childGCPs)
-		recurseObjectTree(static_cast<GCObject*>(child->m_object));
+	for (GCPointer<GCObject>* child : obj->childGCPs)
+		recurseObjectTree(child->Get());
 }
 
 void GarbageCollector::RegisterBaseObject(GCObject* obj)
 {
-	objects.push_back(obj);
+	base.push_back(obj);
+}
+
+void GarbageCollector::RemoveBaseObject(GCObject* obj)
+{
+	auto it = std::find(base.begin(), base.end(), obj);
+	base.erase(it);
 }
 
 void GarbageCollector::RegisterObject(GCObject* obj)
 {
-	//objects.push_back(obj);
+	objects.push_back(obj);
 	obj->id = curID++;
-	if (obj->flags != GCObject::NO_GC)
-		tracked.push_back(obj);
 }
 
 void GarbageCollector::RunCollector()
 {
-	for (GCObject* obj : tracked)
-		obj->flags = GCObject::BLACK;
+	for (GCObject* obj : objects)
+		if (obj->flags != GCObject::NO_GC)
+			obj->flags = GCObject::BLACK;
+
+	for (GCObject* obj : base)
+		obj->flags = GCObject::GREY;
+
+	bool done = false;
+	while (!done)
+	{
+		done = true;
+		for (GCObject* obj : objects)
+			if (obj->flags == GCObject::GREY)
+			{
+				done = false;
+				for (GCPointer<GCObject>* child : obj->childGCPs)
+					if (child->Get()->flags == GCObject::BLACK)
+					child->Get()->flags = GCObject::GREY;
+				obj->flags = GCObject::WHITE;
+			}
+	}
 
 	for (GCObject* obj : objects)
-		recurseObjectTree(obj);
+		if (obj->flags == GCObject::BLACK && obj->m_alive)
+			obj->Destroy();
 
-	for (auto it = tracked.begin(); it != tracked.end(); ++it)
-		if ((*it)->flags == GCObject::BLACK)
-		{
-			delete *it;
-			*it = nullptr;
-		}
+	for (GCObject* obj : objects)
+		for (GCPointer<GCObject>* gcp : obj->childGCPs)
+			gcp->Get();
 
-	std::vector<GCObject*> ntracked;
-	for (GCObject* obj : tracked)
-		if (obj != nullptr)
-			ntracked.push_back(obj);
-	tracked = ntracked;
+	std::vector<GCObject*> nobjects;
+	for (GCObject* obj : objects)
+		if (obj->m_alive)
+			nobjects.push_back(obj);
+		else if (dynamic_cast<GameEngine::Elements::Component*>(obj) != nullptr)
+			delete dynamic_cast<GameEngine::Elements::Component*>(obj);
+		else
+			delete obj;
+	objects = nobjects;
 }
 
 void GarbageCollector::RefreshTracked()
 {
-	tracked.clear();
-	for (GCObject* obj : objects)
-		if (obj->flags != GCObject::NO_GC)
-			tracked.push_back(obj);
+
 }
 
 void GarbageCollector::UpdateSettings(GCSettings* nSettings)

@@ -4,16 +4,17 @@
 
 using namespace GameEngine;
 
-Renderer::~Renderer()
+void Renderer::Destroy()
 {
 	if (m_init) engine->graphics->RemoveRenderer(this);
+	Component::Destroy();
 }
 
 void Renderer::Render(int i)
 {
 	GeometryBuffer::BufferLocation idxes = engine->graphics->geomBuff->FindRenderer(this);
 
-	if (*m_textures == nullptr) return;
+	if (m_textures.Get() == nullptr) return;
 	ID3D11ShaderResourceView* srv = m_textures->GetSRV();
 	engine->graphics->devContext->PSSetShaderResources(0, 1, &srv);
 

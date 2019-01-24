@@ -5,41 +5,42 @@
 #include "Component.h"
 #include "Transform.h"
 #include "Script.h"
-#include "GCObject.h"
 #include "Element.h"
+#include "ElementPtr.h"
 #include "World.h"
 
 namespace GameEngine
 {
 	namespace Elements
 	{
-		class CompositeObject : public Element, private GCObject
+		class CompositeObject : public Element
 		{
 
 		public:
-			std::vector<Component*> m_components;
-			Transform* m_transform;
+			std::vector<ElementPtr<Component>> m_components;
+			ElementPtr<Transform> m_transform;
 
 		public:
 
-			~CompositeObject()
-			{
-				engine->world->objects.remove(this);
-
-				//Cleanup
-				for (Component* c : m_components)
-					delete c;
-
-				delete m_transform;
-			}
-
 			void Update()
 			{
-				for (int i = 0; i < m_components.size(); ++i)
+				for (ElementPtr<Component> c : m_components)
 				{
-					if (dynamic_cast<Script*>(m_components[i]) != nullptr)
-						dynamic_cast<Script*>(m_components[i])->Update();
+					if (dynamic_cast<Script*>(c.Get()) == nullptr) continue;
+					dynamic_cast<Script*>(c.Get())->Update();
 				}
+			}
+
+			void Destroy()
+			{
+				for (auto c : m_components)
+					if (c != nullptr)
+						c->Destroy();
+				if (m_transform != nullptr) m_transform->Destroy();
+
+				engine->world->objects.erase(this);
+
+				Element::Destroy();
 			}
 
 			template <class T>
@@ -47,8 +48,8 @@ namespace GameEngine
 			{
 				for (int i = 0; i < m_components.size(); ++i)
 				{
-					if (dynamic_cast<T*>(m_components[i]) != nullptr)
-						return dynamic_cast<T*>(m_components[i]);
+					if (dynamic_cast<T*>(m_components[i].Get()) != nullptr)
+						return dynamic_cast<T*>(m_components[i].Get());
 				}
 
 				return nullptr;
@@ -56,7 +57,7 @@ namespace GameEngine
 			template <>
 			Transform* GetComponent<Transform>()
 			{
-				return m_transform;
+				return m_transform.Get();
 			}
 
 			template<class T>
@@ -64,8 +65,8 @@ namespace GameEngine
 			{
 				T* component = engine->elementFactory->Create<T>();
 				m_components.push_back(component);
-				dynamic_cast<Component*>(component)->obj = this;
-				dynamic_cast<Component*>(component)->Create();
+				static_cast<Component*>(component)->obj = this;
+				static_cast<Component*>(component)->Create();
 				return component;
 			}
 			template<>
@@ -78,8 +79,8 @@ namespace GameEngine
 			T* AttachComponent(T* component)
 			{
 				m_components.push_back(component);
-				dynamic_cast<Component*>(component)->obj = this;
-				dynamic_cast<Component*>(component)->Create();
+				static_cast<Component*>(component)->obj = this;
+				static_cast<Component*>(component)->Create();
 				return component;
 			}
 			template<>

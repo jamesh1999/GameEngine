@@ -189,6 +189,15 @@
     <ClCompile Include="Component.cpp">
       <Filter>Source Files\Engine\Base\Components</Filter>
     </ClCompile>
+    <ClCompile Include="PropertyDict.cpp">
+      <Filter>Source Files\Engine\Base\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Element.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementPtr.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShipController.h">
@@ -311,9 +320,6 @@
     <ClInclude Include="TextureArray.h">
       <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceRef.h">
-      <Filter>Header Files\Engine\Base\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="SceneLoader.h">
       <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
     </ClInclude>
@@ -334,6 +340,15 @@
     </ClInclude>
     <ClInclude Include="StaticBatcher.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyDict.h">
+      <Filter>Header Files\Engine\Base\Elements\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ElementPtr.h">
+      <Filter>Header Files\Engine\Base\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourcePtr.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -158,8 +158,8 @@ void ParticleSystem::Draw()
 	if (!position.size()) return;
 
 	//engine->graphics->devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DirectX::XMVECTOR up = DirectX::XMVectorScale(engine->graphics->m_camera->obj->GetComponent<Transform>()->GetUp(), 4.5f);
-	DirectX::XMVECTOR right = DirectX::XMVectorScale(engine->graphics->m_camera->obj->GetComponent<Transform>()->GetRight(), 4.5f);
+	DirectX::XMVECTOR up = DirectX::XMVectorScale(engine->graphics->m_camera->obj->GetComponent<Elements::Transform>()->GetUp(), 4.5f);
+	DirectX::XMVECTOR right = DirectX::XMVectorScale(engine->graphics->m_camera->obj->GetComponent<Elements::Transform>()->GetRight(), 4.5f);
 	for (int i = 0; i < 300; ++i)
 	{
 		DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&position[i]);

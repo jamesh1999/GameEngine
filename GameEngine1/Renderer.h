@@ -6,7 +6,7 @@
 #include "Component.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "ResourceRef.h"
+#include "ResourcePtr.h"
 #include "TextureArray.h"
 
 namespace GameEngine
@@ -16,16 +16,16 @@ namespace GameEngine
 		//friend class GraphicsController;
 
 	public:
-		Resources::ResourceRef<Material> mat;
+		Resources::ResourcePtr<Material> mat;
 		//Resources::ResourceRef<Resources::Mesh> mesh;
 		Resources::Mesh* mesh;
-		Resources::ResourceRef<Resources::TextureArray> m_textures;
+		Resources::ResourcePtr<Resources::TextureArray> m_textures;
 		bool m_active = true;
 		bool m_init = false;
 
 	public:
 
-		~Renderer();
+		void Destroy();
 
 		void Render(int);
 

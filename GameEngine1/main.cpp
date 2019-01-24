@@ -22,6 +22,8 @@
 #include "ResourceFactory.h"
 #include "SceneLoader.h"
 #include "StaticBatcher.h"
+#include "PropertyDict.h"
+#include "Component.h"
 
 int width = 1000;
 int height = 1000;
@@ -46,6 +48,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	default:
 		DefWindowProc(hWnd, message, wParam, lParam);
 	}
+}
+
+void DestroyBackwards(GameEngine::Elements::CompositeObject* co)
+{
+	GameEngine::Elements::PropertyDict* pd = co->GetComponent<GameEngine::Elements::PropertyDict>();
+	if (pd != nullptr
+		&& pd->HasProperty("WOforwardTrackDirection")
+		&& pd->GetProperty("WOforwardTrackDirection") == "false")
+	{
+		co->Destroy();
+		return;
+	}
+
+	for (auto child : co->GetComponent<GameEngine::Elements::Transform>()->GetChildren())
+		DestroyBackwards(child->obj.Get());
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -173,42 +190,52 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	else if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->dpthPx);
-
-	//Mesh* mesh = MeshLoader::Load("Track.fbx");
-	std::vector<std::string> tex;
-	//MeshLoader::ApplyFBXWithTextures(mesh, fbxNode, "", tex);
 	
 	//MeshData* skybox = new MeshData;
 	//std::vector<std::string> tex_skybox;
 	//MeshLoader::ApplyFBXWithTextures(skybox, fbxNode, "skycube1_nolight", tex_skybox);
 
 	TrackLayout tl;
-	//MeshData* track_layout = new MeshData;
+	/*GameEngine::Resources::Mesh* track_layout = new GameEngine::Resources::Mesh;
 	//fbxNode = MeshLoader::LoadFBX("Track_Outline.fbx");
-	//MeshLoader::ApplyFBX(track_layout, fbxNode, "", true);
-	//TrackLayout::SetTrack(&(*track_layout)[0]);
+
+	FbxManager* fbx = FbxManager::Create();
+	FbxIOSettings* ios = FbxIOSettings::Create(fbx, IOSROOT);
+	fbx->SetIOSettings(ios);
+	FbxImporter* fbxImporter = FbxImporter::Create(fbx, "");
+	fbxImporter->Initialize("Track.fbx", -1, fbx->GetIOSettings());
+	FbxScene* fbxScene = FbxScene::Create(fbx, "Track.fbx");
+	fbxImporter->Import(fbxScene);
+	fbxImporter->Destroy();
+
+	//Mesh* mesh = LoadFBX(fbxScene->GetRootNode(), path);
+	GameEngine::Resources::MeshLoader::ApplyFbxRecursive(track_layout, fbxScene->GetRootNode(), true);
+	fbx->Destroy();
+	TrackLayout::SetTrack(track_layout);*/
 
 	GameEngine::Elements::CompositeObject* co = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
-	Transform* t = co->GetComponent<Transform>();
+	GameEngine::Elements::Transform* t = co->GetComponent<GameEngine::Elements::Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 	t->m_static = true;
 
 	GameEngine::Elements::CompositeObject* scn = GameEngine::Resources::SceneLoader::LoadFBX(&game, "Track.fbx");
+	DestroyBackwards(scn);
 
 	for (GameEngine::Renderer* r : game.graphics->rq)
 	{
-		std::string id = (*r->m_textures)[0].GetIdentifier();
+		std::string id = (r->m_textures.Get())[0].GetIdentifier();
 		if (id.find("GLOW") == -1) continue;
 		r->mat = game.resourceFactory->Create<Material>("Default Glow");
 	}
 
 	StaticBatcher::BatchFrom(scn, &game);
+	StaticBatcher::CullHeirarchy(scn);
 
 	GameEngine::Elements::CompositeObject* sky = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	GameEngine::Renderer* r = sky->AttachComponent<GameEngine::Renderer>();
-	t = sky->GetComponent<Transform>();
+	t = sky->GetComponent<GameEngine::Elements::Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
 
@@ -228,7 +255,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 	GameEngine::Elements::CompositeObject* ship = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
-	t = ship->GetComponent<Transform>();
+	t = ship->GetComponent<GameEngine::Elements::Transform>();
 	t->SetPosition({ -707.0f, 13.0f, -78.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
@@ -236,7 +263,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ship->AttachComponent<ShipController>();
 
 	game.particleSystem = new GameEngine::Graphics::ParticleSystem(&game);
-	//game.particleSystem->engine = &game;
 
 	MSG message;
 	while (true)

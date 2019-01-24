@@ -17,10 +17,14 @@ private:
 	char flags : 2;
 	unsigned id : 30;
 
-	std::list<GCPointer<void>*> childGCPs;
+	bool m_alive = true;
+
+	std::list<GCPointer<GCObject>*> childGCPs;
 
 public:
 	GCObject();
+
+	virtual void Destroy();
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define __WORLD_INCLUDED__
 
 #include <list>
+#include <unordered_set>
 
 namespace GameEngine
 {
@@ -12,7 +13,7 @@ namespace GameEngine
 		class World
 		{
 		public:
-			std::list<CompositeObject*> objects;
+			std::unordered_set<CompositeObject*> objects;
 
 		public:
 			void Update();

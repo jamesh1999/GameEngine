@@ -10,13 +10,13 @@ namespace GameEngine
 	{
 		class ResourceFactory;
 		template <class TResource>
-		class ResourceRef;
+		class ResourcePtr;
 
 		class Resource
 		{
 			friend class ResourceFactory;
 			template <class>
-			friend class ResourceRef;
+			friend class ResourcePtr;
 
 		private:
 			unsigned m_refCount = 0;

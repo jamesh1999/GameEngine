@@ -124,7 +124,39 @@ void MeshLoader::ApplyFbxRecursive(Mesh* out, FbxNode* node, bool track)
 			if (track && std::strncmp(name, "collision_floor", 15) != 0 && std::strncmp(name, "collision_magfl", 15) != 0)
 				return;
 
-			//ApplyMesh(out, node->GetMesh());
+			FbxMesh* in = node->GetMesh();
+			int lCnt = in->GetLayerCount();
+			for (int j = 0; j < lCnt; ++j)
+			{
+				unsigned polygonCount = in->GetPolygonCount();
+
+				Vertex buff;
+				int vtxIdx = 0;
+				int vtxTot = out->vertices.size();
+				for (int i = 0; i < polygonCount; ++i)
+				{
+					int vcnt = in->GetPolygonSize(i);
+					for (int j = 0; j < vcnt; ++j)
+					{
+						int ctrlPointIdx = in->GetPolygonVertex(i, j);
+						FBXGetVertexPos(in, ctrlPointIdx, buff.pos);
+						FBXGetNormal(in, ctrlPointIdx, vtxIdx, buff.normal);
+						FBXGetUV(in, ctrlPointIdx, vtxIdx, buff.tex);
+						out->vertices.push_back(buff);
+
+						++vtxIdx;
+					}
+
+					for (int j = 1; j < vcnt - 1; ++j)
+					{
+						out->indices.push_back(vtxTot);
+						out->indices.push_back(vtxTot + j);
+						out->indices.push_back(vtxTot + j + 1);
+					}
+
+					vtxTot += vcnt;
+				}
+			}
 		}
 	}
 	int childCnt = node->GetChildCount();

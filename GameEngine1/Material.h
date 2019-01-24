@@ -8,7 +8,7 @@
 #include <string>
 #include <tuple>
 #include "Engine.h"
-#include "ResourceRef.h"
+#include "ResourcePtr.h"
 #include "TextureArray.h"
 #include "Resource.h"
 

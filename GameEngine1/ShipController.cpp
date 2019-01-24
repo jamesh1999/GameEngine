@@ -1,3 +1,4 @@
+#include "Component.h"
 #include "ShipController.h"
 #include "InputManager.h"
 #include "Transform.h"
@@ -16,13 +17,13 @@
 
 void ShipController::UpdateBase()
 {
-	Transform* transform = obj->GetComponent<Transform>();
+	GameEngine::Elements::Transform* transform = obj->GetComponent<GameEngine::Elements::Transform>();
 	DirectX::XMVECTOR pos = transform->GetPosition();
 
 	DirectX::XMVECTOR norm, basePos;
 	std::tie(norm, basePos, overTri) = TrackLayout::GetNormal(pos);
 
-	base->GetComponent<Transform>()->SetPosition(basePos);
+	base->GetComponent<GameEngine::Elements::Transform>()->SetPosition(basePos);
 	DirectX::XMStoreFloat3(&curNorm, norm);
 }
 
@@ -43,7 +44,7 @@ void ShipController::Update()
 					facingDir),
 				norm)));
 
-	Transform* transform = obj->GetComponent<Transform>();
+	GameEngine::Elements::Transform* transform = obj->GetComponent<GameEngine::Elements::Transform>();
 
 	DirectX::XMVECTOR shipPos = transform->GetPosition();
 	float height = 0.0f;
@@ -106,7 +107,7 @@ void ShipController::Update()
 
 	//Calculate track repulsion force
 	DirectX::XMFLOAT3 basepos;
-	DirectX::XMStoreFloat3(&basepos, base->GetComponent<Transform>()->GetPosition());
+	DirectX::XMStoreFloat3(&basepos, base->GetComponent<GameEngine::Elements::Transform>()->GetPosition());
 
 	if (overTri)
 	{
@@ -114,7 +115,7 @@ void ShipController::Update()
 			DirectX::XMVector3Dot(
 				DirectX::XMVectorSubtract(
 					shipPos,
-					base->GetComponent<Transform>()->GetPosition()),
+					base->GetComponent<GameEngine::Elements::Transform>()->GetPosition()),
 				norm
 			)) - 5.0f;
 		
@@ -261,10 +262,10 @@ void ShipController::Update()
 		DirectX::XMVector3TransformCoord(
 	{ 0.0f, 3.0f, -20.0f },
 			transform->GetTransform());
-	cam->GetComponent<Transform>()->SetPosition(camPos);
-	cam->GetComponent<Transform>()->SetRotation(transform->GetRotation());
+	cam->GetComponent<GameEngine::Elements::Transform>()->SetPosition(camPos);
+	cam->GetComponent<GameEngine::Elements::Transform>()->SetRotation(transform->GetRotation());
 
-	model->GetComponent<Transform>()->SetRotation(DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
+	model->GetComponent<GameEngine::Elements::Transform>()->SetRotation(DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
 
 	//shipRot = DirectX::XMVectorSetByIndex(shipRot, roll, 2);
 	//transform->SetRotation(shipRot);
@@ -289,16 +290,16 @@ void ShipController::Create()
 
 	//Init camera
 	cam->AttachComponent<Camera>();
-	cam->GetComponent<Transform>()->SetScale({ 1.0f,1.0f,1.0f });
+	cam->GetComponent<GameEngine::Elements::Transform>()->SetScale({ 1.0f,1.0f,1.0f });
 
 	//Init model child object
 	GameEngine::Resources::Mesh* mesh = engine->resourceFactory->Create<GameEngine::Resources::Mesh>("test.fbx;lodGroup1/ship/");
 
-	Transform* t = model->GetComponent<Transform>();
+	GameEngine::Elements::Transform* t = model->GetComponent<GameEngine::Elements::Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
-	t->SetParent(obj->GetComponent<Transform>());
+	t->SetParent(obj->GetComponent<GameEngine::Elements::Transform>());
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
@@ -319,11 +320,11 @@ void ShipController::Create()
 	r->SetTexture(tex);
 
 	//Init light
-	t = light->GetComponent<Transform>();
+	t = light->GetComponent<GameEngine::Elements::Transform>();
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetPosition({ 0.0f, 0.0f, 10.0f });
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
-	t->SetParent(obj->GetComponent<Transform>());
+	t->SetParent(obj->GetComponent<GameEngine::Elements::Transform>());
 
 	light->AttachComponent<Light>();
 	engine->graphics->SetLight(light->GetComponent<Light>());

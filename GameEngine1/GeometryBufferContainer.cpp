@@ -18,7 +18,7 @@ GeometryBufferContainer::~GeometryBufferContainer()
 
 void GeometryBufferContainer::AddRenderer(GameEngine::Renderer* r)
 {
-	if (r->obj->GetComponent<Transform>()->m_static)
+	if (r->obj->GetComponent<GameEngine::Elements::Transform>()->m_static)
 		m_lookup.insert(std::make_pair(r->GetID(), std::make_pair(0, m_buffers[0].AddRenderer(r))));
 	else
 	{

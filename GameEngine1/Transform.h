@@ -3,44 +3,56 @@
 
 #include "Component.h"
 #include "DirectXMath.h"
+#include "ElementPtr.h"
 #include <vector>
+#include <unordered_set>
 
-class Transform : public GameEngine::Elements::Component
+namespace GameEngine
 {
-private:
-	
-	DirectX::XMFLOAT3A m_position;
-	DirectX::XMFLOAT4A m_rotation;
-	DirectX::XMFLOAT3A m_scale;
+	namespace Elements
+	{
+		class Transform : public Component
+		{
+		private:
 
-	Transform* m_parent = nullptr;
+			DirectX::XMFLOAT3A m_position;
+			DirectX::XMFLOAT4A m_rotation;
+			DirectX::XMFLOAT3A m_scale;
 
-public:
-	bool m_static = false;
-	std::vector<Transform*> m_children;
+			ElementPtr<Transform> m_parent;
+			std::unordered_set<ElementPtr<Transform>> m_children;
 
-	DirectX::XMMATRIX GetTransform() const;
-	DirectX::XMVECTOR GetPosition() const;
-	DirectX::XMVECTOR GetRotation() const;
-	DirectX::XMVECTOR GetScale() const;
+		public:
+			bool m_static = false;
 
-	DirectX::XMVECTOR GetUp() const;
-	DirectX::XMVECTOR GetDown() const;
-	DirectX::XMVECTOR GetLeft() const;
-	DirectX::XMVECTOR GetRight() const;
-	DirectX::XMVECTOR GetForwards() const;
-	DirectX::XMVECTOR GetBackwards() const;
+			void Destroy();
 
-	DirectX::XMMATRIX GetLocalTransform() const;
-	DirectX::XMVECTOR GetLocalPosition() const;
-	DirectX::XMVECTOR GetLocalRotation() const;
-	DirectX::XMVECTOR GetLocalScale() const;
+			DirectX::XMMATRIX GetTransform() const;
+			DirectX::XMVECTOR GetPosition() const;
+			DirectX::XMVECTOR GetRotation() const;
+			DirectX::XMVECTOR GetScale() const;
 
-	void SetPosition(const DirectX::XMVECTOR&);
-	void SetRotation(const DirectX::XMVECTOR&);
-	void SetScale(const DirectX::XMVECTOR&);
+			DirectX::XMVECTOR GetUp() const;
+			DirectX::XMVECTOR GetDown() const;
+			DirectX::XMVECTOR GetLeft() const;
+			DirectX::XMVECTOR GetRight() const;
+			DirectX::XMVECTOR GetForwards() const;
+			DirectX::XMVECTOR GetBackwards() const;
 
-	void SetParent(Transform*);
-};
+			DirectX::XMMATRIX GetLocalTransform() const;
+			DirectX::XMVECTOR GetLocalPosition() const;
+			DirectX::XMVECTOR GetLocalRotation() const;
+			DirectX::XMVECTOR GetLocalScale() const;
+
+			void SetPosition(const DirectX::XMVECTOR&);
+			void SetRotation(const DirectX::XMVECTOR&);
+			void SetScale(const DirectX::XMVECTOR&);
+
+			std::vector<ElementPtr<Transform>> GetChildren();
+
+			void SetParent(Transform*);
+		};
+	}
+}
 
 #endif

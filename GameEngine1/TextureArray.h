@@ -3,7 +3,7 @@
 
 #include "Resource.h"
 #include "Texture.h"
-#include "ResourceRef.h"
+#include "ResourcePtr.h"
 #include <vector>
 
 namespace GameEngine
@@ -18,7 +18,7 @@ namespace GameEngine
 			friend class TextureArrayLoader;
 
 		private:
-			std::vector<ResourceRef<Texture>> m_textures;
+			std::vector<ResourcePtr<Texture>> m_textures;
 			bool m_transparent = false;
 
 			//GPU resource
@@ -48,7 +48,7 @@ namespace GameEngine
 			int Find(Texture* t)
 			{
 				for (int i = 0; i < m_textures.size(); ++i)
-					if (*m_textures[i] == t) return i;
+					if (m_textures[i].Get() == t) return i;
 				return -1;
 			}
 			int Size() { return m_textures.size(); }

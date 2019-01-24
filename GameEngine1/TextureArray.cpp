@@ -41,7 +41,7 @@ TextureArray* TextureArray::Add(Texture* tex)
 
 Texture* TextureArray::operator[](int idx)
 {
-	return *m_textures[idx];
+	return m_textures[idx].Get();
 }
 
 void TextureArray::Push()

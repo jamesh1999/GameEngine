@@ -6,7 +6,7 @@
 #include <d3d11.h>
 #include "Engine.h"
 #include "Mesh.h"
-#include "ResourceRef.h"
+#include "ResourcePtr.h"
 #include "TextureArray.h"
 
 namespace GameEngine
@@ -26,7 +26,7 @@ namespace GameEngine
 			ID3D11Buffer* vertexBuffer = nullptr;
 			ID3D11Buffer* indexBuffer = nullptr;
 
-			Resources::ResourceRef<Resources::TextureArray> m_texture;
+			Resources::ResourcePtr<Resources::TextureArray> m_texture;
 
 			ID3D11BlendState* blendState;
 			ID3D11DepthStencilState* depthState;

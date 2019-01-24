@@ -20,6 +20,7 @@ namespace GameEngine
 			static void FBXGetNormal(FbxMesh*, int, int, DirectX::XMFLOAT3&);
 			static void FBXGetUV(FbxMesh*, int, int, DirectX::XMFLOAT3&);
 
+		public:
 			// To remove
 			static void ApplyFbxRecursive(Mesh*, FbxNode*, bool);
 			// ---

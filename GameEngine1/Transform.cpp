@@ -1,5 +1,22 @@
 #include "Transform.h"
+#include "CompositeObject.h"
 #include <cmath>
+#include "Component.h"
+
+using namespace GameEngine::Elements;
+
+void Transform::Destroy()
+{
+	while (m_children.size())
+		(*m_children.begin())->obj->Destroy();
+
+	if (m_parent != nullptr)
+	{
+		m_parent->m_children.erase(this);
+	}
+
+	Element::Destroy();
+}
 
 DirectX::XMMATRIX Transform::GetTransform() const
 {
@@ -122,15 +139,19 @@ void Transform::SetScale(const DirectX::XMVECTOR& nScale)
 	DirectX::XMStoreFloat3A(&m_scale, nScale);
 }
 
+std::vector<ElementPtr<Transform>> Transform::GetChildren()
+{
+	return std::vector<ElementPtr<Transform>>(m_children.begin(), m_children.end());
+}
+
 void Transform::SetParent(Transform* parent)
 {
 	if (m_parent != nullptr)
 	{
-		auto it = std::find(m_parent->m_children.begin(), m_parent->m_children.end(), this);
-		m_parent->m_children.erase(it);
+		m_parent->m_children.erase(this);
 	}
 
 	m_parent = parent;
 	
-	if (parent != nullptr) parent->m_children.push_back(this);
+	if (parent != nullptr) parent->m_children.emplace(this);
 }

@@ -1,5 +1,5 @@
-#ifndef __RESOURCE_REF_INCLUDED__
-#define __RESOURCE_REF_INCLUDED__
+#ifndef __RESOURCE_PTR_INCLUDED__
+#define __RESOURCE_PTR_INCLUDED__
 
 #include "Resource.h"
 
@@ -8,14 +8,13 @@ namespace GameEngine
 	namespace Resources
 	{
 		template <class TResource>
-		class ResourceRef
+		class ResourcePtr
 		{
-
 		private:
 			TResource* m_resource = nullptr;
 
 			// Decrement the resource count and clean up
-			void ResourceRef<TResource>::DecResource()
+			void DecResource()
 			{
 				if (m_resource == nullptr) return;
 
@@ -25,7 +24,7 @@ namespace GameEngine
 			}
 
 			// Increment the resource count
-			void ResourceRef<TResource>::IncResource()
+			void IncResource()
 			{
 				if (m_resource == nullptr) return;
 
@@ -34,30 +33,23 @@ namespace GameEngine
 
 		public:
 
-			ResourceRef()
-			{
-				static_assert(std::is_base_of<Resource, TResource>::value);
-			}
-
-			ResourceRef(TResource* resource)
+			ResourcePtr(TResource* resource)
 			{
 				static_assert(std::is_base_of<Resource, TResource>::value);
 
 				m_resource = resource;
 				IncResource();
 			}
+			ResourcePtr() : ResourcePtr(nullptr) {};
 
-			ResourceRef(const ResourceRef<TResource>& other)
+			~ResourcePtr() { DecResource(); }
+
+			ResourcePtr(const ResourcePtr<TResource>& other)
 			{
-				DecResource();
-
 				m_resource = other.m_resource;
 				IncResource();
 			}
-
-			~ResourceRef() { DecResource(); }
-
-			ResourceRef<TResource>& operator=(const ResourceRef<TResource>& other)
+			ResourcePtr<TResource>& operator=(const ResourcePtr<TResource>& other)
 			{
 				DecResource();
 
@@ -67,7 +59,7 @@ namespace GameEngine
 				return *this;
 			}
 
-			ResourceRef<TResource>& operator=(TResource* resource)
+			ResourcePtr<TResource>& operator=(TResource* resource)
 			{
 				DecResource();
 
@@ -75,16 +67,21 @@ namespace GameEngine
 				IncResource();
 
 				return *this;
+			}
+
+			TResource* Get() const
+			{
+				return m_resource;
 			}
 
 			TResource* operator->() const
 			{
-				return m_resource;
+				return Get();
 			}
 
-			TResource* operator*() const
+			TResource& operator*() const
 			{
-				return m_resource;
+				return *Get();
 			}
 		};
 	}

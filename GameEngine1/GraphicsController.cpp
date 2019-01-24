@@ -269,12 +269,12 @@ void GraphicsController::StartDraw()
 	PerFrameBuffer data;
 
 	//Get WV matrix
-	DirectX::XMMATRIX mat = m_camera->obj->GetComponent<Transform>()->GetTransform();
+	DirectX::XMMATRIX mat = m_camera->obj->GetComponent<Elements::Transform>()->GetTransform();
 	DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(mat);
 
 	DirectX::XMStoreFloat4x4A(&data.wv, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));
 	DirectX::XMStoreFloat4x4A(&data.vp, DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(0.82547f, static_cast<float>(m_scrWidth) / m_scrHeight, 8.0f, 2000.0f)));
-	DirectX::XMStoreFloat3A(&data.camPos, m_camera->obj->GetComponent<Transform>()->GetPosition());
+	DirectX::XMStoreFloat3A(&data.camPos, m_camera->obj->GetComponent<Elements::Transform>()->GetPosition());
 
 	D3D11_MAPPED_SUBRESOURCE mp;
 	devContext->Map(cBufferFrame, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
@@ -283,19 +283,19 @@ void GraphicsController::StartDraw()
 
 	devContext->VSSetConstantBuffers(0, 1, &cBufferFrame);
 
-	DirectX::XMVECTOR viewDir = m_camera->obj->GetComponent<Transform>()->GetForwards();
+	DirectX::XMVECTOR viewDir = m_camera->obj->GetComponent<Elements::Transform>()->GetForwards();
 	rq.Refresh(viewDir);
 
 	//Fill light buffer
 	LightBuffer light;
 
 	//Get WV matrix
-	mat = m_light->obj->GetComponent<Transform>()->GetTransform();
+	mat = m_light->obj->GetComponent<Elements::Transform>()->GetTransform();
 	det = DirectX::XMMatrixDeterminant(mat);
 
 	DirectX::XMStoreFloat4x4A(&light.v, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));
 	DirectX::XMStoreFloat4x4A(&light.p, DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
-	DirectX::XMStoreFloat3A(&light.lightPos, m_light->obj->GetComponent<Transform>()->GetPosition());
+	DirectX::XMStoreFloat3A(&light.lightPos, m_light->obj->GetComponent<Elements::Transform>()->GetPosition());
 
 	devContext->Map(cBufferLight, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
 	memcpy(mp.pData, &light, sizeof(LightBuffer));
@@ -354,7 +354,7 @@ void GraphicsController::FillBuffers(GameEngine::Renderer* r, bool tex)
 	devContext->Unmap(indexBuffer, 0);*/
 
 	DirectX::XMFLOAT4X4A data[1];
-	DirectX::XMStoreFloat4x4A(data, DirectX::XMMatrixTranspose(r->obj->GetComponent<Transform>()->GetTransform()));
+	DirectX::XMStoreFloat4x4A(data, DirectX::XMMatrixTranspose(r->obj->GetComponent<Elements::Transform>()->GetTransform()));
 
 	devContext->Map(cBufferObject, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
 	memcpy(mp.pData, data, sizeof(DirectX::XMFLOAT4X4A));
@@ -463,7 +463,7 @@ void GraphicsController::RenderLightDepth()
 	PerFrameBuffer data;
 
 	//Get WV matrix
-	DirectX::XMMATRIX mat = m_light->obj->GetComponent<Transform>()->GetTransform();
+	DirectX::XMMATRIX mat = m_light->obj->GetComponent<Elements::Transform>()->GetTransform();
 	DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(mat);
 
 	DirectX::XMStoreFloat4x4A(&data.wv, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));

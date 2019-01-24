@@ -32,7 +32,7 @@ void RenderQueue::Refresh(DirectX::XMVECTOR forwards)
 			DirectX::XMVector3Dot(
 				DirectX::XMVector3Transform(
 					r->mesh->GetCentroid(),
-					r->obj->GetComponent<Transform>()->GetTransform()),
+					r->obj->GetComponent<Elements::Transform>()->GetTransform()),
 				forwards));
 		unsigned priority = *reinterpret_cast<unsigned*>(&result);
 

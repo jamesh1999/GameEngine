@@ -33,7 +33,7 @@ namespace GameEngine
 template <class T>
 T* GameEngine::Elements::ElementFactory::Create()
 {
-	//static_assert(std::is_base_of<Element, T>::value);
+	static_assert(std::is_base_of<Element, T>::value);
 
 	T* elem = new T;
 	dynamic_cast<Element*>(elem)->engine = engine;

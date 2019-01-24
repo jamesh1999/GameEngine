@@ -5,6 +5,7 @@
 #include <malloc.h>
 #include <new>
 #include "Element.h"
+#include "ElementPtr.h"
 
 namespace GameEngine
 {
@@ -22,7 +23,7 @@ namespace GameEngine
 			unsigned id = 0;
 
 		public:
-			CompositeObject* obj;
+			ElementPtr<CompositeObject> obj;
 
 			virtual ~Component() {}
 
@@ -48,7 +49,7 @@ namespace GameEngine
 			//Preferrable to constructor because initialisation has finished
 			virtual void Create() {};
 
-			void Destroy();
+			virtual void Destroy();
 		};
 	}
 }
