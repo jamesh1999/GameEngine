@@ -12,7 +12,6 @@
 #include "Renderer.h"
 #include "Material.h"
 #include "Camera.h"
-#include "Light.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -30,14 +29,11 @@ class GraphicsController
 	ID3D11Buffer* indexBuffer;
 	ID3D11Buffer* cBufferFrame;
 	ID3D11Buffer* cBufferObject;
-	ID3D11Buffer* cBufferLight;
 
 	std::vector<Renderer*> renderers;
 
 	UINT numQualityLevels;
 	Camera* m_camera;
-	Light* m_light;
-	D3D11_VIEWPORT vP;
 
 public:
 	int m_scrWidth;
@@ -54,10 +50,6 @@ public:
 	ID3D11DepthStencilState* depthState;
 	ID3D11RasterizerState* rasterizerState;
 
-	ID3D11VertexShader* dpthVtx;
-	ID3D11PixelShader* dpthPx;
-	ID3D11InputLayout* dpthILayout;
-
 	GraphicsController(int, int, bool, HWND);
 	~GraphicsController();
 	
@@ -70,14 +62,11 @@ public:
 
 	void AddRenderer(Renderer*);
 
-	void FillBuffers(Renderer*,bool);
+	void FillBuffers(Renderer*);
 
 	bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
 
 	void SetCamera(Camera*);
-	void SetLight(Light*);
-
-	void RenderLightDepth();
 };
 
 #endif

@@ -91,58 +91,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MeshLoader meshLoader;
 	GraphicsController graphics(width, height, false, hWnd);
 
-	D3D11_INPUT_ELEMENT_DESC iLayout[]
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
-	//HACK: Need to refactor
-	ID3D10Blob *buff = nullptr, *err = nullptr;
-	HRESULT success = D3DCompileFromFile(
-		L"depth.hlsl",
-		NULL,
-		NULL,
-		"VShader",
-		"vs_5_0",
-		D3DCOMPILE_DEBUG,
-		NULL,
-		&buff,
-		&err);
-
-	if (success != S_OK)
-	{
-		std::cout << static_cast<char*>(err->GetBufferPointer()) << std::endl;
-		system("pause");
-		exit(-1);
-	}
-	else if (err != nullptr)
-		err->Release();
-	graphics.device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &graphics.dpthVtx);
-	GraphicsController::instance->device->CreateInputLayout(
-		iLayout, 3, buff->GetBufferPointer(), buff->GetBufferSize(), &graphics.dpthILayout);
-	success = D3DCompileFromFile(
-		L"depth.hlsl",
-		NULL,
-		NULL,
-		"PShader",
-		"ps_5_0",
-		D3DCOMPILE_DEBUG,
-		NULL,
-		&buff,
-		&err);
-
-	if (success != S_OK)
-	{
-		std::cout << static_cast<char*>(err->GetBufferPointer()) << std::endl;
-		system("pause");
-		exit(-1);
-	}
-	else if (err != nullptr)
-		err->Release();
-	graphics.device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &graphics.dpthPx);
-
 	MeshData* mesh = new MeshData;
 	FbxNode* fbxNode = MeshLoader::LoadFBX("Track.fbx");
 	MeshLoader::PrintFBXHeirachy(fbxNode);
@@ -166,7 +114,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Initialize cylinder
 	Material* mat = new Material;
 	mat->passes.push_back(RenderPass());
-	
+	D3D11_INPUT_ELEMENT_DESC iLayout[]
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
 	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
 	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
 	
@@ -189,23 +142,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Add cylinder
 	graphics.AddRenderer(co.GetComponent<Renderer>());
 
-	CompositeObject root;
-
-	CompositeObject light;
-	t = light.GetComponent<Transform>();
-	t->SetPosition({ 0.0f, 120.0f, 0.0f });
-	t->SetRotation(DirectX::XMQuaternionRotationAxis({1.0f, 0.0f, 0.0f}, DirectX::XM_PIDIV2));
-	t->SetScale({ 1.0f, 1.0f, 1.0f });
-	t->SetParent(root.GetComponent<Transform>());
-
-	t = root.GetComponent<Transform>();
-	t->SetPosition({ -700.0f, 0.0f, 190.0f });
-	t->SetRotation(DirectX::XMQuaternionIdentity());
-	t->SetScale({ 1.0f, 1.0f, 1.0f });
-
-	light.AttachComponent<Light>();
-	graphics.SetLight(light.GetComponent<Light>());
-
 	std::cout << "Jingle Bells" << std::endl;
 
 	MSG message;
@@ -222,12 +158,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		else
 		{
-			//double delta = Time::TimeManager::DeltaT();
-			//t->SetRotation(DirectX::XMQuaternionMultiply(t->GetRotation(), DirectX::XMQuaternionRotationAxis({ 0.0f, 0.0f, 1.0f }, delta / 4.0f)));
-
 			ObjectManager::Update();
 			Input::InputManager::Update();
-			graphics.RenderLightDepth();
 			graphics.StartDraw();
 			graphics.RenderObjects();
 			graphics.EndDraw();

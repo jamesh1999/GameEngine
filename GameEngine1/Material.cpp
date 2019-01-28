@@ -283,10 +283,10 @@ void texcpy(void* dest, void* src, int size, int yscale, int xscale, int nrows, 
 	for(int i = 0; i < nrows; ++i)
 		for(int j = 0; j < ncols; ++j)
 		{
-			udest[(i * ncols + j) * size] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size];
-			udest[(i * ncols + j) * size + 1] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 1];
-			udest[(i * ncols + j) * size + 2] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 2];
-			udest[(i * ncols + j) * size + 3] = usrc[((i / yscale) * (ncols / xscale) + j / xscale) * size + 3];
+			udest[(i * ncols + j) * size] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size];
+			udest[(i * ncols + j) * size + 1] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size + 1];
+			udest[(i * ncols + j) * size + 2] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size + 2];
+			udest[(i * ncols + j) * size + 3] = usrc[((i / yscale) * (ncols / yscale) + j / xscale) * size + 3];
 		}
 }
 
