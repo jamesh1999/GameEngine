@@ -190,13 +190,75 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	else if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->dpthPx);
+
+	success = D3DCompileFromFile(
+		L"blur.hlsl",
+		NULL,
+		NULL,
+		"VShader",
+		"vs_5_0",
+		D3DCOMPILE_DEBUG,
+		NULL,
+		&buff,
+		&err);
+
+	if (success != S_OK)
+	{
+		std::cout << static_cast<char*>(err->GetBufferPointer()) << std::endl;
+		system("pause");
+		exit(-1);
+	}
+	else if (err != nullptr)
+		err->Release();
+	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->bloomVtx);
+	success = D3DCompileFromFile(
+		L"blur.hlsl",
+		NULL,
+		NULL,
+		"PShader",
+		"ps_5_0",
+		D3DCOMPILE_DEBUG,
+		NULL,
+		&buff,
+		&err);
+
+	if (success != S_OK)
+	{
+		std::cout << static_cast<char*>(err->GetBufferPointer()) << std::endl;
+		system("pause");
+		exit(-1);
+	}
+	else if (err != nullptr)
+		err->Release();
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->bloomPx);
+
+	success = D3DCompileFromFile(
+		L"blur.hlsl",
+		NULL,
+		NULL,
+		"PShaderV",
+		"ps_5_0",
+		D3DCOMPILE_DEBUG,
+		NULL,
+		&buff,
+		&err);
+
+	if (success != S_OK)
+	{
+		std::cout << static_cast<char*>(err->GetBufferPointer()) << std::endl;
+		system("pause");
+		exit(-1);
+	}
+	else if (err != nullptr)
+		err->Release();
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->bloomPxV);
 	
 	//MeshData* skybox = new MeshData;
 	//std::vector<std::string> tex_skybox;
 	//MeshLoader::ApplyFBXWithTextures(skybox, fbxNode, "skycube1_nolight", tex_skybox);
 
 	TrackLayout tl;
-	/*GameEngine::Resources::Mesh* track_layout = new GameEngine::Resources::Mesh;
+	GameEngine::Resources::Mesh* track_layout = new GameEngine::Resources::Mesh;
 	//fbxNode = MeshLoader::LoadFBX("Track_Outline.fbx");
 
 	FbxManager* fbx = FbxManager::Create();
@@ -211,7 +273,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Mesh* mesh = LoadFBX(fbxScene->GetRootNode(), path);
 	GameEngine::Resources::MeshLoader::ApplyFbxRecursive(track_layout, fbxScene->GetRootNode(), true);
 	fbx->Destroy();
-	TrackLayout::SetTrack(track_layout);*/
+	TrackLayout::SetTrack(track_layout);
 
 	GameEngine::Elements::CompositeObject* co = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 

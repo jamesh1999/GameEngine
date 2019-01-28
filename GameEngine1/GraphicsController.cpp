@@ -64,8 +64,8 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	swpDesc.BufferDesc.Width = m_scrWidth;
 	swpDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swpDesc.OutputWindow = hWnd;
-	swpDesc.SampleDesc.Count = 4;
-	swpDesc.SampleDesc.Quality = numQualityLevels - 1;
+	swpDesc.SampleDesc.Count = 1;
+	swpDesc.SampleDesc.Quality = 0;
 	swpDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swpDesc.Windowed = !m_fullscreen;
 	swpDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
@@ -92,14 +92,42 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	device->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer);
 	pBackBuffer->Release();
 
+	D3D11_TEXTURE2D_DESC tD;
+	ZeroMemory(&tD, sizeof(D3D11_TEXTURE2D_DESC));
+	tD.ArraySize = 1;
+	tD.Usage = D3D11_USAGE_DEFAULT;
+	tD.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	tD.Height = m_scrHeight;
+	tD.Width = m_scrWidth;
+	tD.MiscFlags = 0;
+	tD.MipLevels = 1;
+	tD.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	tD.SampleDesc.Count = 1;
+	tD.SampleDesc.Quality = 0;
+
+	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer);
+	
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
+	srvD.Format = tD.Format;
+	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvD.Texture2D.MipLevels = -1;
+	srvD.Texture2D.MostDetailedMip = 0;
+	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV);
+
+	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer2);
+	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV2);
+
 	//Create depth and stencil buffer
 	D3D11_TEXTURE2D_DESC depthDesc;
 	ZeroMemory(&depthDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
 	depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	depthDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthDesc.SampleDesc.Count = 4;
-	depthDesc.SampleDesc.Quality = numQualityLevels - 1;
+	depthDesc.SampleDesc.Count = 1;
+	depthDesc.SampleDesc.Quality = 0;
 	depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthDesc.ArraySize = 1;
 	depthDesc.MipLevels = 1;
@@ -144,14 +172,15 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	ZeroMemory(&dsvD, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
 	dsvD.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvD.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	dsvD.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvD.Texture2D.MipSlice = 0;
 
 	device->CreateDepthStencilView(pDepthBuffer, &dsvD, &depthBuffer);
 	pDepthBuffer->Release();
 
 	//Set back buffer & depth/stencil view as render targets
-	devContext->OMSetRenderTargets(1, &backBuffer, depthBuffer);
+	ID3D11RenderTargetView* rTVs[2] = { backBuffer, bloomBuffer };
+	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 
 	//Create rasterizer state
 	D3D11_RASTERIZER_DESC rsD;
@@ -233,10 +262,21 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	bDsc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	bDsc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
 	bDsc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	bDsc.RenderTarget[1].BlendEnable = true;
+	bDsc.RenderTarget[1].BlendOp = D3D11_BLEND_OP_ADD;
+	bDsc.RenderTarget[1].BlendOpAlpha = D3D11_BLEND_OP_MAX;
+	bDsc.RenderTarget[1].DestBlend = D3D11_BLEND_ZERO;
+	bDsc.RenderTarget[1].DestBlendAlpha = D3D11_BLEND_ZERO;
+	bDsc.RenderTarget[1].SrcBlend = D3D11_BLEND_ONE;
+	bDsc.RenderTarget[1].SrcBlendAlpha = D3D11_BLEND_ONE;
+	bDsc.RenderTarget[1].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	ID3D11BlendState* blendState;
 	device->CreateBlendState(&bDsc, &blendState);
 	devContext->OMSetBlendState(blendState, NULL, 0xffffffff);
+
+	bDsc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	bDsc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	device->CreateBlendState(&bDsc, &blendAdd);
 }
 
 GraphicsController::~GraphicsController()
@@ -258,6 +298,8 @@ GraphicsController::~GraphicsController()
 void GraphicsController::StartDraw()
 {
 	devContext->ClearRenderTargetView(backBuffer, DirectX::XMVECTORF32{ 0.0, 0.0, 0.0, 1.0 });
+	devContext->ClearRenderTargetView(bloomBuffer, DirectX::XMVECTORF32{ 0.0, 0.0, 0.0, 1.0 });
+	devContext->ClearRenderTargetView(bloomBuffer2, DirectX::XMVECTORF32{ 0.0, 0.0, 0.0, 1.0 });
 	devContext->ClearDepthStencilView(depthBuffer,
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0, 0);
@@ -322,9 +364,32 @@ void GraphicsController::RenderObjects()
 
 void GraphicsController::EndDraw()
 {
+	devContext->ClearDepthStencilView(depthBuffer,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0, 0);
+	ID3D11RenderTargetView* rTVs[2] = { bloomBuffer2, NULL };
+	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
+	devContext->PSSetShaderResources(0, 1, &bloomSRV);
+	devContext->VSSetShader(bloomVtx, NULL, NULL);
+	devContext->PSSetShader(bloomPx, NULL, NULL);
+	devContext->OMSetBlendState(blendAdd, NULL, 0xffffffff);
+	devContext->Draw(3, 0);
+
+	devContext->ClearDepthStencilView(depthBuffer,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0, 0);
+
+	rTVs[0] = backBuffer;
+	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
+	devContext->PSSetShaderResources(0, 1, &bloomSRV2);
+	devContext->PSSetShader(bloomPxV, NULL, NULL);
+	devContext->Draw(3, 0);
+
+	devContext->OMSetBlendState(blendState, NULL, 0xffffffff);
 	swapChain->Present(NULL, NULL);
 	ID3D11ShaderResourceView* nullSRV = NULL;
 	devContext->PSSetShaderResources(1, 1, &nullSRV);
+	devContext->PSSetShaderResources(0, 1, &nullSRV);
 }
 
 void GraphicsController::AddRenderer(GameEngine::Renderer* r)
@@ -400,8 +465,8 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 
 	depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	depthDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthDesc.SampleDesc.Count = 4;
-	depthDesc.SampleDesc.Quality = numQualityLevels - 1;
+	depthDesc.SampleDesc.Count = 1;
+	depthDesc.SampleDesc.Quality = 0;
 	depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthDesc.ArraySize = 1;
 	depthDesc.MipLevels = 1;
@@ -415,13 +480,41 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	ZeroMemory(&dsvD, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
 	dsvD.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvD.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	dsvD.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvD.Texture2D.MipSlice = 0;
 
 	device->CreateDepthStencilView(pDepthBuffer, &dsvD, &depthBuffer);
 	pDepthBuffer->Release();
 
-	devContext->OMSetRenderTargets(1, &backBuffer, depthBuffer);
+	D3D11_TEXTURE2D_DESC tD;
+	ZeroMemory(&tD, sizeof(D3D11_TEXTURE2D_DESC));
+	tD.ArraySize = 1;
+	tD.Usage = D3D11_USAGE_DEFAULT;
+	tD.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	tD.Height = m_scrHeight;
+	tD.Width = m_scrWidth;
+	tD.MiscFlags = 0;
+	tD.MipLevels = 1;
+	tD.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	tD.SampleDesc.Count = 1;
+	tD.SampleDesc.Quality = 0;
+
+	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
+	srvD.Format = tD.Format;
+	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvD.Texture2D.MipLevels = -1;
+	srvD.Texture2D.MostDetailedMip = 0;
+	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV);
+
+	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer2);
+	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV2);
+
+	ID3D11RenderTargetView* rTVs[2] = { backBuffer, bloomBuffer };
+	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 
 	vP.TopLeftX = 0;
 	vP.TopLeftY = 0;
@@ -483,7 +576,8 @@ void GraphicsController::RenderLightDepth()
 		FillBuffers(r, false);
 	}
 
-	devContext->OMSetRenderTargets(1, &backBuffer, depthBuffer);
+	ID3D11RenderTargetView* rTVs[2] = { backBuffer, bloomBuffer };
+	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 }
 
 void GraphicsController::EnableDepthWrite()

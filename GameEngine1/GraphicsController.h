@@ -67,10 +67,21 @@ namespace GameEngine
 			ID3D11DeviceContext* devContext;
 			IDXGISwapChain* swapChain;
 			ID3D11RenderTargetView* backBuffer;
+			ID3D11RenderTargetView* bloomBuffer;
+			ID3D11RenderTargetView* bloomBuffer2;
 			ID3D11DepthStencilView* depthBuffer;
 			ID3D11DepthStencilState* depthState;
 			ID3D11DepthStencilState* depthStateDisabled;
 			ID3D11RasterizerState* rasterizerState;
+
+			ID3D11VertexShader* bloomVtx;
+			ID3D11PixelShader* bloomPx;
+			ID3D11PixelShader* bloomPxV;
+			ID3D11ShaderResourceView* bloomSRV;
+			ID3D11ShaderResourceView* bloomSRV2;
+
+			ID3D11BlendState* blendAdd;
+			ID3D11BlendState* blendState;
 
 			ID3D11VertexShader* dpthVtx;
 			ID3D11PixelShader* dpthPx;

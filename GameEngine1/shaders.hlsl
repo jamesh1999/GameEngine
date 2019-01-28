@@ -36,6 +36,12 @@ cbuffer perObject : register(b1)
     float4x4 objWorldTransform;
 };
 
+struct POut
+{
+    float4 main : SV_TARGET0;
+    float4 bloom : SV_TARGET1;
+};
+
 VOut VShader(float4 position : POSITION, float3 color : NORMAL, float3 tex : TEXCOORD0)
 {
     VOut output;
@@ -91,7 +97,7 @@ float4 PShader(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view 
 	return float4(color, 1.0) * c + specular;
 }
 
-float4 PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view : TEXCOORD1, float3 tex : TEXCOORD0, float3 color : TEXCOORD2, float4 lightViewPos : TEXCOORD3, float3 lightPos : TEXCOORD4) : SV_TARGET
+POut PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view : TEXCOORD1, float3 tex : TEXCOORD0, float3 color : TEXCOORD2, float4 lightViewPos : TEXCOORD3, float3 lightPos : TEXCOORD4) : SV_TARGET
 {
     float4 c = float4(0.04, 0.05, 0.07, 1.0);
     float4 specular = float4(0.0,0.0,0.0,0.0);
@@ -126,5 +132,10 @@ float4 PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 vi
 
     float4 texCol = pow(shaderTexture.Sample(samplerWrap, tex), 2.2);
 
-    return pow(texCol * c + specular,1/2.2);
+    POut output;
+    output.main = pow(texCol * c + specular,1/2.2);
+
+    output.bloom = float4(0.0, 0.0, 0.0, 1.0);
+
+    return output;
 }
