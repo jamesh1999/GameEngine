@@ -18,6 +18,14 @@ typedef struct
 	float padding;
 } PerFrameBuffer;
 
+typedef struct
+{
+	DirectX::XMFLOAT4X4A v;
+	DirectX::XMFLOAT4X4A p;
+	DirectX::XMFLOAT3A lightPos;
+	float padding;
+} LightBuffer;
+
 GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	: hWnd(wnd), m_scrWidth(w), m_scrHeight(h), m_fullscreen(fullscreen)
 {
@@ -142,7 +150,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	ZeroMemory(&rsD, sizeof(D3D11_RASTERIZER_DESC));
 
 	rsD.AntialiasedLineEnable = false;
-	rsD.CullMode = D3D11_CULL_BACK;
+	rsD.CullMode = D3D11_CULL_NONE;
 	rsD.DepthBias = 0.0;
 	rsD.DepthBiasClamp = 0.0;
 	rsD.DepthClipEnable = true;
@@ -156,8 +164,6 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	devContext->RSSetState(rasterizerState);
 
 	//Setup viewport
-	D3D11_VIEWPORT vP;
-
 	ZeroMemory(&vP, sizeof(D3D11_VIEWPORT));
 
 	vP.TopLeftX = 0;
@@ -198,6 +204,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	cBD.Usage = D3D11_USAGE_DYNAMIC;
 
 	device->CreateBuffer(&cBD, NULL, &cBufferFrame);
+	device->CreateBuffer(&cBD, NULL, &cBufferLight);
 
 	//Per object CB
 	cBD.ByteWidth = sizeof(DirectX::XMFLOAT4X4A);
@@ -231,6 +238,7 @@ void GraphicsController::StartDraw()
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0, 0);
 	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	devContext->RSSetViewports(1, &vP);
 
 	//Fill per frame buffer
 	PerFrameBuffer data;
@@ -245,23 +253,46 @@ void GraphicsController::StartDraw()
 
 	D3D11_MAPPED_SUBRESOURCE mp;
 	devContext->Map(cBufferFrame, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
-	memcpy(mp.pData, &data, sizeof(DirectX::XMFLOAT4X4A) * 2);
+	memcpy(mp.pData, &data, sizeof(PerFrameBuffer));
 	devContext->Unmap(cBufferFrame, 0);
 
 	devContext->VSSetConstantBuffers(0, 1, &cBufferFrame);
+
+	//Fill light buffer
+	LightBuffer light;
+
+	//Get WV matrix
+	mat = m_light->obj->GetComponent<Transform>()->GetTransform();
+	det = DirectX::XMMatrixDeterminant(mat);
+
+	DirectX::XMStoreFloat4x4A(&light.v, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));
+	DirectX::XMStoreFloat4x4A(&light.p, DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
+	DirectX::XMStoreFloat3A(&light.lightPos, m_light->obj->GetComponent<Transform>()->GetPosition());
+
+	devContext->Map(cBufferLight, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
+	memcpy(mp.pData, &light, sizeof(PerFrameBuffer));
+	devContext->Unmap(cBufferLight, 0);
+
+	devContext->VSSetConstantBuffers(2, 1, &cBufferLight);
+
+	ID3D11ShaderResourceView* srv = m_light->GetSRV();
+	devContext->PSSetShaderResources(1, 1, &srv);
+	devContext->PSSetSamplers(1, 1, &m_light->ss);
 }
 
 void GraphicsController::RenderObjects()
 {
 	for(auto r : renderers)
 	{
-		FillBuffers(r);
+		FillBuffers(r,true);
 	}
 }
 
 void GraphicsController::EndDraw()
 {
 	swapChain->Present(NULL, NULL);
+	ID3D11ShaderResourceView* nullSRV = NULL;
+	devContext->PSSetShaderResources(1, 1, &nullSRV);
 }
 
 void GraphicsController::AddRenderer(Renderer* r)
@@ -269,7 +300,7 @@ void GraphicsController::AddRenderer(Renderer* r)
 	renderers.push_back(r);
 }
 
-void GraphicsController::FillBuffers(Renderer* r)
+void GraphicsController::FillBuffers(Renderer* r, bool tex)
 {
 	D3D11_MAPPED_SUBRESOURCE mp;
 
@@ -296,9 +327,15 @@ void GraphicsController::FillBuffers(Renderer* r)
 		devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		devContext->VSSetConstantBuffers(1, 1, &cBufferObject);
 
-		devContext->PSSetSamplers(0, 1, &r->mat[i]->m_samplerState);
-		devContext->PSSetShaderResources(0, 1, &r->mat[i]->m_texView);
-		r->Render(i);
+		if (tex)
+		{
+			devContext->PSSetSamplers(0, 1, &r->mat[i]->m_samplerState);
+			devContext->PSSetShaderResources(0, 1, &r->mat[i]->m_texView);
+
+			r->Render(i);
+		}
+		else
+			devContext->DrawIndexed((*r->mesh)[0].indices.size(), 0, 0);
 	}
 }
 
@@ -351,7 +388,6 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 
 	devContext->OMSetRenderTargets(1, &backBuffer, depthBuffer);
 
-	D3D11_VIEWPORT vP;
 	vP.TopLeftX = 0;
 	vP.TopLeftY = 0;
 	vP.MinDepth = 0.0;
@@ -363,7 +399,52 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	return true;
 }
 
-void GraphicsController::SetCamera(Camera *cam)
+void GraphicsController::SetCamera(Camera* cam)
 {
 	m_camera = cam;
+}
+
+void GraphicsController::SetLight(Light* light)
+{
+	m_light = light;
+}
+
+void GraphicsController::RenderLightDepth()
+{
+	ID3D11RenderTargetView* rtv = m_light->GetRTV();
+	devContext->OMSetRenderTargets(1, &rtv, m_light->depthBuff);
+	devContext->IASetInputLayout(dpthILayout);
+	devContext->VSSetShader(dpthVtx, NULL, NULL);
+	devContext->PSSetShader(dpthPx, NULL, NULL);
+	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	devContext->RSSetViewports(1, &m_light->vp);
+	devContext->ClearDepthStencilView(m_light->depthBuff,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0, 0);
+	devContext->ClearRenderTargetView(m_light->GetRTV(), DirectX::XMVECTORF32{ 1.0, 1.0, 1.0, 1.0 });
+	
+
+	//Fill per frame buffer
+	PerFrameBuffer data;
+
+	//Get WV matrix
+	DirectX::XMMATRIX mat = m_light->obj->GetComponent<Transform>()->GetTransform();
+	DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(mat);
+
+	DirectX::XMStoreFloat4x4A(&data.wv, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));
+	DirectX::XMStoreFloat4x4A(&data.vp, DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
+
+	D3D11_MAPPED_SUBRESOURCE mp;
+	devContext->Map(cBufferFrame, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
+	memcpy(mp.pData, &data, sizeof(DirectX::XMFLOAT4X4A) * 2);
+	devContext->Unmap(cBufferFrame, 0);
+
+	devContext->VSSetConstantBuffers(0, 1, &cBufferFrame);
+
+	for(Renderer* r : renderers)
+	{
+		FillBuffers(r, false);
+	}
+
+	devContext->OMSetRenderTargets(1, &backBuffer, depthBuffer);
 }
