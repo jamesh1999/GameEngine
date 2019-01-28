@@ -1,23 +1,29 @@
+#include "Component.h"
 #include "ShipController.h"
 #include "InputManager.h"
 #include "Transform.h"
 #include "CompositeObject.h"
-#include "TimeManager.h"
+#include "Clock.h"
 #include "GraphicsController.h"
 #include "TrackLayout.h"
 #include <iostream>
 #include <tuple>
+#include <cmath>
 #include "MeshLoader.h"
+#include "CompositeObject.h"
+#include "ElementFactory.h"
+#include "ParticleSystem.h"
+#include "ResourceFactory.h"
 
 void ShipController::UpdateBase()
 {
-	Transform* transform = obj->GetComponent<Transform>();
+	GameEngine::Elements::Transform* transform = obj->GetComponent<GameEngine::Elements::Transform>();
 	DirectX::XMVECTOR pos = transform->GetPosition();
 
 	DirectX::XMVECTOR norm, basePos;
 	std::tie(norm, basePos, overTri) = TrackLayout::GetNormal(pos);
 
-	base.GetComponent<Transform>()->SetPosition(basePos);
+	base->GetComponent<GameEngine::Elements::Transform>()->SetPosition(basePos);
 	DirectX::XMStoreFloat3(&curNorm, norm);
 }
 
@@ -38,19 +44,22 @@ void ShipController::Update()
 					facingDir),
 				norm)));
 
-	Transform* transform = obj->GetComponent<Transform>();
+	GameEngine::Elements::Transform* transform = obj->GetComponent<GameEngine::Elements::Transform>();
 
 	DirectX::XMVECTOR shipPos = transform->GetPosition();
 	float height = 0.0f;
-	float dist = Time::TimeManager::DeltaT() * 40.0;
+	float dist = engine->clock->DeltaT() * 40.0;
 	float dpos = 0.0f;
 	if (Input::InputManager::KeyIsPressed(Input::KeyW))
 	{
 		dpos += dist;
+
+		if (Input::InputManager::KeyIsPressed((Input::KeyF)))
+			dpos *= 10;
 	}
 	if (Input::InputManager::KeyIsPressed(Input::KeyS))
 	{
-		dpos -= dist;
+		dpos -= dist * 0.5f;
 	}
 	if (Input::InputManager::KeyIsPressed(Input::KeyQ))
 	{
@@ -98,7 +107,7 @@ void ShipController::Update()
 
 	//Calculate track repulsion force
 	DirectX::XMFLOAT3 basepos;
-	DirectX::XMStoreFloat3(&basepos, base.GetComponent<Transform>()->GetPosition());
+	DirectX::XMStoreFloat3(&basepos, base->GetComponent<GameEngine::Elements::Transform>()->GetPosition());
 
 	if (overTri)
 	{
@@ -106,14 +115,14 @@ void ShipController::Update()
 			DirectX::XMVector3Dot(
 				DirectX::XMVectorSubtract(
 					shipPos,
-					base.GetComponent<Transform>()->GetPosition()),
+					base->GetComponent<GameEngine::Elements::Transform>()->GetPosition()),
 				norm
 			)) - 5.0f;
 		
-		if (vDist > Time::TimeManager::DeltaT() * vertSpeed)
-			vDist = Time::TimeManager::DeltaT() * vertSpeed;
-		else if (vDist < -Time::TimeManager::DeltaT() * vertSpeed)
-			vDist = -Time::TimeManager::DeltaT() * vertSpeed;
+		if (vDist > engine->clock->DeltaT() * vertSpeed)
+			vDist = engine->clock->DeltaT() * vertSpeed;
+		else if (vDist < -engine->clock->DeltaT() * vertSpeed)
+			vDist = -engine->clock->DeltaT() * vertSpeed;
 
 		//Add on repulsion force
 		shipPos = DirectX::XMVectorAdd(DirectX::XMVectorScale(norm, -vDist), shipPos);
@@ -121,7 +130,7 @@ void ShipController::Update()
 
 	shipPos = DirectX::XMVectorAdd(
 		shipPos,
-		DirectX::XMVectorScale(v, Time::TimeManager::DeltaT())
+		DirectX::XMVectorScale(v, engine->clock->DeltaT())
 	);
 	transform->SetPosition(shipPos);
 
@@ -131,7 +140,7 @@ void ShipController::Update()
 			DirectX::XMVectorPow(
 				v,
 				{ 2.0f, 2.0f, 2.0f }),
-			drag * Time::TimeManager::DeltaT()
+			drag * engine->clock->DeltaT()
 		);
 
 	DirectX::XMFLOAT3 manualD, manualV;
@@ -189,14 +198,14 @@ void ShipController::Update()
 	DirectX::XMStoreFloat3(&facingDirection, facingDir);
 
 	//Get current normal
-	DirectX::XMVECTOR currentNormal = transform->GetUp();
+	DirectX::XMVECTOR currentNormal = norm;//transform->GetUp();
 
 	//Interpolate to find desired normal for this frame
-	float angle = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(norm, currentNormal));
+	/*float angle = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(norm, currentNormal));
 	float interpolate = alignSpeed * Time::TimeManager::DeltaT() / angle;
-	if (interpolate > 1.0f)
+	if (interpolate > 1.0f || interpolate < 0.0f || isnan(interpolate))
 		interpolate = 1.0f;
-	currentNormal = DirectX::XMVectorLerp(currentNormal, norm, interpolate);
+	currentNormal = DirectX::XMVectorLerp(currentNormal, norm, interpolate);*/
 
 	//Project facing direction onto plane of current normal
 	facingDir = DirectX::XMVector3Normalize(
@@ -253,32 +262,44 @@ void ShipController::Update()
 		DirectX::XMVector3TransformCoord(
 	{ 0.0f, 3.0f, -20.0f },
 			transform->GetTransform());
-	cam.GetComponent<Transform>()->SetPosition(camPos);
-	cam.GetComponent<Transform>()->SetRotation(transform->GetRotation());
+	cam->GetComponent<GameEngine::Elements::Transform>()->SetPosition(camPos);
+	cam->GetComponent<GameEngine::Elements::Transform>()->SetRotation(transform->GetRotation());
 
-	model.GetComponent<Transform>()->SetRotation(DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
+	model->GetComponent<GameEngine::Elements::Transform>()->SetRotation(DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
 
 	//shipRot = DirectX::XMVectorSetByIndex(shipRot, roll, 2);
 	//transform->SetRotation(shipRot);
+
+	//if (DirectX::XMVectorGetY(shipPos) > 8.0f && std::fabs(DirectX::XMVectorGetX(v)) > 0.001)
+		//engine->graphics->RemoveRenderer(obj->GetComponent<GameEngine::Renderer>());
+
+	if (Input::InputManager::KeyIsPressed(Input::KeyZ))
+	{
+		DirectX::XMFLOAT3 wp;
+		DirectX::XMStoreFloat3(&wp, transform->GetPosition());
+		engine->particleSystem->Initialise(wp);
+	}
 }
 
 void ShipController::Create()
 {
+	cam = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	model = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	base = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	light = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+
 	//Init camera
-	cam.AttachComponent<Camera>();
-	cam.GetComponent<Transform>()->SetScale({ 1.0f,1.0f,1.0f });
-	GraphicsController::instance->SetCamera(cam.GetComponent<Camera>());
+	cam->AttachComponent<Camera>();
+	cam->GetComponent<GameEngine::Elements::Transform>()->SetScale({ 1.0f,1.0f,1.0f });
 
 	//Init model child object
-	MeshData* mesh = new MeshData;
-	FbxNode* fbxNode = MeshLoader::LoadFBX("test.fbx");
-	MeshLoader::ApplyFBX(mesh, fbxNode, "");
+	GameEngine::Resources::Mesh* mesh = engine->resourceFactory->Create<GameEngine::Resources::Mesh>("test.fbx;lodGroup1/ship/");
 
-	Transform* t = model.GetComponent<Transform>();
+	GameEngine::Elements::Transform* t = model->GetComponent<GameEngine::Elements::Transform>();
 	t->SetPosition({ 0.0f, 0.0f, 0.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({ 1.0f, 1.0f, 1.0f });
-	t->SetParent(obj->GetComponent<Transform>());
+	t->SetParent(obj->GetComponent<GameEngine::Elements::Transform>());
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
@@ -287,17 +308,26 @@ void ShipController::Create()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	Material* mat = new Material;
+	Material* mat = engine->resourceFactory->Create<Material>("");
 	mat->passes.push_back(RenderPass());
+	mat->passes[0].engine = engine;
 	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
 	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
-	mat->LoadTGA("test.tga");
 
-	Renderer* r = model.AttachComponent<Renderer>();
-	MaterialGroup m;
-	m.AddMaterial(mat);
-	r->Init(m, mesh);
-	GraphicsController::instance->AddRenderer(r);
+	GameEngine::Renderer* r = model->AttachComponent<GameEngine::Renderer>();
+	r->Init(mat, mesh);
+	GameEngine::Resources::Texture* tex = engine->resourceFactory->Create<GameEngine::Resources::Texture>("test.tga");
+	r->SetTexture(tex);
+
+	//Init light
+	t = light->GetComponent<GameEngine::Elements::Transform>();
+	t->SetRotation(DirectX::XMQuaternionIdentity());
+	t->SetPosition({ 0.0f, 0.0f, 10.0f });
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	t->SetParent(obj->GetComponent<GameEngine::Elements::Transform>());
+
+	light->AttachComponent<Light>();
+	engine->graphics->SetLight(light->GetComponent<Light>());
 
 	facingDirection = { 0.0f, 0.0f, 1.0f };
 	velocity = { 0.0f, 0.0f, 0.0f };

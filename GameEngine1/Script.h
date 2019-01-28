@@ -3,11 +3,10 @@
 
 #include "Component.h"
 
-class Script : public Component
+class Script : public GameEngine::Elements::Component
 {
 public:
-	virtual void Update() = 0;
-	virtual void Create() = 0;
+	virtual void Update() {};
 };
 
 #endif

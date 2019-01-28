@@ -2,7 +2,7 @@
 #include "Geometry.h"
 #include <iostream>
 
-void Geometry::GenerateCuboid(SubMesh* mesh, float w, float h, float d)
+void Geometry::GenerateCuboid(GameEngine::Resources::Mesh* mesh, float w, float h, float d)
 {
 	Vertex buff;
 	
@@ -61,7 +61,7 @@ void Geometry::GenerateCuboid(SubMesh* mesh, float w, float h, float d)
 		mesh->indices.push_back(i);
 }
 
-void Geometry::GenerateSphere(SubMesh* mesh, float radius, int nSlices, int nSegments)
+void Geometry::GenerateSphere(GameEngine::Resources::Mesh* mesh, float radius, int nSlices, int nSegments)
 {
 	//Sides
 	float deltaH = 2.0 / nSlices;
@@ -130,7 +130,7 @@ void Geometry::GenerateSphere(SubMesh* mesh, float radius, int nSlices, int nSeg
 	}
 }
 
-void Geometry::GenerateCylinder(SubMesh* mesh, float topRadius, float bottomRadius, float h, int nSlices, int nSegments)
+void Geometry::GenerateCylinder(GameEngine::Resources::Mesh* mesh, float topRadius, float bottomRadius, float h, int nSlices, int nSegments)
 {
 	//Sides
 	float deltaH = h / nSlices;
@@ -219,7 +219,7 @@ void Geometry::GenerateCylinder(SubMesh* mesh, float topRadius, float bottomRadi
 	}
 }
 
-void Geometry::GenerateQuad(SubMesh* mesh, float w, float l, int xSplit, int ySplit)
+void Geometry::GenerateQuad(GameEngine::Resources::Mesh* mesh, float w, float l, int xSplit, int ySplit)
 {
 	//Vertices
 	float origX = -w / 2;

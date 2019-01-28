@@ -13,138 +13,318 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Scripts">
-      <UniqueIdentifier>{154586f9-b1e5-4b68-8bdb-4baaf773fd63}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Scripts">
-      <UniqueIdentifier>{d17a5227-be24-41c3-aa33-1ca0daaa4281}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\GameCode">
       <UniqueIdentifier>{5c5ec805-cf3b-4899-a187-a0469527f026}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\GameCode">
       <UniqueIdentifier>{85bd34bc-da99-4e6b-86e3-3e272bdaa9b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{56433a93-be28-4663-bd86-127883f8d967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Base">
+      <UniqueIdentifier>{bf7b43c4-67cc-4448-9d6c-c517d2bf7dfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Graphics">
+      <UniqueIdentifier>{aad9e0c6-4d6f-445c-80e2-ee898d26b7f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{9f207189-7eed-4aff-aeeb-e28bc0d483ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Base">
+      <UniqueIdentifier>{4abf8ac3-7ea1-458d-90ae-704baeaa34e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameCode\Scripts">
+      <UniqueIdentifier>{154586f9-b1e5-4b68-8bdb-4baaf773fd63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameCode\Scripts">
+      <UniqueIdentifier>{d17a5227-be24-41c3-aa33-1ca0daaa4281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Generation">
+      <UniqueIdentifier>{3e815afd-8a86-41a7-9f54-818c619cce18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Generation">
+      <UniqueIdentifier>{23cca0d0-2d10-446c-8eb5-755fdf0f15ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Graphics">
+      <UniqueIdentifier>{467dd0eb-d93e-4d08-a637-a7df6e32ce16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Resources">
+      <UniqueIdentifier>{89eebf28-a9b8-4181-9c04-5ecb526ef1a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Base\Components">
+      <UniqueIdentifier>{b14034f4-4261-4a7c-a68d-9e36836dc4ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Resources\Initialisation">
+      <UniqueIdentifier>{4e426ea4-5e90-48cf-9dd1-9d36facd6156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Base\Elements">
+      <UniqueIdentifier>{6910af9e-c65c-4f1d-8c32-ba3c32f2a3a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Base\Resources">
+      <UniqueIdentifier>{9c5dd1cd-5045-40f6-a69b-1cf3d607537a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Base\Elements\Components">
+      <UniqueIdentifier>{31750915-7492-4fce-a1fc-b1f63cbeab15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Base\Resources\Initialisation">
+      <UniqueIdentifier>{046c576b-98e9-4b0f-8993-fc5b794b7ec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Base\Utils">
+      <UniqueIdentifier>{dba0667c-2af0-4816-a17d-8e99d39083b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Geometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Perlin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FractalFault.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ShipController.cpp">
-      <Filter>Source Files\Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameCode\Scripts</Filter>
     </ClCompile>
     <ClCompile Include="TrackLayout.cpp">
       <Filter>Source Files\GameCode</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialManager.cpp">
+    <ClCompile Include="FractalFault.cpp">
+      <Filter>Source Files\Engine\Generation</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Source Files\Engine\Generation</Filter>
+    </ClCompile>
+    <ClCompile Include="LODGenerator.cpp">
+      <Filter>Source Files\Engine\Generation</Filter>
+    </ClCompile>
+    <ClCompile Include="Perlin.cpp">
+      <Filter>Source Files\Engine\Generation</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files\Engine\Generation</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryBuffer.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsController.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files\Engine\Base\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryBufferContainer.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Clock.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementFactory.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureArray.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFactory.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureArrayLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderQueue.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticBatcher.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source Files\Engine\Base\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertyDict.cpp">
+      <Filter>Source Files\Engine\Base\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Element.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementPtr.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GraphicsController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CompositeObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Script.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Perlin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FractalFault.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ShipController.h">
-      <Filter>Header Files\Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GameCode\Scripts</Filter>
     </ClInclude>
     <ClInclude Include="TrackLayout.h">
       <Filter>Header Files\GameCode</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialManager.h">
+    <ClInclude Include="GeometryBuffer.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsController.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="FractalFault.h">
+      <Filter>Header Files\Engine\Generation</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Header Files\Engine\Generation</Filter>
+    </ClInclude>
+    <ClInclude Include="LODGenerator.h">
+      <Filter>Header Files\Engine\Generation</Filter>
+    </ClInclude>
+    <ClInclude Include="Perlin.h">
+      <Filter>Header Files\Engine\Generation</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Header Files\Engine\Base\Elements\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files\Engine\Generation</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Header Files\Engine\Base\Elements\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\Engine\Base\Elements\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLoader.h">
+      <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoader.h">
+      <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryBufferContainer.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Clock.h">
+      <Filter>Header Files\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ElementFactory.h">
+      <Filter>Header Files\Engine\Base\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Element.h">
+      <Filter>Header Files\Engine\Base\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeObject.h">
+      <Filter>Header Files\Engine\Base\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentContainers.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="PriorityQueue.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="OrderedContainer.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializable.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFactory.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceTable.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArray.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoader.h">
+      <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArrayLoader.h">
+      <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorParser.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="LazyOrderedContainer.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderQueue.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticBatcher.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyDict.h">
+      <Filter>Header Files\Engine\Base\Elements\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ElementPtr.h">
+      <Filter>Header Files\Engine\Base\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourcePtr.h">
+      <Filter>Header Files\Engine\Base\Resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -22,33 +22,33 @@
     <ProjectGuid>{BF1D57A4-D9C6-42E6-A764-E62B756F8D38}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DirectXTest2</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <ProjectName>GameEngine1</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -108,11 +108,12 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\FBXSDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\FBXSDK\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\FBXSDK\lib\vs2015\x64\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -149,58 +150,103 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\FBXSDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\FBXSDK\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\FBXSDK\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Element.cpp" />
+    <ClCompile Include="ElementFactory.cpp" />
+    <ClCompile Include="ElementPtr.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FractalFault.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="GeometryBuffer.cpp" />
+    <ClCompile Include="GeometryBufferContainer.cpp" />
     <ClCompile Include="GraphicsController.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="MaterialManager.cpp" />
-    <ClCompile Include="MeshData.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LODGenerator.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Perlin.cpp" />
+    <ClCompile Include="PropertyDict.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="RenderQueue.cpp" />
+    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceFactory.cpp" />
+    <ClCompile Include="SceneLoader.cpp" />
     <ClCompile Include="ShipController.cpp" />
+    <ClCompile Include="StaticBatcher.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="TextureArray.cpp" />
+    <ClCompile Include="TextureArrayLoader.cpp" />
+    <ClCompile Include="TextureLoader.cpp" />
+    <ClCompile Include="Clock.cpp" />
     <ClCompile Include="TrackLayout.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentContainers.h" />
     <ClInclude Include="CompositeObject.h" />
+    <ClInclude Include="DescriptorParser.h" />
+    <ClInclude Include="Element.h" />
+    <ClInclude Include="ElementFactory.h" />
+    <ClInclude Include="ElementPtr.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="FractalFault.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="GeometryBuffer.h" />
+    <ClInclude Include="GeometryBufferContainer.h" />
     <ClInclude Include="GraphicsController.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="MaterialManager.h" />
+    <ClInclude Include="LazyOrderedContainer.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LODGenerator.h" />
     <ClInclude Include="MeshLoader.h" />
-    <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="OrderedContainer.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Perlin.h" />
+    <ClInclude Include="PriorityQueue.h" />
+    <ClInclude Include="PropertyDict.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="MeshData.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="RenderQueue.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceFactory.h" />
+    <ClInclude Include="ResourcePtr.h" />
+    <ClInclude Include="ResourceTable.h" />
+    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="Serializable.h" />
     <ClInclude Include="ShipController.h" />
+    <ClInclude Include="StaticBatcher.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="TextureArray.h" />
+    <ClInclude Include="TextureArrayLoader.h" />
+    <ClInclude Include="TextureLoader.h" />
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="TrackLayout.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

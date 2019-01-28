@@ -1,5 +1,22 @@
 #include "Transform.h"
+#include "CompositeObject.h"
 #include <cmath>
+#include "Component.h"
+
+using namespace GameEngine::Elements;
+
+void Transform::Destroy()
+{
+	while (m_children.size())
+		(*m_children.begin())->obj->Destroy();
+
+	if (m_parent != nullptr)
+	{
+		m_parent->m_children.erase(this);
+	}
+
+	Element::Destroy();
+}
 
 DirectX::XMMATRIX Transform::GetTransform() const
 {
@@ -7,16 +24,16 @@ DirectX::XMMATRIX Transform::GetTransform() const
 		return DirectX::XMMatrixMultiply(
 		DirectX::XMMatrixMultiply(
 		DirectX::XMMatrixMultiply(
-			DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4A(&m_rotation)),
-			DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3A(&m_scale))),
-		DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3A(&m_position))),
+			DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&m_rotation)),
+			DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_scale))),
+		DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3(&m_position))),
 		m_parent->GetTransform());
 	else
 		return DirectX::XMMatrixMultiply(
 			DirectX::XMMatrixMultiply(
-				DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4A(&m_rotation)),
-				DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3A(&m_scale))),
-			DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3A(&m_position)));
+				DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&m_rotation)),
+				DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_scale))),
+			DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3(&m_position)));
 }
 
 DirectX::XMVECTOR Transform::GetPosition() const
@@ -122,7 +139,19 @@ void Transform::SetScale(const DirectX::XMVECTOR& nScale)
 	DirectX::XMStoreFloat3A(&m_scale, nScale);
 }
 
+std::vector<ElementPtr<Transform>> Transform::GetChildren()
+{
+	return std::vector<ElementPtr<Transform>>(m_children.begin(), m_children.end());
+}
+
 void Transform::SetParent(Transform* parent)
 {
+	if (m_parent != nullptr)
+	{
+		m_parent->m_children.erase(this);
+	}
+
 	m_parent = parent;
+	
+	if (parent != nullptr) parent->m_children.emplace(this);
 }

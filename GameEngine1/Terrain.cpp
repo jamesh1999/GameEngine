@@ -2,7 +2,7 @@
 #include "Texture.h"
 #include "FractalFault.h"
 
-void Terrain::ApplyHeightmap(SubMesh* mesh)
+void Terrain::ApplyHeightmap(GameEngine::Resources::Mesh* mesh)
 {
 	float* perlinTex = new float[101 * 101];
 	for (int i = 0; i < 101 * 101; ++i)
@@ -42,7 +42,7 @@ void Terrain::ApplyHeightmap(SubMesh* mesh)
 	delete[] perlinTex;
 }
 
-void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, SubMesh* in)
+void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, GameEngine::Resources::Mesh* in)
 {
 	//Create perlin noise
 	float* noiseTex = new float[x * x];
@@ -95,7 +95,7 @@ void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, SubMe
 		}
 	}
 
-	Texture::GaussianBlur(out, x, y, 4.0f);
+	//Texture::GaussianBlur(out, x, y, 4.0f);
 
 	for(int i = 0; i < x * y; ++i)
 	{

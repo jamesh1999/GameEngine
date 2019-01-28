@@ -1,37 +1,45 @@
-#ifndef __GRAPHICS_OBJECT_INCLUDED___
-#define __GRAPHICS_OBJECT_INCLUDED___
+#ifndef __RENDERER_INCLUDED___
+#define __RENDERER_INCLUDED___
 
 #include <DirectXMath.h>
 #include <vector>
 #include "Component.h"
 #include "Material.h"
-#include "MeshData.h"
+#include "Mesh.h"
+#include "ResourcePtr.h"
+#include "TextureArray.h"
 
-class Renderer : public Component
+namespace GameEngine
 {
-	friend class GraphicsController;
+	class Renderer : public Elements::Component
+	{
+		//friend class GraphicsController;
 
-private:
-	MaterialGroup mat;
-	MeshData* mesh;
+	public:
+		Resources::ResourcePtr<Material> mat;
+		//Resources::ResourceRef<Resources::Mesh> mesh;
+		Resources::Mesh* mesh;
+		Resources::ResourcePtr<Resources::TextureArray> m_textures;
+		bool m_active = true;
+		bool m_init = false;
 
-public:
+	public:
 
+		void Destroy();
 
-	void Render(int);
+		void Render(int);
 
-	Renderer() = default;
-	~Renderer();
+		void Init(Material* mat, Resources::Mesh* mesh);
 
-	Renderer(const Renderer&) = delete;
-	Renderer(Renderer&&) = delete;
-	Renderer& operator=(const Renderer&) = delete;
-	Renderer& operator=(Renderer&&) = delete;
+		void SetMesh(Resources::Mesh*);
+		void SetMaterial(Material*);
+		void SetTexture(Resources::TextureArray*);
+		void SetTexture(Resources::Texture*);
 
-	void Init(MaterialGroup mat, MeshData* mesh);
+		bool GetTransparent();
 
-	void SetMesh(MeshData*);
-	void SetMaterial(MaterialGroup);
-};
+		Resources::Mesh* GetMesh();
+	};
+}
 
 #endif

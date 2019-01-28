@@ -12,61 +12,106 @@
 #include "Renderer.h"
 #include "Material.h"
 #include "Camera.h"
+#include "Light.h"
+#include "GeometryBufferContainer.h"
+#include "ComponentContainers.h"
+#include "PriorityQueue.h"
+#include "RenderQueue.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-enum SHADER_TYPE { Shader_Type_Vertex, Shader_Type_Pixel };
-
-class GraphicsController
+namespace GameEngine
 {
-	HWND hWnd;
-	HINSTANCE hInstance;
-	bool m_fullscreen;
-	
-	ID3D11Buffer* vertexBuffer;
-	ID3D11Buffer* indexBuffer;
-	ID3D11Buffer* cBufferFrame;
-	ID3D11Buffer* cBufferObject;
+	namespace Graphics
+	{
 
-	std::vector<Renderer*> renderers;
+		enum SHADER_TYPE { Shader_Type_Vertex, Shader_Type_Pixel };
 
-	UINT numQualityLevels;
-	Camera* m_camera;
+		class GraphicsController
+		{
+			HWND hWnd;
+			HINSTANCE hInstance;
+			bool m_fullscreen;
 
-public:
-	int m_scrWidth;
-	int m_scrHeight;
-	static GraphicsController* instance;
+			ID3D11Buffer* vertexBuffer;
+			ID3D11Buffer* indexBuffer;
+			ID3D11Buffer* cBufferFrame;
+			ID3D11Buffer* cBufferObject;
+			ID3D11Buffer* cBufferLight;
 
-	bool running = true;
 
-	ID3D11Device* device;
-	ID3D11DeviceContext* devContext;
-	IDXGISwapChain* swapChain;
-	ID3D11RenderTargetView* backBuffer;
-	ID3D11DepthStencilView* depthBuffer;
-	ID3D11DepthStencilState* depthState;
-	ID3D11RasterizerState* rasterizerState;
 
-	GraphicsController(int, int, bool, HWND);
-	~GraphicsController();
-	
-	GraphicsController(const GraphicsController&) = delete;
-	GraphicsController& operator=(const GraphicsController&) = delete;
+			//Utils::PriorityQueue<GameEngine::Renderer*> renderers;
+		public:
+			RenderQueue rq;
+		private:
+			UINT numQualityLevels;
+		public:
+			Camera* m_camera;
+		private:
+			Light* m_light;
+			D3D11_VIEWPORT vP;
 
-	void StartDraw();
-	void RenderObjects();
-	void EndDraw();
+		public:
+			GeometryBufferContainer* geomBuff;
 
-	void AddRenderer(Renderer*);
+			int m_scrWidth;
+			int m_scrHeight;
+			//static GraphicsController* instance;
 
-	void FillBuffers(Renderer*);
+			bool running = true;
 
-	bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
+			ID3D11Device* device;
+			ID3D11DeviceContext* devContext;
+			IDXGISwapChain* swapChain;
+			ID3D11RenderTargetView* backBuffer;
+			ID3D11RenderTargetView* bloomBuffer;
+			ID3D11RenderTargetView* bloomBuffer2;
+			ID3D11DepthStencilView* depthBuffer;
+			ID3D11DepthStencilState* depthState;
+			ID3D11DepthStencilState* depthStateDisabled;
+			ID3D11RasterizerState* rasterizerState;
 
-	void SetCamera(Camera*);
-};
+			ID3D11VertexShader* bloomVtx;
+			ID3D11PixelShader* bloomPx;
+			ID3D11PixelShader* bloomPxV;
+			ID3D11ShaderResourceView* bloomSRV;
+			ID3D11ShaderResourceView* bloomSRV2;
+
+			ID3D11BlendState* blendAdd;
+			ID3D11BlendState* blendState;
+
+			ID3D11VertexShader* dpthVtx;
+			ID3D11PixelShader* dpthPx;
+			ID3D11InputLayout* dpthILayout;
+
+			GraphicsController(int, int, bool, HWND);
+			~GraphicsController();
+
+			GraphicsController(const GraphicsController&) = delete;
+			GraphicsController& operator=(const GraphicsController&) = delete;
+
+			void StartDraw();
+			void RenderObjects();
+			void EndDraw();
+
+			void AddRenderer(GameEngine::Renderer*);
+			void RemoveRenderer(GameEngine::Renderer*);
+
+			void FillBuffers(GameEngine::Renderer*, bool);
+
+			bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
+
+			void SetCamera(Camera*);
+			void SetLight(Light*);
+
+			void RenderLightDepth();
+			void DisableDepthWrite();
+			void EnableDepthWrite();
+		};
+	}
+}
 
 #endif

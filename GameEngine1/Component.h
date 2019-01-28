@@ -4,28 +4,54 @@
 #include <cstdlib>
 #include <malloc.h>
 #include <new>
+#include "Element.h"
+#include "ElementPtr.h"
 
-class CompositeObject;
-
-class alignas(16) Component
+namespace GameEngine
 {
-public:
-	CompositeObject* obj;
-	virtual ~Component() {}
-
-	void* operator new(std::size_t cnt)
+	namespace Elements
 	{
-		void* ptr = _aligned_malloc(cnt, 16);
-		if (!ptr)
-			throw std::bad_alloc();
-		else
-			return ptr;
-	}
+		class ElementFactory;
+		class CompositeObject;
 
-	void operator delete(void* ptr)
-	{
-		_aligned_free(ptr);
+		class alignas(16) Component : public Element
+		{
+		public:
+			friend class ElementFactory;
+
+		private:
+			unsigned id = 0;
+
+		public:
+			ElementPtr<CompositeObject> obj;
+
+			virtual ~Component() {}
+
+			unsigned GetID() const
+			{
+				return id;
+			}
+
+			void* operator new(std::size_t cnt)
+			{
+				void* ptr = _aligned_malloc(cnt, 16);
+				if (!ptr)
+					throw std::bad_alloc();
+				else
+					return ptr;
+			}
+
+			void operator delete(void* ptr)
+			{
+				_aligned_free(ptr);
+			}
+
+			//Preferrable to constructor because initialisation has finished
+			virtual void Create() {};
+
+			virtual void Destroy();
+		};
 	}
-};
+}
 
 #endif

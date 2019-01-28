@@ -3,36 +3,41 @@
 
 #include <string>
 #include <fbxsdk.h>
-#include "MeshData.h"
+#include "Mesh.h"
 #include "Material.h"
 #include <vector>
 
-class MeshLoader
+namespace GameEngine
 {
-private:
-	static MeshLoader* instance;
+	namespace Resources
+	{
+		class MeshLoader
+		{
+		private:
 
-	//FBX loader helper functions
-	static void FBXGetVertexPos(FbxMesh*, int, DirectX::XMFLOAT3&);
-	static void FBXGetNormal(FbxMesh*, int, int, DirectX::XMFLOAT3&);
-	static void FBXGetUV(FbxMesh*, int, int, DirectX::XMFLOAT3&);
+			//FBX loader helper functions
+			static void FBXGetVertexPos(FbxMesh*, int, DirectX::XMFLOAT3&);
+			static void FBXGetNormal(FbxMesh*, int, int, DirectX::XMFLOAT3&);
+			static void FBXGetUV(FbxMesh*, int, int, DirectX::XMFLOAT3&);
 
-	static void PrintFBXRecursive(FbxNode*, int);
-	static void ApplyFbxRecursive(MeshData*, FbxNode*);
+		public:
+			// To remove
+			static void ApplyFbxRecursive(Mesh*, FbxNode*, bool);
+			// ---
 
-	static void ApplyFbxRecursiveWithTextures(MeshData*, FbxNode*, std::vector<std::string>&);
+		public:
 
-public:
-	MeshLoader();
+			// FBX loader functions
+			static Mesh* LoadFBX(FbxMesh*);
+			static Mesh* LoadFBX(FbxNode*, const std::string& = "");
+			static Mesh* LoadFBX(const std::string&, const std::string& = "");
 
-	static FbxNode* LoadFBX(std::string);
-	static void PrintFBXHeirachy(FbxNode*);
-	static void ApplyFBX(MeshData*, FbxNode*, std::string);
-	static void ApplyFBXWithTextures(MeshData*, FbxNode*, std::string, std::vector<std::string>&);
-	static void ApplyMesh(SubMesh*, FbxMesh*);
-	static void ApplyMesh(SubMesh*, FbxMesh*, int);
+			// OBJ loader functions
+			static Mesh* LoadOBJ(const std::string&);
 
-	static void LoadOBJ(MeshData*,std::string);
-};
+			static Mesh* Load(const std::string&);
+		};
+	}
+}
 
 #endif

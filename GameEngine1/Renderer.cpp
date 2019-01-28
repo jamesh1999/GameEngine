@@ -1,43 +1,69 @@
 #include "Renderer.h"
 #include "GraphicsController.h"
+#include "ResourceFactory.h"
+
+using namespace GameEngine;
+
+void Renderer::Destroy()
+{
+	if (m_init) engine->graphics->RemoveRenderer(this);
+	Component::Destroy();
+}
 
 void Renderer::Render(int i)
 {
-	int min = mesh->size();
-	if (mat.Size() < min)
-		min = mat.Size();
+	GeometryBuffer::BufferLocation idxes = engine->graphics->geomBuff->FindRenderer(this);
 
-	if (i < min)
+	if (m_textures.Get() == nullptr) return;
+	ID3D11ShaderResourceView* srv = m_textures->GetSRV();
+	engine->graphics->devContext->PSSetShaderResources(0, 1, &srv);
+
+	for (int j = 0; j < mat->passes.size(); ++j)
 	{
-		for (int j = 0; j < mat[i]->passes.size(); ++j)
-		{
-			GraphicsController::instance->devContext->IASetInputLayout(mat[i]->passes[j].layout);
-			GraphicsController::instance->devContext->VSSetShader(mat[i]->passes[j].vs, NULL, NULL);
-			GraphicsController::instance->devContext->PSSetShader(mat[i]->passes[j].ps, NULL, NULL);
+		engine->graphics->devContext->IASetInputLayout(mat->passes[j].layout);
+		engine->graphics->devContext->VSSetShader(mat->passes[j].vs, NULL, NULL);
+		engine->graphics->devContext->PSSetShader(mat->passes[j].ps, NULL, NULL);
 
-			GraphicsController::instance->devContext->DrawIndexed((*mesh)[i].indices.size(), 0, 0);
-		}
+		engine->graphics->devContext->DrawIndexed(mesh->indices.size(), std::get<0>(idxes), std::get<1>(idxes));
 	}
 }
 
-void Renderer::Init(MaterialGroup material, MeshData* m)
+void Renderer::Init(Material* material, Resources::Mesh* m)
 {
 	mat = material;
 	mesh = m;
+	engine->graphics->AddRenderer(this);
+	m_init = true;
 }
 
-Renderer::~Renderer()
-{
-	delete mesh;
-}
-
-void Renderer::SetMaterial(MaterialGroup m)
+void Renderer::SetMaterial(Material* m)
 {
 	mat = m;
 }
 
-void Renderer::SetMesh(MeshData* m)
+void Renderer::SetMesh(Resources::Mesh* m)
 {
-	delete mesh;
 	mesh = m;
+}
+
+void Renderer::SetTexture(Resources::TextureArray* texArray)
+{
+	m_textures = texArray;
+}
+
+void Renderer::SetTexture(Resources::Texture* tex)
+{
+	m_textures = engine->resourceFactory->Create<Resources::TextureArray>();
+	m_textures = m_textures->Add(tex);
+}
+
+Resources::Mesh* Renderer::GetMesh()
+{
+	//return *mesh;
+	return mesh;
+}
+
+bool Renderer::GetTransparent()
+{
+	return m_textures->GetTransparent();
 }
