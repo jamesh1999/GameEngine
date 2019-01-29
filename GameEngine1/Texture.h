@@ -3,7 +3,6 @@
 
 #include <DirectXMath.h>
 #include "Resource.h"
-#include <d3d11.h>
 
 namespace GameEngine
 {

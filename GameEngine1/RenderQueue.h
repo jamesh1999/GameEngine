@@ -1,10 +1,10 @@
 #ifndef __RENDER_QUEUE_INCLUDED__
 #define __RENDER_QUEUE_INCLUDED__
 
+#include <DirectXMath.h>
 #include <unordered_map>
 #include "LazyOrderedContainer.h"
 #include "Renderer.h"
-#include <DirectXMath.h>
 
 namespace GameEngine
 {

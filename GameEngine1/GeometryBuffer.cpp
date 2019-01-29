@@ -1,10 +1,9 @@
 #include "GeometryBuffer.h"
 #include <algorithm>
-#include "CompositeObject.h"
-#include "Transform.h"
-#include "GraphicsController.h"
 #include <comdef.h>
-#include <iostream>
+#include "CompositeObject.h"
+#include "GraphicsController.h"
+#include "Transform.h"
 
 GeometryBuffer::GeometryBuffer(GeometryBuffer&& other)
 {

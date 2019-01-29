@@ -1,8 +1,6 @@
 #ifndef __RENDERER_INCLUDED___
 #define __RENDERER_INCLUDED___
 
-#include <DirectXMath.h>
-#include <vector>
 #include "Component.h"
 #include "Material.h"
 #include "Mesh.h"
@@ -36,9 +34,9 @@ namespace GameEngine
 		void SetTexture(Resources::TextureArray*);
 		void SetTexture(Resources::Texture*);
 
-		bool GetTransparent();
+		bool GetTransparent() const;
 
-		Resources::Mesh* GetMesh();
+		Resources::Mesh* GetMesh() const;
 	};
 }
 

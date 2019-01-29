@@ -57,13 +57,13 @@ void Renderer::SetTexture(Resources::Texture* tex)
 	m_textures = m_textures->Add(tex);
 }
 
-Resources::Mesh* Renderer::GetMesh()
+Resources::Mesh* Renderer::GetMesh() const
 {
 	//return *mesh;
 	return mesh;
 }
 
-bool Renderer::GetTransparent()
+bool Renderer::GetTransparent() const
 {
 	return m_textures->GetTransparent();
 }

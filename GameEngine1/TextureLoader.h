@@ -1,12 +1,11 @@
 #ifndef __TEXTURE_LOADER_INCLUDED__
 #define __TEXTURE_LOADER_INCLUDED__
 
-#include <string>
-#include <memory>
 #include <fstream>
-#include "Texture.h"
-#include <vector>
 #include <list>
+#include <memory>
+#include <string>
+#include "Texture.h"
 
 namespace GameEngine
 {
@@ -73,17 +72,11 @@ namespace GameEngine
 				uint8_t interlace;
 			};
 
-			struct PNGChunkPLTE
-			{
-			};
+			struct PNGChunkPLTE { };
 
-			struct PNGChunkIDAT
-			{
-			};
+			struct PNGChunkIDAT { };
 
-			struct PNGChunkIEND
-			{
-			};
+			struct PNGChunkIEND { };
 
 			const static uint64_t pngSignature = 0x89504e470d0a1a0a;
 

@@ -32,9 +32,7 @@ namespace GameEngine
 
 		public:
 
-			virtual ~Resource()
-			{
-			}
+			virtual ~Resource() { }
 
 			std::string GetIdentifier() const
 			{

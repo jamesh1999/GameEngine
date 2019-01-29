@@ -1,11 +1,11 @@
 #include "Engine.h"
-#include "GraphicsController.h"
 #include "Clock.h"
-#include "InputManager.h"
-#include "World.h"
 #include "ElementFactory.h"
+#include "GraphicsController.h"
+#include "InputManager.h"
 #include "ParticleSystem.h"
 #include "ResourceFactory.h"
+#include "World.h"
 
 using namespace GameEngine;
 
@@ -22,20 +22,15 @@ Engine::Engine()
 //Clean up dynamic allocation
 Engine::~Engine()
 {
-	if (clock != nullptr)
-		delete clock;
-	if (graphics != nullptr)
-		delete graphics;
-	if (world != nullptr)
-		delete world;
-	if (elementFactory != nullptr)
-		delete elementFactory;
-	if (resourceFactory != nullptr)
-		delete resourceFactory;
+	delete clock;
+	delete graphics;
+	delete world;
+	delete elementFactory;
+	delete resourceFactory;
 }
 
 //One complete loop of the game
-void Engine::Loop()
+void Engine::Loop() const
 {
 	world->Update();
 	particleSystem->Update();
@@ -50,9 +45,9 @@ void Engine::Loop()
 }
 
 //Handles messages from WndProc()
-bool Engine::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+bool Engine::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) const
 {
-	if (graphics->HandleMessage(hWnd, message, wParam, lParam)) return true;
+	if (graphics != nullptr && graphics->HandleMessage(hWnd, message, wParam, lParam)) return true;
 
 	return false;
 }

@@ -1,10 +1,11 @@
 #ifndef __TEXTURE_ARRAY_INCLUDED__
 #define __TEXTURE_ARRAY_INCLUDED__
 
-#include "Resource.h"
-#include "Texture.h"
-#include "ResourcePtr.h"
+#include <d3d11.h>
 #include <vector>
+#include "Resource.h"
+#include "ResourcePtr.h"
+#include "Texture.h"
 
 namespace GameEngine
 {
@@ -44,9 +45,9 @@ namespace GameEngine
 			void Push();
 			ID3D11ShaderResourceView* GetSRV();
 
-			bool GetTransparent() { return m_transparent; }
+			bool GetTransparent() const;
 			int Find(Texture*);
-			int Size() { return m_textures.size(); }
+			int Size() const;
 		};
 	}
 }

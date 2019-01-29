@@ -1,13 +1,13 @@
 #ifndef __RESOURCE_FACTORY_INCLUDED__
 #define __RESOURCE_FACTORY_INCLUDED__
 
+#include <sstream>
+#include <unordered_map>
 #include "Engine.h"
+#include "Mesh.h"
 #include "ResourceTable.h"
 #include "Texture.h"
-#include "Mesh.h"
 #include "TextureArray.h"
-#include <unordered_map>
-#include <sstream>
 
 namespace GameEngine
 {

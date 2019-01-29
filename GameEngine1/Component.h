@@ -25,9 +25,7 @@ namespace GameEngine
 		public:
 			ElementPtr<CompositeObject> obj;
 
-			virtual ~Component()
-			{
-			}
+			virtual ~Component() = default;
 
 			unsigned GetID() const
 			{
@@ -47,10 +45,8 @@ namespace GameEngine
 				_aligned_free(ptr);
 			}
 
-			//Preferrable to constructor because initialisation has finished
-			virtual void Create()
-			{
-			};
+			//Preferable to constructor because initialisation has finished
+			virtual void Create() { }
 
 			void Destroy() override;
 		};

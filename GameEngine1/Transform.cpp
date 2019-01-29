@@ -1,7 +1,6 @@
 #include "Transform.h"
-#include "CompositeObject.h"
-#include <cmath>
 #include "Component.h"
+#include "CompositeObject.h"
 
 using namespace GameEngine::Elements;
 

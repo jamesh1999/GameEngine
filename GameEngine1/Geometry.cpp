@@ -1,6 +1,5 @@
-#include <DirectXMath.h>
 #include "Geometry.h"
-#include <iostream>
+#include <DirectXMath.h>
 
 void Geometry::GenerateCuboid(GameEngine::Resources::Mesh* mesh, float w, float h, float d)
 {
@@ -9,9 +8,11 @@ void Geometry::GenerateCuboid(GameEngine::Resources::Mesh* mesh, float w, float 
 	//Positions
 	for (int i = 0; i < 24; ++i)
 	{
-		buff.pos = {i & 1 ? -w : w,
+		buff.pos = {
+			i & 1 ? -w : w,
 			i & 2 ? -h : h,
-			i & 4 ? -d : d};
+			i & 4 ? -d : d
+		};
 
 		mesh->vertices.push_back(buff);
 	}
@@ -42,20 +43,44 @@ void Geometry::GenerateCuboid(GameEngine::Resources::Mesh* mesh, float w, float 
 	//Indices
 	int indices[36] =
 	{
-		0, 2, 6,
-		4, 0, 6,
-		1, 5, 7,
-		1, 7, 3,
+		0,
+		2,
+		6,
+		4,
+		0,
+		6,
+		1,
+		5,
+		7,
+		1,
+		7,
+		3,
 
-		8, 12, 9,
-		9, 12, 13,
-		11, 15, 14,
-		14, 10, 11,
+		8,
+		12,
+		9,
+		9,
+		12,
+		13,
+		11,
+		15,
+		14,
+		14,
+		10,
+		11,
 
-		16, 17, 19,
-		16, 19, 18,
-		21, 20, 23,
-		20, 22, 23,
+		16,
+		17,
+		19,
+		16,
+		19,
+		18,
+		21,
+		20,
+		23,
+		20,
+		22,
+		23,
 	};
 	for (int i : indices)
 		mesh->indices.push_back(i);
@@ -130,7 +155,8 @@ void Geometry::GenerateSphere(GameEngine::Resources::Mesh* mesh, float radius, i
 	}
 }
 
-void Geometry::GenerateCylinder(GameEngine::Resources::Mesh* mesh, float topRadius, float bottomRadius, float h, int nSlices, int nSegments)
+void Geometry::GenerateCylinder(GameEngine::Resources::Mesh* mesh, float topRadius, float bottomRadius, float h,
+                                int nSlices, int nSegments)
 {
 	//Sides
 	float deltaH = h / nSlices;

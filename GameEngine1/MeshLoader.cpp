@@ -1,6 +1,4 @@
 #include "MeshLoader.h"
-#include <iostream>
-#include <algorithm>
 #include <vector>
 #include "DescriptorParser.h"
 

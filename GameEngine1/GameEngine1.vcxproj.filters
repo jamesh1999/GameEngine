@@ -90,9 +90,6 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>Source Files\Engine\Generation</Filter>
     </ClCompile>
-    <ClCompile Include="LODGenerator.cpp">
-      <Filter>Source Files\Engine\Generation</Filter>
-    </ClCompile>
     <ClCompile Include="Perlin.cpp">
       <Filter>Source Files\Engine\Generation</Filter>
     </ClCompile>
@@ -222,9 +219,6 @@
       <Filter>Header Files\Engine\Generation</Filter>
     </ClInclude>
     <ClInclude Include="Geometry.h">
-      <Filter>Header Files\Engine\Generation</Filter>
-    </ClInclude>
-    <ClInclude Include="LODGenerator.h">
       <Filter>Header Files\Engine\Generation</Filter>
     </ClInclude>
     <ClInclude Include="Perlin.h">

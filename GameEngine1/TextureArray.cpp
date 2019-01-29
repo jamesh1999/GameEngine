@@ -1,8 +1,7 @@
 #include "TextureArray.h"
+#include <sstream>
 #include "GraphicsController.h"
 #include "ResourceFactory.h"
-#include <sstream>
-#include <iostream>
 
 using namespace GameEngine::Resources;
 
@@ -117,9 +116,19 @@ ID3D11ShaderResourceView* TextureArray::GetSRV()
 	return m_SRV;
 }
 
+bool TextureArray::GetTransparent() const
+{
+	return m_transparent;
+}
+
 int TextureArray::Find(Texture* t)
 {
 	for (size_t i = 0; i < m_textures.size(); ++i)
 		if (m_textures[i].Get() == t) return i;
 	return -1;
+}
+
+int TextureArray::Size() const
+{
+	return m_textures.size();
 }

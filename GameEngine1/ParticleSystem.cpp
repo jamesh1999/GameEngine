@@ -1,12 +1,13 @@
 #include "ParticleSystem.h"
-#include "GraphicsController.h"
-#include "Clock.h"
-#include "TextureLoader.h"
-#include "CompositeObject.h"
-#include "Transform.h"
 #include <iostream>
-#include "Texture.h"
+#include <d3dcompiler.h>
+#include "Clock.h"
+#include "CompositeObject.h"
+#include "GraphicsController.h"
 #include "ResourceFactory.h"
+#include "Texture.h"
+#include "TextureLoader.h"
+#include "Transform.h"
 
 using namespace GameEngine;
 using namespace Graphics;
@@ -15,7 +16,8 @@ ParticleSystem::ParticleSystem(Engine* engine)
 {
 	this->engine = engine;
 
-	auto tex = engine->resourceFactory->Create<Resources::Texture>("Z:\\WipeoutPSP\\PS2\\Data\\Psys\\Tex\\explosion_01_64x64.tga");
+	auto tex = engine->resourceFactory->Create<Resources::Texture>(
+		"Z:\\WipeoutPSP\\PS2\\Data\\Psys\\Tex\\explosion_01_64x64.tga");
 	m_texture = engine->resourceFactory->Create<Resources::TextureArray>("");
 	m_texture = m_texture->Add(tex);
 
@@ -112,9 +114,11 @@ void ParticleSystem::Initialise(DirectX::XMFLOAT3 pos)
 	for (int i = 0; i < 300; ++i)
 	{
 		position[i] = pos;
-		velocity[i] = {rand() / static_cast<float>(RAND_MAX) - 0.5f,
+		velocity[i] = {
 			rand() / static_cast<float>(RAND_MAX) - 0.5f,
-			rand() / static_cast<float>(RAND_MAX) - 0.5f};
+			rand() / static_cast<float>(RAND_MAX) - 0.5f,
+			rand() / static_cast<float>(RAND_MAX) - 0.5f
+		};
 	}
 
 	indices.clear();
@@ -159,8 +163,10 @@ void ParticleSystem::Draw()
 	if (!position.size()) return;
 
 	//engine->graphics->devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DirectX::XMVECTOR up = DirectX::XMVectorScale(engine->graphics->m_camera->obj->GetComponent<Elements::Transform>()->GetUp(), 4.5f);
-	DirectX::XMVECTOR right = DirectX::XMVectorScale(engine->graphics->m_camera->obj->GetComponent<Elements::Transform>()->GetRight(), 4.5f);
+	DirectX::XMVECTOR up = DirectX::XMVectorScale(
+		engine->graphics->m_camera->obj->GetComponent<Elements::Transform>()->GetUp(), 4.5f);
+	DirectX::XMVECTOR right = DirectX::XMVectorScale(
+		engine->graphics->m_camera->obj->GetComponent<Elements::Transform>()->GetRight(), 4.5f);
 	for (int i = 0; i < 300; ++i)
 	{
 		DirectX::XMVECTOR pos = XMLoadFloat3(&position[i]);

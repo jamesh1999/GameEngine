@@ -24,6 +24,7 @@
 #include "StaticBatcher.h"
 #include "PropertyDict.h"
 #include "Component.h"
+#include <d3dcompiler.h>
 
 int width = 1000;
 int height = 1000;
@@ -93,7 +94,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RegisterClassEx(&winClass);
 
 	//Create a window with CLASS1
-	HWND hWnd = CreateWindow(
+	HWND hWnd =	CreateWindow(
 		L"CLASS1",
 		L"GameEngine1",
 		WS_OVERLAPPEDWINDOW,
@@ -167,7 +168,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->dpthVtx);
+	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
+	                                          &game.graphics->dpthVtx);
 	game.graphics->device->CreateInputLayout(
 		iLayout, 3, buff->GetBufferPointer(), buff->GetBufferSize(), &game.graphics->dpthILayout);
 	success = D3DCompileFromFile(
@@ -189,7 +191,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->dpthPx);
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
+	                                         &game.graphics->dpthPx);
 
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
@@ -210,7 +213,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomVtx);
+	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
+	                                          &game.graphics->bloomVtx);
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
 		nullptr,
@@ -230,7 +234,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomPx);
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
+	                                         &game.graphics->bloomPx);
 
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
@@ -251,7 +256,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomPxV);
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
+	                                         &game.graphics->bloomPxV);
 
 	//MeshData* skybox = new MeshData;
 	//std::vector<std::string> tex_skybox;
@@ -314,7 +320,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//r = co->AttachComponent<Renderer>();
 	//r->Init(mat, mesh);
-
 
 	GameEngine::Elements::CompositeObject* ship = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	t = ship->GetComponent<GameEngine::Elements::Transform>();

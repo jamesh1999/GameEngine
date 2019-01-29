@@ -1,10 +1,10 @@
 #ifndef __DESCRIPTOR_PARSER_INCLUDED__
 #define __DESCRIPTOR_PARSER_INCLUDED__
 
-#include <string>
 #include <algorithm>
-#include <vector>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 class DescriptorParser
 {

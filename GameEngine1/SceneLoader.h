@@ -2,10 +2,9 @@
 #define __SCENE_LOADER_INCLUDED__
 
 #include <fbxsdk.h>
-
+#include <string>
 #include "CompositeObject.h"
 #include "Engine.h"
-#include <string>
 
 namespace GameEngine
 {

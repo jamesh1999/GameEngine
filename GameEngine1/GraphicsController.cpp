@@ -1,12 +1,10 @@
 #include "GraphicsController.h"
-#include <iostream>
 #include <comdef.h>
+#include <iostream>
 #include <locale>
-#include <codecvt>
 #include <Windows.h>
-#include <windowsx.h>
-#include "Transform.h"
 #include "CompositeObject.h"
+#include "Transform.h"
 
 using namespace GameEngine;
 using namespace Graphics;
@@ -27,8 +25,8 @@ typedef struct
 	float padding;
 } LightBuffer;
 
-GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
-	: hWnd(wnd), m_fullscreen(fullscreen), m_scrWidth(w), m_scrHeight(h)
+GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) : hWnd(wnd), m_fullscreen(fullscreen),
+                                                                                  m_scrWidth(w), m_scrHeight(h)
 {
 	//instance = this;
 
@@ -108,7 +106,6 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 
 	device->CreateTexture2D(&tD, nullptr, &pBackBuffer);
 	device->CreateRenderTargetView(pBackBuffer, nullptr, &bloomBuffer);
-
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
 	srvD.Format = tD.Format;
@@ -232,7 +229,6 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 
 	device->CreateBuffer(&iBD, NULL, &indexBuffer);*/
 
-
 	//Per frame CB
 	D3D11_BUFFER_DESC cBD;
 	ZeroMemory(&cBD, sizeof(D3D11_BUFFER_DESC));
@@ -316,7 +312,9 @@ void GraphicsController::StartDraw()
 	DirectX::XMVECTOR det = XMMatrixDeterminant(mat);
 
 	XMStoreFloat4x4A(&data.wv, XMMatrixTranspose(XMMatrixInverse(&det, mat)));
-	XMStoreFloat4x4A(&data.vp, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(0.82547f, static_cast<float>(m_scrWidth) / m_scrHeight, 8.0f, 2000.0f)));
+	XMStoreFloat4x4A(&data.vp, XMMatrixTranspose(
+		                 DirectX::XMMatrixPerspectiveFovLH(0.82547f, static_cast<float>(m_scrWidth) / m_scrHeight, 8.0f,
+		                                                   2000.0f)));
 	XMStoreFloat3A(&data.camPos, m_camera->obj->GetComponent<Elements::Transform>()->GetPosition());
 
 	D3D11_MAPPED_SUBRESOURCE mp;
@@ -337,7 +335,8 @@ void GraphicsController::StartDraw()
 	det = XMMatrixDeterminant(mat);
 
 	XMStoreFloat4x4A(&light.v, XMMatrixTranspose(XMMatrixInverse(&det, mat)));
-	XMStoreFloat4x4A(&light.p, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
+	XMStoreFloat4x4A(
+		&light.p, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
 	XMStoreFloat3A(&light.lightPos, m_light->obj->GetComponent<Elements::Transform>()->GetPosition());
 
 	devContext->Map(cBufferLight, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
@@ -349,7 +348,6 @@ void GraphicsController::StartDraw()
 	ID3D11ShaderResourceView* srv = m_light->GetSRV();
 	devContext->PSSetShaderResources(1, 1, &srv);
 	devContext->PSSetSamplers(1, 1, &m_light->ss);
-
 
 	devContext->VSSetConstantBuffers(1, 1, &cBufferObject);
 }
@@ -426,7 +424,6 @@ void GraphicsController::FillBuffers(Renderer* r, bool tex)
 	memcpy(mp.pData, data, sizeof(DirectX::XMFLOAT4X4A));
 	devContext->Unmap(cBufferObject, 0);
 
-
 	if (tex)
 	{
 		ID3D11SamplerState* smpl = r->mat->GetSampler();
@@ -443,7 +440,7 @@ void GraphicsController::FillBuffers(Renderer* r, bool tex)
 //Handle window resizing
 bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message != WM_SIZE || this == nullptr) return false;
+	if (message != WM_SIZE) return false;
 	m_scrWidth = LOWORD(lParam);
 	m_scrHeight = HIWORD(lParam);
 
@@ -552,7 +549,6 @@ void GraphicsController::RenderLightDepth()
 	                                  1.0, 0);
 	devContext->ClearRenderTargetView(m_light->GetRTV(), DirectX::XMVECTORF32{1.0, 1.0, 1.0, 1.0});
 
-
 	//Fill per frame buffer
 	PerFrameBuffer data;
 
@@ -561,7 +557,8 @@ void GraphicsController::RenderLightDepth()
 	DirectX::XMVECTOR det = XMMatrixDeterminant(mat);
 
 	XMStoreFloat4x4A(&data.wv, XMMatrixTranspose(XMMatrixInverse(&det, mat)));
-	XMStoreFloat4x4A(&data.vp, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
+	XMStoreFloat4x4A(
+		&data.vp, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
 
 	D3D11_MAPPED_SUBRESOURCE mp;
 	devContext->Map(cBufferFrame, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);

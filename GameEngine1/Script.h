@@ -6,9 +6,7 @@
 class Script : public GameEngine::Elements::Component
 {
 public:
-	virtual void Update()
-	{
-	};
+	virtual void Update() { }
 };
 
 #endif

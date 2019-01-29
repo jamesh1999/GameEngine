@@ -1,10 +1,9 @@
-#include <cstdlib>
+#include "FractalFault.h"
 #include <cmath>
+#include <cstdlib>
 #include <d3dcompiler.h>
 #include <Windows.h>
 #include "GraphicsController.h"
-#include <minwinbase.h>
-#include "FractalFault.h"
 
 Generation::FractalFault* Generation::FractalFault::instance = nullptr;
 
@@ -67,7 +66,7 @@ void Generation::FractalFault::Generate(float* out, int w, int h, int n)
 		for (int y = 0; y < h; ++y)
 			for (int x = 0; x < w; ++x)
 			{
-				if (greater == (y > grad * x + offset))
+				if (greater == y > grad * x + offset)
 				{
 					out[y * w + x] += val;
 				}

@@ -2,20 +2,11 @@
 #define __GRAPHICS_CONTROLLER_INCLUDED__
 
 #include <d3d11.h>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
 #include <windows.h>
-#include <windowsx.h>
-#include <d3dcompiler.h>
-#include <string>
-#include <vector>
 #include "Renderer.h"
-#include "Material.h"
 #include "Camera.h"
 #include "Light.h"
 #include "GeometryBufferContainer.h"
-#include "ComponentContainers.h"
-#include "PriorityQueue.h"
 #include "RenderQueue.h"
 
 #pragma comment(lib, "d3d11.lib")

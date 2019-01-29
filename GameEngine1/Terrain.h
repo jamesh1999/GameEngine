@@ -1,9 +1,8 @@
 #ifndef __TERRAIN_INCLUDED__
 #define __TERRAIN_INCLUDED__
 
+#include <DirectXMath.h>
 #include "Mesh.h"
-#include "Perlin.h"
-#include "DirectXMath.h"
 
 namespace Terrain
 {

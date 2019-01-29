@@ -1,16 +1,15 @@
-#include "Component.h"
 #include "SceneLoader.h"
-#include "ElementFactory.h"
-#include "Transform.h"
-#include "Light.h"
-#include "Mesh.h"
-#include "Renderer.h"
-#include "Material.h"
-#include "MeshLoader.h"
-#include "ResourceFactory.h"
-#include "PropertyDict.h"
 #include <DirectXMath.h>
-#include <iostream>
+#include "Component.h"
+#include "ElementFactory.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "MeshLoader.h"
+#include "PropertyDict.h"
+#include "Renderer.h"
+#include "ResourceFactory.h"
+#include "Transform.h"
+
 
 using namespace GameEngine::Resources;
 using namespace GameEngine;
@@ -39,9 +38,9 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 	t->SetRotation(vec);
 
 	FbxVector4 scale = node->EvaluateLocalScaling();
-	v.x = 1;// scale.mData[0];
-	v.y = 1;// scale.mData[1];
-	v.z = 1;// scale.mData[2];
+	v.x = 1; // scale.mData[0];
+	v.y = 1; // scale.mData[1];
+	v.z = 1; // scale.mData[2];
 	vec = XMLoadFloat3A(&v);
 	t->SetScale(vec);
 
@@ -80,7 +79,6 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 				// Attach renderer
 				//Renderer* r = co->AttachComponent<Renderer>();
 
-
 				// Load & attach textures
 				FbxLayerElementMaterial* lE = node->GetGeometry()->GetLayer(i)->GetMaterials();
 				switch (lE->GetMappingMode())
@@ -111,7 +109,8 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 						int matCnt = node->GetMesh()->GetPolygonCount();
 						for (int j = 0; j < matCnt; ++j)
 						{
-							FbxSurfaceMaterial* surf = node->GetMaterial(lE->GetIndexArray()[j]);//node->GetMaterial(j);
+							FbxSurfaceMaterial* surf = node->GetMaterial(lE->GetIndexArray()[j]);
+							//node->GetMaterial(j);
 							if (surf == nullptr) continue;
 
 							FbxProperty prop = surf->FindProperty(FbxSurfaceMaterial::sDiffuse);
@@ -147,7 +146,6 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 								mm->indices.push_back(k + 1);
 								mm->indices.push_back(k + 2);
 							}
-
 
 							r->Init(mat, mm);
 						}

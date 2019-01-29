@@ -1,19 +1,17 @@
-#include "Component.h"
 #include "ShipController.h"
-#include "InputManager.h"
-#include "Transform.h"
-#include "CompositeObject.h"
-#include "Clock.h"
-#include "GraphicsController.h"
-#include "TrackLayout.h"
-#include <iostream>
-#include <tuple>
 #include <cmath>
-#include "MeshLoader.h"
+#include <tuple>
+#include "Clock.h"
+#include "Component.h"
 #include "CompositeObject.h"
 #include "ElementFactory.h"
+#include "GraphicsController.h"
+#include "InputManager.h"
+#include "MeshLoader.h"
 #include "ParticleSystem.h"
 #include "ResourceFactory.h"
+#include "TrackLayout.h"
+#include "Transform.h"
 
 void ShipController::UpdateBase()
 {
@@ -54,7 +52,7 @@ void ShipController::Update()
 	{
 		dpos += dist;
 
-		if (Input::InputManager::KeyIsPressed((Input::KeyF)))
+		if (Input::InputManager::KeyIsPressed(Input::KeyF))
 			dpos *= 10.0f;
 	}
 	if (Input::InputManager::KeyIsPressed(Input::KeyS))
@@ -198,7 +196,7 @@ void ShipController::Update()
 	XMStoreFloat3(&facingDirection, facingDir);
 
 	//Get current normal
-	DirectX::XMVECTOR currentNormal = norm;//transform->GetUp();
+	DirectX::XMVECTOR currentNormal = norm; //transform->GetUp();
 
 	//Interpolate to find desired normal for this frame
 	/*float angle = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(norm, currentNormal));
@@ -265,7 +263,8 @@ void ShipController::Update()
 	cam->GetComponent<GameEngine::Elements::Transform>()->SetPosition(camPos);
 	cam->GetComponent<GameEngine::Elements::Transform>()->SetRotation(transform->GetRotation());
 
-	model->GetComponent<GameEngine::Elements::Transform>()->SetRotation(DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
+	model->GetComponent<GameEngine::Elements::Transform>()->SetRotation(
+		DirectX::XMQuaternionRotationAxis({0.0f, 0.0f, 1.0f}, curRoll));
 
 	//shipRot = DirectX::XMVectorSetByIndex(shipRot, roll, 2);
 	//transform->SetRotation(shipRot);
@@ -290,10 +289,11 @@ void ShipController::Create()
 
 	//Init camera
 	cam->AttachComponent<Camera>();
-	cam->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f,1.0f,1.0f});
+	cam->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
 
 	//Init model child object
-	GameEngine::Resources::Mesh* mesh = engine->resourceFactory->Create<GameEngine::Resources::Mesh>("test.fbx;lodGroup1/ship/");
+	GameEngine::Resources::Mesh* mesh = engine->resourceFactory->Create<GameEngine::Resources::Mesh>(
+		"test.fbx;lodGroup1/ship/");
 
 	GameEngine::Elements::Transform* t = model->GetComponent<GameEngine::Elements::Transform>();
 	t->SetPosition({0.0f, 0.0f, 0.0f});
@@ -333,10 +333,6 @@ void ShipController::Create()
 	velocity = {0.0f, 0.0f, 0.0f};
 }
 
-ShipController::ShipController()
-{
-}
+ShipController::ShipController() {}
 
-ShipController::~ShipController()
-{
-}
+ShipController::~ShipController() {}

@@ -3,10 +3,10 @@
 
 #include <vector>
 #include "Component.h"
-#include "Transform.h"
-#include "Script.h"
 #include "Element.h"
 #include "ElementPtr.h"
+#include "Script.h"
+#include "Transform.h"
 #include "World.h"
 
 namespace GameEngine
@@ -23,7 +23,7 @@ namespace GameEngine
 
 			void Update()
 			{
-				for (ElementPtr<Component> c : m_components)
+				for (const auto& c : m_components)
 				{
 					if (dynamic_cast<Script*>(c.Get()) == nullptr) continue;
 					dynamic_cast<Script*>(c.Get())->Update();
@@ -32,7 +32,7 @@ namespace GameEngine
 
 			void Destroy() override
 			{
-				for (auto c : m_components)
+				for (const auto& c : m_components)
 					if (c != nullptr)
 						c->Destroy();
 				if (m_transform != nullptr) m_transform->Destroy();

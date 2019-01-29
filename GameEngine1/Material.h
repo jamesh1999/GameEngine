@@ -2,14 +2,9 @@
 #define __MATERIAL_H__
 
 #include <d3d11.h>
-#include <d3dcompiler.h>
-#include <DirectXMath.h>
-#include <vector>
 #include <string>
-#include <tuple>
+#include <vector>
 #include "Engine.h"
-#include "ResourcePtr.h"
-#include "TextureArray.h"
 #include "Resource.h"
 
 class RenderPass

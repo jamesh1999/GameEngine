@@ -34,9 +34,7 @@ namespace GameEngine
 				AttachPtr();
 			}
 
-			ElementPtr() : ElementPtr(nullptr)
-			{
-			};
+			ElementPtr() : ElementPtr(nullptr) { }
 
 			~ElementPtr() { DetachPtr(); }
 

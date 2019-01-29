@@ -1,8 +1,8 @@
 #include "TextureArrayLoader.h"
-#include "DescriptorParser.h"
-#include "Texture.h"
 #include <vector>
+#include "DescriptorParser.h"
 #include "ResourceFactory.h"
+#include "Texture.h"
 
 using namespace GameEngine;
 using namespace Resources;

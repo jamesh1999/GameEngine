@@ -2,12 +2,11 @@
 #define __ELEMENT_FACTORY_INCLUDED__
 
 #include <type_traits>
-#include "Element.h"
-#include "World.h"
-#include "CompositeObject.h"
 #include "Component.h"
-#include "Transform.h"
+#include "CompositeObject.h"
+#include "Element.h"
 #include "Engine.h"
+#include "Transform.h"
 
 namespace GameEngine
 {
@@ -40,11 +39,11 @@ T* GameEngine::Elements::ElementFactory::Create()
 	//Components just need a unique ID
 	dynamic_cast<Component*>(elem)->id = id++;
 
-
 	return elem;
 }
 
 template <>
-GameEngine::Elements::CompositeObject* GameEngine::Elements::ElementFactory::Create<GameEngine::Elements::CompositeObject>();
+GameEngine::Elements::CompositeObject* GameEngine::Elements::ElementFactory::Create<GameEngine::Elements::
+	CompositeObject>();
 
 #endif

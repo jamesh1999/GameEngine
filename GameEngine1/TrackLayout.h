@@ -2,8 +2,8 @@
 #define __TRACK_LAYOUT_INCLUDED__
 
 #include <DirectXMath.h>
-#include <vector>
 #include <tuple>
+#include <vector>
 #include "Mesh.h"
 
 typedef struct

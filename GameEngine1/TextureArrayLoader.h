@@ -2,8 +2,8 @@
 #define __TEXTURE_ARRAY_LOADER_INCLUDED__
 
 #include <string>
-#include "TextureArray.h"
 #include "Engine.h"
+#include "TextureArray.h"
 
 namespace GameEngine
 {

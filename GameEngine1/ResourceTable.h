@@ -1,8 +1,8 @@
 #ifndef __RESOURCE_TABLE_INCLUDED__
 #define __RESOURCE_TABLE_INCLUDED__
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 namespace GameEngine
 {

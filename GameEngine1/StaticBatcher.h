@@ -1,10 +1,10 @@
 #ifndef __STATIC_BATCHER_INCLUDED__
 #define __STATIC_BATCHER_INCLUDED__
 
-#include "CompositeObject.h"
-#include "Renderer.h"
 #include <vector>
+#include "CompositeObject.h"
 #include "Engine.h"
+#include "Renderer.h"
 
 class StaticBatcher
 {

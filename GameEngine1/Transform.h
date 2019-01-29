@@ -1,11 +1,11 @@
 #ifndef __TRANSFORM_INCLUDED__
 #define __TRANSFORM_INCLUDED__
 
+#include <unordered_set>
+#include <vector>
 #include "Component.h"
 #include "DirectXMath.h"
 #include "ElementPtr.h"
-#include <vector>
-#include <unordered_set>
 
 namespace GameEngine
 {

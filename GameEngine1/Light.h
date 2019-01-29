@@ -20,8 +20,8 @@ public:
 
 	void Create() override;
 
-	ID3D11RenderTargetView* GetRTV();
-	ID3D11ShaderResourceView* GetSRV();
+	ID3D11RenderTargetView* GetRTV() const;
+	ID3D11ShaderResourceView* GetSRV() const;
 };
 
 #endif

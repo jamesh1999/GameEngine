@@ -1,9 +1,8 @@
 #include "Material.h"
-#include <fstream>
-#include <cmath>
-#include "GraphicsController.h"
-#include <Windows.h>
+#include <d3dcompiler.h>
 #include <iostream>
+#include <Windows.h>
+#include "GraphicsController.h"
 #include "ResourceFactory.h"
 
 void RenderPass::LoadVS(std::wstring filename, std::string entry, D3D11_INPUT_ELEMENT_DESC* inputDesc, int numElements)

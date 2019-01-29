@@ -1,11 +1,10 @@
 #ifndef __GEOMETRY_BUFFER_CONTAINER_INCLUDED__
 #define __GEOMETRY_BUFFER_CONTAINER_INCLUDED__
 
-#include <unordered_map>
 #include <d3d11.h>
+#include <unordered_map>
 #include "GeometryBuffer.h"
 #include "Renderer.h"
-#include "Mesh.h"
 
 class GeometryBufferContainer
 {

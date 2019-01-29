@@ -48,7 +48,8 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR, bool> TrackLayout::GetNormal(Di
 	for (Segment s : instance->m_trackSegments)
 	{
 		DirectX::XMVECTOR norm = XMLoadFloat3(&s.norm);
-		DirectX::XMVECTOR vdist = DirectX::XMVectorSubtract(DirectX::XMVector3Dot(norm, pos), DirectX::XMVector3Dot(norm, XMLoadFloat3(&s.p1)));
+		DirectX::XMVECTOR vdist = DirectX::XMVectorSubtract(DirectX::XMVector3Dot(norm, pos),
+		                                                    DirectX::XMVector3Dot(norm, XMLoadFloat3(&s.p1)));
 		DirectX::XMVECTOR proj = DirectX::XMVectorSubtract(
 			pos,
 			DirectX::XMVectorMultiply(norm, vdist));
@@ -76,7 +77,6 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR, bool> TrackLayout::GetNormal(Di
 		float denom = d00 * d11 - d01 * d01;
 		float v = (d11 * d20 - d01 * d21) / denom;
 		float w = (d00 * d21 - d01 * d20) / denom;
-
 
 		float dist = abs(DirectX::XMVectorGetX(vdist) - s.pos);
 		if (v < 0.0f

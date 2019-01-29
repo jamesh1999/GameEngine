@@ -1,6 +1,6 @@
 #include "ResourceFactory.h"
-#include "TextureLoader.h"
 #include "MeshLoader.h"
+#include "TextureLoader.h"
 #include "TextureArrayLoader.h"
 
 using namespace GameEngine::Resources;

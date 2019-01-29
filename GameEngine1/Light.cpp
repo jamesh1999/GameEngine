@@ -1,7 +1,6 @@
 #include "Light.h"
+#include <minwinbase.h>
 #include "GraphicsController.h"
-#include <minwinbase.h>
-#include <minwinbase.h>
 
 void Light::Create()
 {
@@ -35,7 +34,6 @@ void Light::Create()
 	engine->graphics->device->CreateRenderTargetView(depthTex, &rtvDsc, &renderTarget);
 	engine->graphics->device->CreateShaderResourceView(depthTex, &srDsc, &shaderResource);
 
-
 	//Create depth and stencil buffer
 	D3D11_TEXTURE2D_DESC depthDesc;
 	ZeroMemory(&depthDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -68,7 +66,6 @@ void Light::Create()
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 
-
 	D3D11_SAMPLER_DESC sD;
 	sD.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
 	sD.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -97,12 +94,12 @@ Light::~Light()
 	depthBuffer->Release();
 }
 
-ID3D11RenderTargetView* Light::GetRTV()
+ID3D11RenderTargetView* Light::GetRTV() const
 {
 	return renderTarget;
 }
 
-ID3D11ShaderResourceView* Light::GetSRV()
+ID3D11ShaderResourceView* Light::GetSRV() const
 {
 	return shaderResource;
 }

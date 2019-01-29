@@ -1,9 +1,9 @@
 #ifndef __PARTICLE_SYSTEM_INCLUDED__
-#define __PArtICLE_SYSTEM_INCLUDED__
+#define __PARTICLE_SYSTEM_INCLUDED__
 
-#include <vector>
 #include <DirectXMath.h>
 #include <d3d11.h>
+#include <vector>
 #include "Engine.h"
 #include "Mesh.h"
 #include "ResourcePtr.h"

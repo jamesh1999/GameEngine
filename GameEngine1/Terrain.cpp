@@ -1,6 +1,7 @@
 #include "Terrain.h"
-#include "Texture.h"
 #include "FractalFault.h"
+#include "Perlin.h"
+#include "Texture.h"
 
 void Terrain::ApplyHeightmap(GameEngine::Resources::Mesh* mesh)
 {
@@ -15,7 +16,6 @@ void Terrain::ApplyHeightmap(GameEngine::Resources::Mesh* mesh)
 	Generation::FractalFault::Generate(perlinTex, 101, 101, 140000);
 
 	ThermalErosion(perlinTex, 101, 101, 40, 0.007f);
-
 
 	//Apply heights
 	for (int i = 0; i < 101 * 101; ++i)

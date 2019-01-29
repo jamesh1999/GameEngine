@@ -1,7 +1,6 @@
 #include "TextureLoader.h"
-#include <cctype>
 #include <algorithm>
-#include <iostream>
+#include <cctype>
 
 using namespace GameEngine::Resources;
 
@@ -64,7 +63,7 @@ std::unique_ptr<uint8_t[]> TextureLoader::ReadRLEImageTGA(const TGAHeader& heade
 			for (int i = 0; i <= (packet & 0x7f); ++i)
 				memcpy(image.get() + (curPixel + i) * bytesPerPixel, buffer, bytesPerPixel);
 		}
-		// Normal packet
+			// Normal packet
 		else
 			stream.read(reinterpret_cast<char*>(image.get() + curPixel * bytesPerPixel), (1 + packet) * bytesPerPixel);
 

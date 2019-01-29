@@ -1,10 +1,9 @@
 #ifndef __SHIP_CONTROLLER_INCLUDED__
 #define __SHIP_CONTROLLER_INCLUDED__
 
-#include "Script.h"
-#include "CompositeObject.h"
-#include "Transform.h"
 #include <DirectXMath.h>
+#include "CompositeObject.h"
+#include "Script.h"
 
 class ShipController : public Script
 {

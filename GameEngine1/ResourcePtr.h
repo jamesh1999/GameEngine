@@ -41,9 +41,7 @@ namespace GameEngine
 				IncResource();
 			}
 
-			ResourcePtr() : ResourcePtr(nullptr)
-			{
-			};
+			ResourcePtr() : ResourcePtr(nullptr) { }
 
 			~ResourcePtr() { DecResource(); }
 

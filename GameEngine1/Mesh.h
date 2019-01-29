@@ -1,9 +1,9 @@
 #ifndef __MESH_H__
 #define __MESH_H__
 
-#include "Resource.h"
 #include <DirectXMath.h>
 #include <vector>
+#include "Resource.h"
 
 struct Vertex
 {

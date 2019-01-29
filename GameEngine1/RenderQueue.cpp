@@ -48,12 +48,12 @@ void RenderQueue::Refresh(DirectX::XMVECTOR forwards)
 	m_queue.SetDirty();
 }
 
-const std::vector<GameEngine::Renderer*>::iterator RenderQueue::begin()
+const std::vector<Renderer*>::iterator RenderQueue::begin()
 {
 	return m_queue.begin();
 }
 
-const std::vector<GameEngine::Renderer*>::iterator RenderQueue::end()
+const std::vector<Renderer*>::iterator RenderQueue::end()
 {
 	return m_queue.end();
 }

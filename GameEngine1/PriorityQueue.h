@@ -1,8 +1,8 @@
 #ifndef __PRIORITY_QUEUE_INCLUDED__
 #define __PRIORITY_QUEUE_INCLUDED__
 
-#include <vector>
 #include <utility>
+#include <vector>
 #include "OrderedContainer.h"
 
 namespace GameEngine

@@ -21,10 +21,10 @@ namespace GameEngine
 
 			void Reset();
 			double TimeSinceStartUp();
-			double DeltaT();
+			double DeltaT() const;
 			void Pause();
 			void Resume();
-			double SystemTime();
+			static double SystemTime();
 
 			void StartFrame();
 			void EndFrame();

@@ -1,7 +1,6 @@
 #ifndef __GameEngine_INCLUDED__
 #define __GameEngine_INCLUDED__
 
-#include <list>
 #include <Windows.h>
 
 namespace GameEngine
@@ -47,8 +46,8 @@ namespace GameEngine
 		Engine(const Engine&) = delete;
 		Engine& operator=(const Engine&) = delete;
 
-		void Loop();
-		bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
+		void Loop() const;
+		bool HandleMessage(HWND, UINT, WPARAM, LPARAM) const;
 	};
 }
 

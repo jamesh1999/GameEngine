@@ -23,7 +23,7 @@ double Clock::TimeSinceStartUp()
 	return SystemTime() - m_start;
 }
 
-double Clock::DeltaT()
+double Clock::DeltaT() const
 {
 	if (m_paused) return 0.0;
 

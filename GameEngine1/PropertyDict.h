@@ -1,8 +1,8 @@
 #ifndef __PROPERTY_DICT_INCLUDED__
 #define __PROPERTY_DICT_INCLUDED__
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include "Component.h"
 
 namespace GameEngine

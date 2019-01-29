@@ -1,7 +1,6 @@
 #include "Perlin.h"
 #include <cmath>
 #include <DirectXMath.h>
-#include <iostream>
 
 float dotGridPoint(float* vectors, int x, int y, float dx, float dy)
 {

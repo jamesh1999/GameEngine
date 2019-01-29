@@ -1,7 +1,6 @@
 #ifndef __WORLD_INCLUDED__
 #define __WORLD_INCLUDED__
 
-#include <list>
 #include <unordered_set>
 
 namespace GameEngine

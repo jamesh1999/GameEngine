@@ -1,11 +1,10 @@
 #ifndef __MESH_LOADER_INCLUDED__
 #define __MESH_LOADER_INCLUDED__
 
-#include <string>
 #include <fbxsdk.h>
-#include "Mesh.h"
-#include "Material.h"
+#include <string>
 #include <vector>
+#include "Mesh.h"
 
 namespace GameEngine
 {

@@ -1,20 +1,24 @@
 #include "StaticBatcher.h"
-#include "Transform.h"
+#include "Component.h"
+#include "ElementFactory.h"
+#include "ElementPtr.h"
+#include "GraphicsController.h"
 #include "Mesh.h"
 #include "ResourceFactory.h"
-#include "TextureArray.h"
 #include "ResourcePtr.h"
-#include "ElementFactory.h"
-#include "GraphicsController.h"
-#include "ElementPtr.h"
-#include "Component.h"
+#include "TextureArray.h"
+#include "Transform.h"
 
-void StaticBatcher::AggregateRenderers(GameEngine::Elements::CompositeObject* co, std::vector<GameEngine::Renderer*>& agg)
+
+void StaticBatcher::AggregateRenderers(GameEngine::Elements::CompositeObject* co,
+                                       std::vector<GameEngine::Renderer*>& agg)
 {
 	GameEngine::Renderer* r = co->GetComponent<GameEngine::Renderer>();
 	if (r != nullptr) agg.push_back(r);
 
-	for (GameEngine::Elements::ElementPtr<GameEngine::Elements::Transform> child : co->GetComponent<GameEngine::Elements::Transform>()->GetChildren())
+	for (GameEngine::Elements::ElementPtr<GameEngine::Elements::Transform> child : co
+	                                                                               ->GetComponent<GameEngine::Elements::
+		                                                                               Transform>()->GetChildren())
 		AggregateRenderers(child->obj.Get(), agg);
 }
 
@@ -65,8 +69,11 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 	while (unbatched)
 	{
 		unbatched = false;
-		GameEngine::Elements::CompositeObject* trans = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetParent(root->GetComponent<GameEngine::Elements::Transform>());
+		GameEngine::Elements::CompositeObject* trans = engine
+		                                               ->elementFactory->Create<GameEngine::Elements::CompositeObject
+		                                               >();
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetParent(
+			root->GetComponent<GameEngine::Elements::Transform>());
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({0.0f, 0.0f, 0.0f});
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({0.0f, 0.0f, 0.0f});
@@ -121,8 +128,11 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 	while (unbatched)
 	{
 		unbatched = false;
-		GameEngine::Elements::CompositeObject* trans = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetParent(root->GetComponent<GameEngine::Elements::Transform>());
+		GameEngine::Elements::CompositeObject* trans = engine
+		                                               ->elementFactory->Create<GameEngine::Elements::CompositeObject
+		                                               >();
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetParent(
+			root->GetComponent<GameEngine::Elements::Transform>());
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({0.0f, 0.0f, 0.0f});
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({0.0f, 0.0f, 0.0f});
