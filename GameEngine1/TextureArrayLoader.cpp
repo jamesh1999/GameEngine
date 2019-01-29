@@ -4,7 +4,8 @@
 #include <vector>
 #include "ResourceFactory.h"
 
-using namespace GameEngine::Resources;
+using namespace GameEngine;
+using namespace Resources;
 
 TextureArray* TextureArrayLoader::Load(Engine* engine, const std::string& descriptor)
 {

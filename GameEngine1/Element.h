@@ -22,11 +22,11 @@ namespace GameEngine
 			std::unordered_set<ElementPtr<Element>*> m_ptrs;
 
 		protected:
-			Engine* engine;
+			Engine* engine = nullptr;
 
 		public:
 			virtual ~Element();
-			virtual void Destroy() { delete this; };
+			virtual void Destroy();
 		};
 	}
 }

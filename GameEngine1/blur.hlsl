@@ -25,6 +25,11 @@ float4 PShader(float4 pos : SV_POSITION, float2 tex : TEXCOORD0) : SV_Target0
     float normalization;
     float4 color;
 
+    float w;
+    float h;
+    shaderTexture.GetDimensions(w, h);
+    float offset = 1 / w;
+
     // Create the weights that each neighbor pixel will contribute to the blur.
     weight0 = 1.0f;
     weight1 = 0.94f;
@@ -50,19 +55,19 @@ float4 PShader(float4 pos : SV_POSITION, float2 tex : TEXCOORD0) : SV_Target0
     color = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Add the nine horizontal pixels to the color by the specific weight of each.
-    color += shaderTexture.Sample(samplerWrap, tex-0.006*float2(1.0, 0.0)) * weight6;
-    color += shaderTexture.Sample(samplerWrap, tex-0.005*float2(1.0, 0.0)) * weight5;
-    color += shaderTexture.Sample(samplerWrap, tex-0.004*float2(1.0, 0.0)) * weight4;
-    color += shaderTexture.Sample(samplerWrap, tex-0.003*float2(1.0, 0.0)) * weight3;
-    color += shaderTexture.Sample(samplerWrap, tex-0.002*float2(1.0, 0.0)) * weight2;
-    color += shaderTexture.Sample(samplerWrap, tex-0.001*float2(1.0, 0.0)) * weight1;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*6*float2(1.0, 0.0)) * weight6;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*5*float2(1.0, 0.0)) * weight5;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*4*float2(1.0, 0.0)) * weight4;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*3*float2(1.0, 0.0)) * weight3;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*2*float2(1.0, 0.0)) * weight2;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*1*float2(1.0, 0.0)) * weight1;
     color += shaderTexture.Sample(samplerWrap, tex) * weight0;
-    color += shaderTexture.Sample(samplerWrap, tex+0.006*float2(1.0, 0.0)) * weight6;
-    color += shaderTexture.Sample(samplerWrap, tex+0.005*float2(1.0, 0.0)) * weight5;
-    color += shaderTexture.Sample(samplerWrap, tex+0.004*float2(1.0, 0.0)) * weight4;
-    color += shaderTexture.Sample(samplerWrap, tex+0.003*float2(1.0, 0.0)) * weight3;
-    color += shaderTexture.Sample(samplerWrap, tex+0.002*float2(1.0, 0.0)) * weight2;
-    color += shaderTexture.Sample(samplerWrap, tex+0.001*float2(1.0, 0.0)) * weight1;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*6*float2(1.0, 0.0)) * weight6;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*5*float2(1.0, 0.0)) * weight5;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*4*float2(1.0, 0.0)) * weight4;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*3*float2(1.0, 0.0)) * weight3;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*2*float2(1.0, 0.0)) * weight2;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*1*float2(1.0, 0.0)) * weight1;
 
     // Set the alpha channel to one.
     color.a = 1.0;
@@ -76,6 +81,11 @@ float4 PShaderV(float4 pos : SV_POSITION, float2 tex : TEXCOORD0) : SV_Target0
     float normalization;
     float4 color;
 
+    float w;
+    float h;
+    shaderTexture.GetDimensions(w, h);
+    float offset = 1 / h;
+
     // Create the weights that each neighbor pixel will contribute to the blur.
     weight0 = 1.0f;
     weight1 = 0.94f;
@@ -101,19 +111,19 @@ float4 PShaderV(float4 pos : SV_POSITION, float2 tex : TEXCOORD0) : SV_Target0
     color = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Add the nine horizontal pixels to the color by the specific weight of each.
-    color += shaderTexture.Sample(samplerWrap, tex-0.006*float2(0.0, 1.0)) * weight6;
-    color += shaderTexture.Sample(samplerWrap, tex-0.005*float2(0.0, 1.0)) * weight5;
-    color += shaderTexture.Sample(samplerWrap, tex-0.004*float2(0.0, 1.0)) * weight4;
-    color += shaderTexture.Sample(samplerWrap, tex-0.003*float2(0.0, 1.0)) * weight3;
-    color += shaderTexture.Sample(samplerWrap, tex-0.002*float2(0.0, 1.0)) * weight2;
-    color += shaderTexture.Sample(samplerWrap, tex-0.001*float2(0.0, 1.0)) * weight1;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*6*float2(0.0, 1.0)) * weight6;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*5*float2(0.0, 1.0)) * weight5;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*4*float2(0.0, 1.0)) * weight4;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*3*float2(0.0, 1.0)) * weight3;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*2*float2(0.0, 1.0)) * weight2;
+    color += shaderTexture.Sample(samplerWrap, tex-offset*1*float2(0.0, 1.0)) * weight1;
     color += shaderTexture.Sample(samplerWrap, tex) * weight0;
-    color += shaderTexture.Sample(samplerWrap, tex+0.006*float2(0.0, 1.0)) * weight6;
-    color += shaderTexture.Sample(samplerWrap, tex+0.005*float2(0.0, 1.0)) * weight5;
-    color += shaderTexture.Sample(samplerWrap, tex+0.004*float2(0.0, 1.0)) * weight4;
-    color += shaderTexture.Sample(samplerWrap, tex+0.003*float2(0.0, 1.0)) * weight3;
-    color += shaderTexture.Sample(samplerWrap, tex+0.002*float2(0.0, 1.0)) * weight2;
-    color += shaderTexture.Sample(samplerWrap, tex+0.001*float2(0.0, 1.0)) * weight1;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*6*float2(0.0, 1.0)) * weight6;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*5*float2(0.0, 1.0)) * weight5;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*4*float2(0.0, 1.0)) * weight4;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*3*float2(0.0, 1.0)) * weight3;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*2*float2(0.0, 1.0)) * weight2;
+    color += shaderTexture.Sample(samplerWrap, tex+offset*1*float2(0.0, 1.0)) * weight1;
 
     // Set the alpha channel to one.
     color.a = 1.0;

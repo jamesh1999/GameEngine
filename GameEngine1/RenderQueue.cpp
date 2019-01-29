@@ -2,7 +2,8 @@
 #include "CompositeObject.h"
 #include "Transform.h"
 
-using namespace GameEngine::Graphics;
+using namespace GameEngine;
+using namespace Graphics;
 
 RenderQueue::RenderQueue()
 {

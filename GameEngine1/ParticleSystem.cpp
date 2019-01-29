@@ -8,7 +8,8 @@
 #include "Texture.h"
 #include "ResourceFactory.h"
 
-using namespace GameEngine::Graphics;
+using namespace GameEngine;
+using namespace Graphics;
 
 ParticleSystem::ParticleSystem(Engine* engine)
 {

@@ -8,7 +8,8 @@
 #include "Transform.h"
 #include "CompositeObject.h"
 
-using namespace GameEngine::Graphics;
+using namespace GameEngine;
+using namespace Graphics;
 
 typedef struct
 {

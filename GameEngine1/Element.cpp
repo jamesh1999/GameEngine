@@ -9,3 +9,8 @@ Element::~Element()
 	for (auto ptr : m_ptrs)
 		ptr->Clear();
 }
+
+void Element::Destroy()
+{
+	delete this;
+}
