@@ -20,114 +20,110 @@ void Transform::Destroy()
 
 DirectX::XMMATRIX Transform::GetTransform() const
 {
-	if(m_parent != nullptr)
-		return DirectX::XMMatrixMultiply(
-		DirectX::XMMatrixMultiply(
-		DirectX::XMMatrixMultiply(
-			DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&m_rotation)),
-			DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_scale))),
-		DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3(&m_position))),
-		m_parent->GetTransform());
-	else
-		return DirectX::XMMatrixMultiply(
-			DirectX::XMMatrixMultiply(
-				DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&m_rotation)),
-				DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_scale))),
-			DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3(&m_position)));
+	if (m_parent != nullptr)
+		return XMMatrixMultiply(
+			XMMatrixMultiply(
+				XMMatrixMultiply(
+					DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&m_rotation)),
+					DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_scale))),
+				DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_position))),
+			m_parent->GetTransform());
+	return XMMatrixMultiply(
+		XMMatrixMultiply(
+			DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&m_rotation)),
+			DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_scale))),
+		DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_position)));
 }
 
 DirectX::XMVECTOR Transform::GetPosition() const
 {
-	if(m_parent != nullptr)
-		return DirectX::XMVector3TransformCoord(
-			DirectX::XMLoadFloat3A(&m_position),
+	if (m_parent != nullptr)
+		return XMVector3TransformCoord(
+			XMLoadFloat3A(&m_position),
 			m_parent->GetTransform());
-	else
-		return DirectX::XMLoadFloat3A(&m_position);
+	return XMLoadFloat3A(&m_position);
 }
 
 DirectX::XMVECTOR Transform::GetRotation() const
 {
 	if (m_parent != nullptr)
 		return DirectX::XMQuaternionMultiply(
-			DirectX::XMLoadFloat4A(&m_rotation),
+			XMLoadFloat4A(&m_rotation),
 			m_parent->GetRotation());
-	else
-		return DirectX::XMLoadFloat4A(&m_rotation);
+	return XMLoadFloat4A(&m_rotation);
 }
 
 DirectX::XMVECTOR Transform::GetScale() const
 {
 	if (m_parent != nullptr)
-		return DirectX::XMVector3TransformNormal(
-			DirectX::XMLoadFloat3A(&m_position),
+		return XMVector3TransformNormal(
+			XMLoadFloat3A(&m_position),
 			m_parent->GetTransform());
-	else
-		return DirectX::XMLoadFloat3A(&m_scale);
+	return XMLoadFloat3A(&m_scale);
 }
 
 DirectX::XMVECTOR Transform::GetUp() const
 {
-	return DirectX::XMVector3Rotate({ 0.0f, 1.0f, 0.0f }, GetRotation());
+	return DirectX::XMVector3Rotate({0.0f, 1.0f, 0.0f}, GetRotation());
 }
 
 DirectX::XMVECTOR Transform::GetDown() const
 {
-	return DirectX::XMVector3Rotate({ 0.0f, -1.0f, 0.0f }, GetRotation());
+	return DirectX::XMVector3Rotate({0.0f, -1.0f, 0.0f}, GetRotation());
 }
 
 DirectX::XMVECTOR Transform::GetLeft() const
 {
-	return DirectX::XMVector3Rotate({ -1.0f, 0.0f, 0.0f }, GetRotation());
+	return DirectX::XMVector3Rotate({-1.0f, 0.0f, 0.0f}, GetRotation());
 }
 
 DirectX::XMVECTOR Transform::GetRight() const
 {
-	return DirectX::XMVector3Rotate({ 1.0f, 0.0f, 0.0f }, GetRotation());
+	return DirectX::XMVector3Rotate({1.0f, 0.0f, 0.0f}, GetRotation());
 }
 
 DirectX::XMVECTOR Transform::GetForwards() const
 {
-	return DirectX::XMVector3Rotate({ 0.0f, 0.0f, 1.0f }, GetRotation());
+	return DirectX::XMVector3Rotate({0.0f, 0.0f, 1.0f}, GetRotation());
 }
 
 DirectX::XMVECTOR Transform::GetBackwards() const
 {
-	return DirectX::XMVector3Rotate({ 0.0f, 0.0f, -1.0f }, GetRotation());
+	return DirectX::XMVector3Rotate({0.0f, 0.0f, -1.0f}, GetRotation());
 }
 
 DirectX::XMMATRIX Transform::GetLocalTransform() const
 {
-	return DirectX::XMMatrixMultiply(
-		DirectX::XMMatrixMultiply(
-			DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4A(&m_rotation)),
-			DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3A(&m_scale))),
-		DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3A(&m_position)));
+	return XMMatrixMultiply(
+		XMMatrixMultiply(
+			DirectX::XMMatrixRotationQuaternion(XMLoadFloat4A(&m_rotation)),
+			DirectX::XMMatrixScalingFromVector(XMLoadFloat3A(&m_scale))),
+		DirectX::XMMatrixTranslationFromVector(XMLoadFloat3A(&m_position)));
 }
 
 DirectX::XMVECTOR Transform::GetLocalPosition() const
 {
-	return DirectX::XMLoadFloat3A(&m_position);
+	return XMLoadFloat3A(&m_position);
 }
 
 DirectX::XMVECTOR Transform::GetLocalRotation() const
 {
-	return DirectX::XMLoadFloat4A(&m_rotation);
+	return XMLoadFloat4A(&m_rotation);
 }
 
 DirectX::XMVECTOR Transform::GetLocalScale() const
 {
-	return DirectX::XMLoadFloat3A(&m_scale);
+	return XMLoadFloat3A(&m_scale);
 }
 
 void Transform::SetPosition(const DirectX::XMVECTOR& nPos)
 {
-	DirectX::XMStoreFloat3A(&m_position, nPos);
+	XMStoreFloat3A(&m_position, nPos);
 }
 
 void Transform::SetRotation(const DirectX::XMVECTOR& nRotation)
 {
-	DirectX::XMStoreFloat4A(&m_rotation, nRotation);
+	XMStoreFloat4A(&m_rotation, nRotation);
 	//Clamp [-pi:pi]
 	/*m_rotation.x -= DirectX::XM_2PI * (std::floor((m_rotation.x + DirectX::XM_PI) / DirectX::XM_2PI));
 	m_rotation.y -= DirectX::XM_2PI * (std::floor((m_rotation.y + DirectX::XM_PI) / DirectX::XM_2PI));
@@ -136,7 +132,7 @@ void Transform::SetRotation(const DirectX::XMVECTOR& nRotation)
 
 void Transform::SetScale(const DirectX::XMVECTOR& nScale)
 {
-	DirectX::XMStoreFloat3A(&m_scale, nScale);
+	XMStoreFloat3A(&m_scale, nScale);
 }
 
 std::vector<ElementPtr<Transform>> Transform::GetChildren()
@@ -152,6 +148,6 @@ void Transform::SetParent(Transform* parent)
 	}
 
 	m_parent = parent;
-	
+
 	if (parent != nullptr) parent->m_children.emplace(this);
 }

@@ -18,7 +18,8 @@ namespace GameEngine
 			{
 			public:
 				std::unordered_map<unsigned, int>* m_priorities;
-				bool operator() (Renderer* a, Renderer* b)
+
+				bool operator()(Renderer* a, Renderer* b)
 				{
 					return (*m_priorities)[a->GetID()] > (*m_priorities)[b->GetID()];
 				}

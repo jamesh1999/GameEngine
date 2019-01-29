@@ -50,7 +50,7 @@ void Engine::Loop()
 }
 
 //Handles messages from WndProc()
-bool GameEngine::Engine::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+bool Engine::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (graphics->HandleMessage(hWnd, message, wParam, lParam)) return true;
 

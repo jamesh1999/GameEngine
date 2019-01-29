@@ -4,21 +4,23 @@
 #include <unordered_set>
 #include "Component.h"
 
-struct Hash {
+struct Hash
+{
 	size_t operator()(const GameEngine::Elements::Component* c) const
 	{
 		return c->GetID();
 	}
 };
 
-struct Pred {
+struct Pred
+{
 	bool operator()(const GameEngine::Elements::Component* a, const GameEngine::Elements::Component* b) const
 	{
 		return a->GetID() == b->GetID();
 	}
 };
 
-template<class T>
+template <class T>
 using ComponentSet = std::unordered_set<T, Hash, Pred>;
 
 #endif

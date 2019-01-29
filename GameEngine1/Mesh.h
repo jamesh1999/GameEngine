@@ -26,7 +26,7 @@ namespace GameEngine
 			DirectX::XMFLOAT3 m_centroid;
 
 		protected:
-			Mesh* CloneResource();
+			Mesh* CloneResource() override;
 
 		public:
 			Mesh* CombineMesh(Mesh*);

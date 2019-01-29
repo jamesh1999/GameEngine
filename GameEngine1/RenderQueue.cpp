@@ -12,13 +12,13 @@ RenderQueue::RenderQueue()
 	m_queue = Utils::LazyOrderedContainer<Renderer*, std::vector<Renderer*>, RQComp>(cmp);
 }
 
-void RenderQueue::AddRenderer(GameEngine::Renderer* r)
+void RenderQueue::AddRenderer(Renderer* r)
 {
 	m_priorities[r->GetID()] = 0;
 	m_queue.Insert(r);
 }
 
-void RenderQueue::RemoveRenderer(GameEngine::Renderer* r)
+void RenderQueue::RemoveRenderer(Renderer* r)
 {
 	m_priorities.erase(r->GetID());
 	m_queue.Erase(r);
@@ -30,7 +30,7 @@ void RenderQueue::Refresh(DirectX::XMVECTOR forwards)
 	{
 		float result = DirectX::XMVectorGetX(
 			DirectX::XMVector3Dot(
-				DirectX::XMVector3Transform(
+				XMVector3Transform(
 					r->mesh->GetCentroid(),
 					r->obj->GetComponent<Elements::Transform>()->GetTransform()),
 				forwards));

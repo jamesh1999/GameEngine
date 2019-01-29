@@ -34,11 +34,11 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	//Create device and device context
 	D3D_FEATURE_LEVEL featureLevel;
 	D3D11CreateDevice(
-		NULL,
+		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
+		nullptr,
 		D3D11_CREATE_DEVICE_DEBUG,
-		NULL,
+		nullptr,
 		NULL,
 		D3D11_SDK_VERSION,
 		&device,
@@ -46,7 +46,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 		&devContext
 	);
 
-	if(featureLevel < D3D_FEATURE_LEVEL_11_0)
+	if (featureLevel < D3D_FEATURE_LEVEL_11_0)
 	{
 		std::cerr << "The graphics hardware does not support DirectX 11" << std::endl;
 		exit(-1);
@@ -89,7 +89,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	//Bind backbuffer
 	ID3D11Texture2D* pBackBuffer;
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-	device->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer);
+	device->CreateRenderTargetView(pBackBuffer, nullptr, &backBuffer);
 	pBackBuffer->Release();
 
 	D3D11_TEXTURE2D_DESC tD;
@@ -105,20 +105,20 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	tD.SampleDesc.Count = 1;
 	tD.SampleDesc.Quality = 0;
 
-	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
-	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer);
-	
+	device->CreateTexture2D(&tD, nullptr, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, nullptr, &bloomBuffer);
+
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
 	srvD.Format = tD.Format;
 	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvD.Texture2D.MipLevels = -1;
 	srvD.Texture2D.MostDetailedMip = 0;
-	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV);
+	device->CreateShaderResourceView(pBackBuffer, nullptr, &bloomSRV);
 
-	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
-	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer2);
-	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV2);
+	device->CreateTexture2D(&tD, nullptr, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, nullptr, &bloomBuffer2);
+	device->CreateShaderResourceView(pBackBuffer, nullptr, &bloomSRV2);
 
 	//Create depth and stencil buffer
 	D3D11_TEXTURE2D_DESC depthDesc;
@@ -135,7 +135,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	depthDesc.Width = m_scrWidth;
 
 	ID3D11Texture2D* pDepthBuffer;
-	device->CreateTexture2D(&depthDesc, NULL, &pDepthBuffer);
+	device->CreateTexture2D(&depthDesc, nullptr, &pDepthBuffer);
 
 	D3D11_DEPTH_STENCIL_DESC dsD;
 	ZeroMemory(&dsD, sizeof(D3D11_DEPTH_STENCIL_DESC));
@@ -179,7 +179,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	pDepthBuffer->Release();
 
 	//Set back buffer & depth/stencil view as render targets
-	ID3D11RenderTargetView* rTVs[2] = { backBuffer, bloomBuffer };
+	ID3D11RenderTargetView* rTVs[2] = {backBuffer, bloomBuffer};
 	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 
 	//Create rasterizer state
@@ -240,13 +240,13 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	cBD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cBD.Usage = D3D11_USAGE_DYNAMIC;
 
-	device->CreateBuffer(&cBD, NULL, &cBufferFrame);
-	device->CreateBuffer(&cBD, NULL, &cBufferLight);
+	device->CreateBuffer(&cBD, nullptr, &cBufferFrame);
+	device->CreateBuffer(&cBD, nullptr, &cBufferLight);
 
 	//Per object CB
 	cBD.ByteWidth = sizeof(DirectX::XMFLOAT4X4A);
 
-	device->CreateBuffer(&cBD, NULL, &cBufferObject);
+	device->CreateBuffer(&cBD, nullptr, &cBufferObject);
 
 	geomBuff = new GeometryBufferContainer(device, devContext);
 
@@ -272,7 +272,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	bDsc.RenderTarget[1].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	device->CreateBlendState(&bDsc, &blendState);
-	devContext->OMSetBlendState(blendState, NULL, 0xffffffff);
+	devContext->OMSetBlendState(blendState, nullptr, 0xffffffff);
 
 	bDsc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 	bDsc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
@@ -297,12 +297,12 @@ GraphicsController::~GraphicsController()
 
 void GraphicsController::StartDraw()
 {
-	devContext->ClearRenderTargetView(backBuffer, DirectX::XMVECTORF32{ 0.0, 0.0, 0.0, 1.0 });
-	devContext->ClearRenderTargetView(bloomBuffer, DirectX::XMVECTORF32{ 0.0, 0.0, 0.0, 1.0 });
-	devContext->ClearRenderTargetView(bloomBuffer2, DirectX::XMVECTORF32{ 0.0, 0.0, 0.0, 1.0 });
+	devContext->ClearRenderTargetView(backBuffer, DirectX::XMVECTORF32{0.0, 0.0, 0.0, 1.0});
+	devContext->ClearRenderTargetView(bloomBuffer, DirectX::XMVECTORF32{0.0, 0.0, 0.0, 1.0});
+	devContext->ClearRenderTargetView(bloomBuffer2, DirectX::XMVECTORF32{0.0, 0.0, 0.0, 1.0});
 	devContext->ClearDepthStencilView(depthBuffer,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0, 0);
+	                                  D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+	                                  1.0, 0);
 	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devContext->RSSetViewports(1, &vP);
 	devContext->OMSetDepthStencilState(depthState, 1);
@@ -312,11 +312,11 @@ void GraphicsController::StartDraw()
 
 	//Get WV matrix
 	DirectX::XMMATRIX mat = m_camera->obj->GetComponent<Elements::Transform>()->GetTransform();
-	DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(mat);
+	DirectX::XMVECTOR det = XMMatrixDeterminant(mat);
 
-	DirectX::XMStoreFloat4x4A(&data.wv, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));
-	DirectX::XMStoreFloat4x4A(&data.vp, DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(0.82547f, static_cast<float>(m_scrWidth) / m_scrHeight, 8.0f, 2000.0f)));
-	DirectX::XMStoreFloat3A(&data.camPos, m_camera->obj->GetComponent<Elements::Transform>()->GetPosition());
+	XMStoreFloat4x4A(&data.wv, XMMatrixTranspose(XMMatrixInverse(&det, mat)));
+	XMStoreFloat4x4A(&data.vp, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(0.82547f, static_cast<float>(m_scrWidth) / m_scrHeight, 8.0f, 2000.0f)));
+	XMStoreFloat3A(&data.camPos, m_camera->obj->GetComponent<Elements::Transform>()->GetPosition());
 
 	D3D11_MAPPED_SUBRESOURCE mp;
 	devContext->Map(cBufferFrame, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
@@ -333,11 +333,11 @@ void GraphicsController::StartDraw()
 
 	//Get WV matrix
 	mat = m_light->obj->GetComponent<Elements::Transform>()->GetTransform();
-	det = DirectX::XMMatrixDeterminant(mat);
+	det = XMMatrixDeterminant(mat);
 
-	DirectX::XMStoreFloat4x4A(&light.v, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));
-	DirectX::XMStoreFloat4x4A(&light.p, DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
-	DirectX::XMStoreFloat3A(&light.lightPos, m_light->obj->GetComponent<Elements::Transform>()->GetPosition());
+	XMStoreFloat4x4A(&light.v, XMMatrixTranspose(XMMatrixInverse(&det, mat)));
+	XMStoreFloat4x4A(&light.p, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
+	XMStoreFloat3A(&light.lightPos, m_light->obj->GetComponent<Elements::Transform>()->GetPosition());
 
 	devContext->Map(cBufferLight, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
 	memcpy(mp.pData, &light, sizeof(LightBuffer));
@@ -355,61 +355,61 @@ void GraphicsController::StartDraw()
 
 void GraphicsController::RenderObjects()
 {
-	for(auto r : rq)
+	for (auto r : rq)
 	{
 		if (!r->m_active) continue;
-		FillBuffers(r,true);
+		FillBuffers(r, true);
 	}
 }
 
 void GraphicsController::EndDraw()
 {
 	devContext->ClearDepthStencilView(depthBuffer,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0, 0);
-	ID3D11RenderTargetView* rTVs[2] = { bloomBuffer2, NULL };
+	                                  D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+	                                  1.0, 0);
+	ID3D11RenderTargetView* rTVs[2] = {bloomBuffer2, nullptr};
 	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 	devContext->PSSetShaderResources(0, 1, &bloomSRV);
-	devContext->VSSetShader(bloomVtx, NULL, NULL);
-	devContext->PSSetShader(bloomPx, NULL, NULL);
-	devContext->OMSetBlendState(blendAdd, NULL, 0xffffffff);
+	devContext->VSSetShader(bloomVtx, nullptr, NULL);
+	devContext->PSSetShader(bloomPx, nullptr, NULL);
+	devContext->OMSetBlendState(blendAdd, nullptr, 0xffffffff);
 	devContext->Draw(3, 0);
 
 	devContext->ClearDepthStencilView(depthBuffer,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0, 0);
+	                                  D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+	                                  1.0, 0);
 
 	rTVs[0] = backBuffer;
 	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 	devContext->PSSetShaderResources(0, 1, &bloomSRV2);
-	devContext->PSSetShader(bloomPxV, NULL, NULL);
+	devContext->PSSetShader(bloomPxV, nullptr, NULL);
 	devContext->Draw(3, 0);
 
-	devContext->OMSetBlendState(blendState, NULL, 0xffffffff);
+	devContext->OMSetBlendState(blendState, nullptr, 0xffffffff);
 	swapChain->Present(NULL, NULL);
-	ID3D11ShaderResourceView* nullSRV = NULL;
+	ID3D11ShaderResourceView* nullSRV = nullptr;
 	devContext->PSSetShaderResources(1, 1, &nullSRV);
 	devContext->PSSetShaderResources(0, 1, &nullSRV);
 }
 
-void GraphicsController::AddRenderer(GameEngine::Renderer* r)
+void GraphicsController::AddRenderer(Renderer* r)
 {
 	//renderers.Insert(std::make_pair(renderers.Size(), r));
 	rq.AddRenderer(r);
 	geomBuff->AddRenderer(r);
 }
 
-void GraphicsController::RemoveRenderer(GameEngine::Renderer* r)
+void GraphicsController::RemoveRenderer(Renderer* r)
 {
 	rq.RemoveRenderer(r);
 }
 
-void GraphicsController::FillBuffers(GameEngine::Renderer* r, bool tex)
+void GraphicsController::FillBuffers(Renderer* r, bool tex)
 {
 	D3D11_MAPPED_SUBRESOURCE mp;
 
 	if (r->GetTransparent()) DisableDepthWrite();
-		
+
 	/*devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
 	memcpy(mp.pData, &(*r->mesh)[i].vertices[0], (*r->mesh)[i].vertices.size() * sizeof(Vertex));
 	devContext->Unmap(vertexBuffer, 0);
@@ -419,7 +419,7 @@ void GraphicsController::FillBuffers(GameEngine::Renderer* r, bool tex)
 	devContext->Unmap(indexBuffer, 0);*/
 
 	DirectX::XMFLOAT4X4A data[1];
-	DirectX::XMStoreFloat4x4A(data, DirectX::XMMatrixTranspose(r->obj->GetComponent<Elements::Transform>()->GetTransform()));
+	XMStoreFloat4x4A(data, XMMatrixTranspose(r->obj->GetComponent<Elements::Transform>()->GetTransform()));
 
 	devContext->Map(cBufferObject, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
 	memcpy(mp.pData, data, sizeof(DirectX::XMFLOAT4X4A));
@@ -449,14 +449,14 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	if (m_scrWidth == 0 || m_scrHeight == 0) return true;
 
 	//Release old resources
-	devContext->OMSetRenderTargets(0, NULL, NULL);
+	devContext->OMSetRenderTargets(0, nullptr, nullptr);
 	depthBuffer->Release();
 	backBuffer->Release();
 
 	swapChain->ResizeBuffers(0, m_scrWidth, m_scrHeight, DXGI_FORMAT_UNKNOWN, 0);
 	ID3D11Texture2D* pBackBuffer;
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-	device->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer);
+	device->CreateRenderTargetView(pBackBuffer, nullptr, &backBuffer);
 	pBackBuffer->Release();
 
 	//Create new depth/stencil buffer
@@ -474,7 +474,7 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	depthDesc.Width = m_scrWidth;
 
 	ID3D11Texture2D* pDepthBuffer;
-	device->CreateTexture2D(&depthDesc, NULL, &pDepthBuffer);
+	device->CreateTexture2D(&depthDesc, nullptr, &pDepthBuffer);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvD;
 	ZeroMemory(&dsvD, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -499,21 +499,21 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	tD.SampleDesc.Count = 1;
 	tD.SampleDesc.Quality = 0;
 
-	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
-	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer);
+	device->CreateTexture2D(&tD, nullptr, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, nullptr, &bloomBuffer);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvD;
 	srvD.Format = tD.Format;
 	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvD.Texture2D.MipLevels = -1;
 	srvD.Texture2D.MostDetailedMip = 0;
-	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV);
+	device->CreateShaderResourceView(pBackBuffer, nullptr, &bloomSRV);
 
-	device->CreateTexture2D(&tD, NULL, &pBackBuffer);
-	device->CreateRenderTargetView(pBackBuffer, NULL, &bloomBuffer2);
-	device->CreateShaderResourceView(pBackBuffer, NULL, &bloomSRV2);
+	device->CreateTexture2D(&tD, nullptr, &pBackBuffer);
+	device->CreateRenderTargetView(pBackBuffer, nullptr, &bloomBuffer2);
+	device->CreateShaderResourceView(pBackBuffer, nullptr, &bloomSRV2);
 
-	ID3D11RenderTargetView* rTVs[2] = { backBuffer, bloomBuffer };
+	ID3D11RenderTargetView* rTVs[2] = {backBuffer, bloomBuffer};
 	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 
 	vP.TopLeftX = 0;
@@ -542,25 +542,25 @@ void GraphicsController::RenderLightDepth()
 	ID3D11RenderTargetView* rtv = m_light->GetRTV();
 	devContext->OMSetRenderTargets(1, &rtv, m_light->depthBuff);
 	devContext->IASetInputLayout(dpthILayout);
-	devContext->VSSetShader(dpthVtx, NULL, NULL);
-	devContext->PSSetShader(dpthPx, NULL, NULL);
+	devContext->VSSetShader(dpthVtx, nullptr, NULL);
+	devContext->PSSetShader(dpthPx, nullptr, NULL);
 	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devContext->RSSetViewports(1, &m_light->vp);
 	devContext->ClearDepthStencilView(m_light->depthBuff,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0, 0);
-	devContext->ClearRenderTargetView(m_light->GetRTV(), DirectX::XMVECTORF32{ 1.0, 1.0, 1.0, 1.0 });
-	
+	                                  D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+	                                  1.0, 0);
+	devContext->ClearRenderTargetView(m_light->GetRTV(), DirectX::XMVECTORF32{1.0, 1.0, 1.0, 1.0});
+
 
 	//Fill per frame buffer
 	PerFrameBuffer data;
 
 	//Get WV matrix
 	DirectX::XMMATRIX mat = m_light->obj->GetComponent<Elements::Transform>()->GetTransform();
-	DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(mat);
+	DirectX::XMVECTOR det = XMMatrixDeterminant(mat);
 
-	DirectX::XMStoreFloat4x4A(&data.wv, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, mat)));
-	DirectX::XMStoreFloat4x4A(&data.vp, DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
+	XMStoreFloat4x4A(&data.wv, XMMatrixTranspose(XMMatrixInverse(&det, mat)));
+	XMStoreFloat4x4A(&data.vp, XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 1.0f, 8.0f, 800.0f)));
 
 	D3D11_MAPPED_SUBRESOURCE mp;
 	devContext->Map(cBufferFrame, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
@@ -576,7 +576,7 @@ void GraphicsController::RenderLightDepth()
 		FillBuffers(r, false);
 	}
 
-	ID3D11RenderTargetView* rTVs[2] = { backBuffer, bloomBuffer };
+	ID3D11RenderTargetView* rTVs[2] = {backBuffer, bloomBuffer};
 	devContext->OMSetRenderTargets(2, rTVs, depthBuffer);
 }
 

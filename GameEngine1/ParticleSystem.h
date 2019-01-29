@@ -16,7 +16,7 @@ namespace GameEngine
 		class ParticleSystem
 		{
 		private:
-			
+
 			ID3D11VertexShader* vtx;
 			ID3D11PixelShader* pix;
 
@@ -37,7 +37,7 @@ namespace GameEngine
 		public:
 			Engine* engine = nullptr;
 
-			ParticleSystem(GameEngine::Engine*);
+			ParticleSystem(Engine*);
 
 			void Initialise(DirectX::XMFLOAT3);
 			void Update();

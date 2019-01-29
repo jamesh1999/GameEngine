@@ -26,9 +26,8 @@ public:
 
 class Material : public GameEngine::Resources::Resource
 {
-
 protected:
-	Material* CloneResource();
+	Material* CloneResource() override;
 
 public:
 	std::vector<RenderPass> passes;

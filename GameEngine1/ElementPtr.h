@@ -8,7 +8,7 @@ namespace GameEngine
 	namespace Elements
 	{
 		class CompositeObject;
-		
+
 		template <class TElement>
 		class ElementPtr
 		{
@@ -33,7 +33,10 @@ namespace GameEngine
 				m_element = element;
 				AttachPtr();
 			}
-			ElementPtr() : ElementPtr(nullptr) {};
+
+			ElementPtr() : ElementPtr(nullptr)
+			{
+			};
 
 			~ElementPtr() { DetachPtr(); }
 
@@ -42,6 +45,7 @@ namespace GameEngine
 				m_element = other.m_element;
 				AttachPtr();
 			}
+
 			ElementPtr<TElement>& operator=(const ElementPtr<TElement>& other)
 			{
 				DetachPtr();
@@ -105,6 +109,7 @@ namespace GameEngine
 			if (m_element == nullptr) return;
 			static_cast<Element*>(m_element)->m_ptrs.erase(reinterpret_cast<ElementPtr<Element>*>(this));
 		}
+
 		template <>
 		void ElementPtr<CompositeObject>::DetachPtr();
 
@@ -115,6 +120,7 @@ namespace GameEngine
 			if (m_element == nullptr) return;
 			static_cast<Element*>(m_element)->m_ptrs.insert(reinterpret_cast<ElementPtr<Element>*>(this));
 		}
+
 		template <>
 		void ElementPtr<CompositeObject>::AttachPtr();
 	}

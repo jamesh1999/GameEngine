@@ -44,7 +44,7 @@ void InputManager::SetMouseButton(MouseButton b, bool down)
 	instance->m_mousePressed[static_cast<int>(b)] = down;
 }
 
-void Input::InputManager::GetMouseDelta(int& x, int& y)
+void InputManager::GetMouseDelta(int& x, int& y)
 {
 	x = instance->m_x - instance->m_mouseLast[0];
 	y = instance->m_y - instance->m_mouseLast[1];
@@ -74,7 +74,7 @@ KeyboardButton InputManager::WCharToKeyboard(wchar_t b)
 	return NullKey;
 }
 
-void Input::InputManager::Update()
+void InputManager::Update()
 {
 	instance->m_mouseLast[0] = instance->m_x;
 	instance->m_mouseLast[1] = instance->m_y;

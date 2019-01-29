@@ -25,7 +25,7 @@ namespace GameEngine
 		public:
 			bool m_static = false;
 
-			void Destroy();
+			void Destroy() override;
 
 			DirectX::XMMATRIX GetTransform() const;
 			DirectX::XMVECTOR GetPosition() const;

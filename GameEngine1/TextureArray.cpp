@@ -26,7 +26,7 @@ TextureArray* TextureArray::Add(Texture* tex)
 {
 	std::stringstream ss;
 	ss << '[';
-	
+
 	if (m_textures.size())
 	{
 		std::string identifier = GetIdentifier();
@@ -66,16 +66,17 @@ void TextureArray::Push()
 	for (auto& tex : m_textures)
 	{
 		if (tex->GetWidth() == max_width
-			&& tex->GetHeight() == max_height) continue;
+			&& tex->GetHeight() == max_height)
+			continue;
 
 		tex = tex->Resize(max_width, max_height);
 
 		//for (int x = 0; x < tex->GetWidth(); ++x)
-			//for (int y = 0; y < tex->GetHeight(); ++y)
-				//if (tex->m_data[(y * tex->GetWidth() + x) * 4 + 2] > 1.1f)
-					//std::cout << "haha" << std::endl;
+		//for (int y = 0; y < tex->GetHeight(); ++y)
+		//if (tex->m_data[(y * tex->GetWidth() + x) * 4 + 2] > 1.1f)
+		//std::cout << "haha" << std::endl;
 	}
-		
+
 	D3D11_TEXTURE2D_DESC tD;
 	ZeroMemory(&tD, sizeof(D3D11_TEXTURE2D_DESC));
 	tD.ArraySize = m_textures.size();
@@ -107,7 +108,7 @@ void TextureArray::Push()
 	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvD.Texture2D.MipLevels = -1;
 	srvD.Texture2D.MostDetailedMip = 0;
-	engine->graphics->device->CreateShaderResourceView(m_texture, NULL, &m_SRV);
+	engine->graphics->device->CreateShaderResourceView(m_texture, nullptr, &m_SRV);
 }
 
 ID3D11ShaderResourceView* TextureArray::GetSRV()

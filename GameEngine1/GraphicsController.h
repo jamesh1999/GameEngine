@@ -26,8 +26,11 @@ namespace GameEngine
 {
 	namespace Graphics
 	{
-
-		enum SHADER_TYPE { Shader_Type_Vertex, Shader_Type_Pixel };
+		enum SHADER_TYPE
+		{
+			Shader_Type_Vertex,
+			Shader_Type_Pixel
+		};
 
 		class GraphicsController
 		{
@@ -40,7 +43,6 @@ namespace GameEngine
 			ID3D11Buffer* cBufferFrame;
 			ID3D11Buffer* cBufferObject;
 			ID3D11Buffer* cBufferLight;
-
 
 
 			//Utils::PriorityQueue<GameEngine::Renderer*> renderers;
@@ -97,10 +99,10 @@ namespace GameEngine
 			void RenderObjects();
 			void EndDraw();
 
-			void AddRenderer(GameEngine::Renderer*);
-			void RemoveRenderer(GameEngine::Renderer*);
+			void AddRenderer(Renderer*);
+			void RemoveRenderer(Renderer*);
 
-			void FillBuffers(GameEngine::Renderer*, bool);
+			void FillBuffers(Renderer*, bool);
 
 			bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
 

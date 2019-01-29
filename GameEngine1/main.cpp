@@ -37,14 +37,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (game.HandleMessage(hWnd, message, wParam, lParam))
 		return message;
 
-	switch(message)
+	switch (message)
 	{
-	//Quit the window
+		//Quit the window
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 
-	//Otherwise use the default handling
+		//Otherwise use the default handling
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -91,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//Register the window class
 	RegisterClassEx(&winClass);
-	
+
 	//Create a window with CLASS1
 	HWND hWnd = CreateWindow(
 		L"CLASS1",
@@ -111,13 +111,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ShowWindow(hWnd, nCmdShow);
 
 	//Try to lock cursor?
-	RECT cursorPos = { 400, 400, 500, 500 };
+	RECT cursorPos = {400, 400, 500, 500};
 	ShowCursor(false);
 
 	//-----------------
 	// Game Initialisation
 	//-----------------
-	
+
 	game.clock = new GameEngine::Time::Clock;
 	game.graphics = new GameEngine::Graphics::GraphicsController(width, height, false, hWnd);
 	game.world = new GameEngine::Elements::World;
@@ -127,9 +127,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, pos), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	Material* mat = game.resourceFactory->Create<Material>("Default Phong");
@@ -165,7 +165,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->dpthVtx);
 	game.graphics->device->CreateInputLayout(
@@ -187,7 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->dpthPx);
 
@@ -208,7 +208,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomVtx);
 	success = D3DCompileFromFile(
@@ -228,7 +228,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomPx);
 
@@ -249,10 +249,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomPxV);
-	
+
 	//MeshData* skybox = new MeshData;
 	//std::vector<std::string> tex_skybox;
 	//MeshLoader::ApplyFBXWithTextures(skybox, fbxNode, "skycube1_nolight", tex_skybox);
@@ -278,8 +278,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	GameEngine::Elements::CompositeObject* co = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
 	GameEngine::Elements::Transform* t = co->GetComponent<GameEngine::Elements::Transform>();
-	t->SetPosition({ 0.0f, 0.0f, 0.0f });
-	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	t->SetPosition({0.0f, 0.0f, 0.0f});
+	t->SetScale({1.0f, 1.0f, 1.0f});
 	t->m_static = true;
 
 	GameEngine::Elements::CompositeObject* scn = GameEngine::Resources::SceneLoader::LoadFBX(&game, "Track.fbx");
@@ -298,8 +298,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	GameEngine::Elements::CompositeObject* sky = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	GameEngine::Renderer* r = sky->AttachComponent<GameEngine::Renderer>();
 	t = sky->GetComponent<GameEngine::Elements::Transform>();
-	t->SetPosition({ 0.0f, 0.0f, 0.0f });
-	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	t->SetPosition({0.0f, 0.0f, 0.0f});
+	t->SetScale({1.0f, 1.0f, 1.0f});
 
 	Material* mat1 = game.resourceFactory->Create<Material>("");
 	mat1->passes.push_back(RenderPass());
@@ -318,9 +318,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	GameEngine::Elements::CompositeObject* ship = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	t = ship->GetComponent<GameEngine::Elements::Transform>();
-	t->SetPosition({ -707.0f, 13.0f, -78.0f });
+	t->SetPosition({-707.0f, 13.0f, -78.0f});
 	t->SetRotation(DirectX::XMQuaternionIdentity());
-	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	t->SetScale({1.0f, 1.0f, 1.0f});
 
 	ship->AttachComponent<ShipController>();
 

@@ -46,7 +46,7 @@ std::unique_ptr<uint8_t[]> TextureLoader::ReadColourMapTGA(const TGAHeader& head
 std::unique_ptr<uint8_t[]> TextureLoader::ReadRLEImageTGA(const TGAHeader& header, std::ifstream& stream)
 {
 	unsigned imgSize = header.width * header.height;
-	unsigned bytesPerPixel = (header.bpp+1) >> 3; // Allow for 15bpp
+	unsigned bytesPerPixel = (header.bpp + 1) >> 3; // Allow for 15bpp
 	auto image = std::make_unique<uint8_t[]>(imgSize * bytesPerPixel);
 
 	unsigned curPixel = 0;
@@ -161,8 +161,8 @@ void TextureLoader::GetPixelTGA(float* out, int x, int y, TGA* img)
 
 	// Convert colour representation to normalized floats
 	int bpp = img->header.colourMap == 1
-		? img->header.entryBpp
-		: img->header.bpp;
+		          ? img->header.entryBpp
+		          : img->header.bpp;
 	switch (bpp)
 	{
 	case 16:
@@ -194,7 +194,7 @@ std::list<TextureLoader::PNGChunk> TextureLoader::ReadPNG(std::ifstream& stream)
 	stream.read(reinterpret_cast<char*>(&signature), 8);
 	if (signature != 0x89504e470d0a1a0a) return chunks;
 
-	while(true)
+	while (true)
 	{
 		PNGChunk chunk;
 
@@ -222,8 +222,8 @@ Texture* TextureLoader::LoadTGA(std::ifstream& stream)
 	tex->m_w = img->header.width;
 	tex->m_data = new float[img->header.width * img->header.height * 4];
 
-	for(int y = 0; y < img->header.height; ++y)
-		for(int x = 0; x < img->header.width; ++x)
+	for (int y = 0; y < img->header.height; ++y)
+		for (int x = 0; x < img->header.width; ++x)
 		{
 			GetPixelTGA(tex->m_data + 4 * (y * img->header.width + x), x, y, img.get());
 
@@ -249,12 +249,12 @@ Texture* TextureLoader::Load(const std::string& filename)
 
 	int idx = filename.find_last_of('.');
 	std::string extension = filename.substr(idx + 1, filename.size() - idx - 1);
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+	transform(extension.begin(), extension.end(), extension.begin(), tolower);
 
 	std::ifstream stream(filename, std::ios::binary);
 
 	if (extension == "tga")
 		return LoadTGA(stream);
-	
+
 	return nullptr;
 }

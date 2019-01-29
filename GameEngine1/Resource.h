@@ -27,12 +27,14 @@ namespace GameEngine
 		protected:
 			Engine* engine = nullptr;
 			std::string m_identifier;
-			
+
 			virtual Resource* CloneResource() = 0;
 
 		public:
 
-			virtual ~Resource() {}
+			virtual ~Resource()
+			{
+			}
 
 			std::string GetIdentifier() const
 			{

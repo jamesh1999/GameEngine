@@ -24,13 +24,13 @@ void MeshLoader::FBXGetNormal(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX
 		switch (norm->GetReferenceMode())
 		{
 		case FbxGeometryElement::eIndexToDirect:
-		{
-			int idx = norm->GetIndexArray().GetAt(ctrlPointIdx);
-			out.x = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[0]);
-			out.y = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[1]);
-			out.z = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[2]);
-			break;
-		}
+			{
+				int idx = norm->GetIndexArray().GetAt(ctrlPointIdx);
+				out.x = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[0]);
+				out.y = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[1]);
+				out.z = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[2]);
+				break;
+			}
 		case FbxGeometryElement::eDirect:
 			out.x = static_cast<float>(norm->GetDirectArray().GetAt(ctrlPointIdx).mData[0]);
 			out.y = static_cast<float>(norm->GetDirectArray().GetAt(ctrlPointIdx).mData[1]);
@@ -42,13 +42,13 @@ void MeshLoader::FBXGetNormal(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX
 		switch (norm->GetReferenceMode())
 		{
 		case FbxGeometryElement::eIndexToDirect:
-		{
-			int idx = norm->GetIndexArray().GetAt(vtxIdx);
-			out.x = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[0]);
-			out.y = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[1]);
-			out.z = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[2]);
-			break;
-		}
+			{
+				int idx = norm->GetIndexArray().GetAt(vtxIdx);
+				out.x = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[0]);
+				out.y = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[1]);
+				out.z = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[2]);
+				break;
+			}
 		case FbxGeometryElement::eDirect:
 			out.x = static_cast<float>(norm->GetDirectArray().GetAt(vtxIdx).mData[0]);
 			out.y = static_cast<float>(norm->GetDirectArray().GetAt(vtxIdx).mData[1]);
@@ -71,13 +71,13 @@ void MeshLoader::FBXGetUV(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX::XM
 		switch (uv->GetReferenceMode())
 		{
 		case FbxGeometryElement::eIndexToDirect:
-		{
-			int idx = uv->GetIndexArray().GetAt(ctrlPointIdx);
-			out.x = static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[0]);
-			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[1]);
-			out.z = 0.0f;
-			break;
-		}
+			{
+				int idx = uv->GetIndexArray().GetAt(ctrlPointIdx);
+				out.x = static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[0]);
+				out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[1]);
+				out.z = 0.0f;
+				break;
+			}
 		case FbxGeometryElement::eDirect:
 			out.x = static_cast<float>(uv->GetDirectArray().GetAt(ctrlPointIdx).mData[0]);
 			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(ctrlPointIdx).mData[1]);
@@ -89,13 +89,13 @@ void MeshLoader::FBXGetUV(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX::XM
 		switch (uv->GetReferenceMode())
 		{
 		case FbxGeometryElement::eIndexToDirect:
-		{
-			int idx = uv->GetIndexArray().GetAt(vtxIdx);
-			out.x = static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[0]);
-			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[1]);
-			out.z = 0.0f;
-			break;
-		}
+			{
+				int idx = uv->GetIndexArray().GetAt(vtxIdx);
+				out.x = static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[0]);
+				out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[1]);
+				out.z = 0.0f;
+				break;
+			}
 		case FbxGeometryElement::eDirect:
 			out.x = static_cast<float>(uv->GetDirectArray().GetAt(vtxIdx).mData[0]);
 			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(vtxIdx).mData[1]);
@@ -112,7 +112,7 @@ void MeshLoader::ApplyFbxRecursive(Mesh* out, FbxNode* node, bool track)
 		&& !node->FindProperty("WOforwardTrackDirection").Get<FbxBool>())
 		return;
 
-	if (track && std::strncmp(node->GetName(), "collision_reverse", 17) == 0)
+	if (track && strncmp(node->GetName(), "collision_reverse", 17) == 0)
 		return;
 
 	FbxNodeAttribute* attr = node->GetNodeAttribute();
@@ -121,7 +121,7 @@ void MeshLoader::ApplyFbxRecursive(Mesh* out, FbxNode* node, bool track)
 		if (attr->GetAttributeType() == FbxNodeAttribute::eMesh)
 		{
 			const char* name = node->GetName();
-			if (track && std::strncmp(name, "collision_floor", 15) != 0 && std::strncmp(name, "collision_magfl", 15) != 0)
+			if (track && strncmp(name, "collision_floor", 15) != 0 && strncmp(name, "collision_magfl", 15) != 0)
 				return;
 
 			FbxMesh* in = node->GetMesh();
@@ -213,7 +213,7 @@ Mesh* MeshLoader::LoadFBX(FbxNode* node, const std::string& path)
 	{
 		FbxNodeAttribute* attr = node->GetNodeAttribute();
 		if (attr == nullptr || attr->GetAttributeType() != FbxNodeAttribute::eMesh) return nullptr;
-		
+
 		return LoadFBX(node->GetMesh());
 	}
 
@@ -259,7 +259,6 @@ Mesh* MeshLoader::LoadOBJ(const std::string& filename)
 
 Mesh* MeshLoader::Load(const std::string& descriptor)
 {
-
 	std::vector<std::string> parts = DescriptorParser::GetParts(descriptor);
 
 	std::string extension = DescriptorParser::GetExtension(parts[0]);

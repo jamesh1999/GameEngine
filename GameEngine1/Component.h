@@ -25,20 +25,21 @@ namespace GameEngine
 		public:
 			ElementPtr<CompositeObject> obj;
 
-			virtual ~Component() {}
+			virtual ~Component()
+			{
+			}
 
 			unsigned GetID() const
 			{
 				return id;
 			}
 
-			void* operator new(std::size_t cnt)
+			void* operator new(size_t cnt)
 			{
 				void* ptr = _aligned_malloc(cnt, 16);
 				if (!ptr)
 					throw std::bad_alloc();
-				else
-					return ptr;
+				return ptr;
 			}
 
 			void operator delete(void* ptr)
@@ -47,9 +48,11 @@ namespace GameEngine
 			}
 
 			//Preferrable to constructor because initialisation has finished
-			virtual void Create() {};
+			virtual void Create()
+			{
+			};
 
-			virtual void Destroy();
+			void Destroy() override;
 		};
 	}
 }

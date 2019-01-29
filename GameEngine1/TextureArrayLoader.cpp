@@ -6,7 +6,7 @@
 
 using namespace GameEngine::Resources;
 
-TextureArray* TextureArrayLoader::Load(GameEngine::Engine* engine, const std::string& descriptor)
+TextureArray* TextureArrayLoader::Load(Engine* engine, const std::string& descriptor)
 {
 	TextureArray* texArray = new TextureArray;
 

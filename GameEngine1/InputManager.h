@@ -5,8 +5,13 @@
 
 namespace Input
 {
+	enum MouseButton
+	{
+		Left,
+		Middle,
+		Right
+	};
 
-	enum MouseButton { Left, Middle, Right };
 	enum KeyboardButton
 	{
 		KeyA,

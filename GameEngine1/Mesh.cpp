@@ -29,9 +29,9 @@ Mesh* Mesh::CombineMesh(Mesh* additional)
 
 DirectX::XMVECTOR Mesh::GetCentroid()
 {
-	if (m_generated) return DirectX::XMLoadFloat3(&m_centroid);
+	if (m_generated) return XMLoadFloat3(&m_centroid);
 
-	m_centroid = { 0.0f, 0.0f, 0.0f };
+	m_centroid = {0.0f, 0.0f, 0.0f};
 	for (Vertex v : vertices)
 	{
 		m_centroid.x += v.pos.x;
@@ -45,5 +45,5 @@ DirectX::XMVECTOR Mesh::GetCentroid()
 
 	m_generated = true;
 
-	return DirectX::XMLoadFloat3(&m_centroid);
+	return XMLoadFloat3(&m_centroid);
 }

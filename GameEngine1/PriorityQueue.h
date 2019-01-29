@@ -9,7 +9,6 @@ namespace GameEngine
 {
 	namespace Utils
 	{
-
 		namespace
 		{
 			template <class T>

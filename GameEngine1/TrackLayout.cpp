@@ -24,49 +24,48 @@ void TrackLayout::SetTrack(GameEngine::Resources::Mesh* mesh)
 		s.n2 = mesh->vertices[mesh->indices[i + 1]].normal;
 		s.n3 = mesh->vertices[mesh->indices[i + 2]].normal;
 
-		DirectX::XMVECTOR p1 = DirectX::XMLoadFloat3(&s.p1);
-		DirectX::XMVECTOR p2 = DirectX::XMLoadFloat3(&s.p2);
-		DirectX::XMVECTOR p3 = DirectX::XMLoadFloat3(&s.p3);
+		DirectX::XMVECTOR p1 = XMLoadFloat3(&s.p1);
+		DirectX::XMVECTOR p2 = XMLoadFloat3(&s.p2);
+		DirectX::XMVECTOR p3 = XMLoadFloat3(&s.p3);
 
 		DirectX::XMVECTOR v1 = DirectX::XMVectorSubtract(p2, p1);
 		DirectX::XMVECTOR v2 = DirectX::XMVectorSubtract(p3, p1);
 
 		DirectX::XMVECTOR norm = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(v1, v2));
-		DirectX::XMStoreFloat3(&s.norm, norm);
+		XMStoreFloat3(&s.norm, norm);
 		s.pos = DirectX::XMVectorGetX(DirectX::XMVector3Dot(norm, p1));
 
 		instance->m_trackSegments.push_back(s);
 	}
-
 }
 
 std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR, bool> TrackLayout::GetNormal(DirectX::XMVECTOR pos)
 {
 	float minDist = FLT_MAX;
-	DirectX::XMFLOAT3 shipNorm = { 0.0f, 1.0f, 0.0f };
-	DirectX::XMVECTOR projFinal = { 0.0f, 0.0f, 0.0f };
+	DirectX::XMFLOAT3 shipNorm = {0.0f, 1.0f, 0.0f};
+	DirectX::XMVECTOR projFinal = {0.0f, 0.0f, 0.0f};
 	bool over = false;
 	for (Segment s : instance->m_trackSegments)
 	{
-		DirectX::XMVECTOR norm = DirectX::XMLoadFloat3(&s.norm);
-		DirectX::XMVECTOR vdist = DirectX::XMVectorSubtract(DirectX::XMVector3Dot(norm, pos), DirectX::XMVector3Dot(norm, DirectX::XMLoadFloat3(&s.p1)));
+		DirectX::XMVECTOR norm = XMLoadFloat3(&s.norm);
+		DirectX::XMVECTOR vdist = DirectX::XMVectorSubtract(DirectX::XMVector3Dot(norm, pos), DirectX::XMVector3Dot(norm, XMLoadFloat3(&s.p1)));
 		DirectX::XMVECTOR proj = DirectX::XMVectorSubtract(
 			pos,
 			DirectX::XMVectorMultiply(norm, vdist));
 
 		DirectX::XMVECTOR v0 = DirectX::XMVectorSubtract(
-			DirectX::XMLoadFloat3(&s.p2),
-			DirectX::XMLoadFloat3(&s.p1)
+			XMLoadFloat3(&s.p2),
+			XMLoadFloat3(&s.p1)
 		);
 
 		DirectX::XMVECTOR v1 = DirectX::XMVectorSubtract(
-			DirectX::XMLoadFloat3(&s.p3),
-			DirectX::XMLoadFloat3(&s.p1)
+			XMLoadFloat3(&s.p3),
+			XMLoadFloat3(&s.p1)
 		);
 
 		DirectX::XMVECTOR v2 = DirectX::XMVectorSubtract(
 			proj,
-			DirectX::XMLoadFloat3(&s.p1)
+			XMLoadFloat3(&s.p1)
 		);
 
 		float d00 = DirectX::XMVectorGetX(DirectX::XMVector3Dot(v0, v0));
@@ -79,7 +78,7 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR, bool> TrackLayout::GetNormal(Di
 		float w = (d00 * d21 - d01 * d20) / denom;
 
 
-		float dist = std::abs(DirectX::XMVectorGetX(vdist) - s.pos);
+		float dist = abs(DirectX::XMVectorGetX(vdist) - s.pos);
 		if (v < 0.0f
 			|| w < 0.0f
 			|| v + w > 1.0f)
@@ -87,17 +86,17 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR, bool> TrackLayout::GetNormal(Di
 		if (dist > minDist) continue;
 		minDist = dist;
 
-		DirectX::XMStoreFloat3(&shipNorm, 
-			DirectX::XMVector3Normalize(
-				DirectX::XMVectorAdd(
-					DirectX::XMVectorAdd(
-						DirectX::XMVectorScale(DirectX::XMLoadFloat3(&s.n1), 1.0f - w - v),
-						DirectX::XMVectorScale(DirectX::XMLoadFloat3(&s.n2), v)),
-					DirectX::XMVectorScale(DirectX::XMLoadFloat3(&s.n3), w))));
+		XMStoreFloat3(&shipNorm,
+		              DirectX::XMVector3Normalize(
+			              DirectX::XMVectorAdd(
+				              DirectX::XMVectorAdd(
+					              DirectX::XMVectorScale(XMLoadFloat3(&s.n1), 1.0f - w - v),
+					              DirectX::XMVectorScale(XMLoadFloat3(&s.n2), v)),
+				              DirectX::XMVectorScale(XMLoadFloat3(&s.n3), w))));
 
 		projFinal = proj;
 		over = true;
 	}
 
-	return std::make_tuple(DirectX::XMLoadFloat3(&shipNorm), projFinal, over);
+	return std::make_tuple(XMLoadFloat3(&shipNorm), projFinal, over);
 }

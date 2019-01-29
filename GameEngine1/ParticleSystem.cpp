@@ -10,7 +10,7 @@
 
 using namespace GameEngine::Graphics;
 
-ParticleSystem::ParticleSystem(GameEngine::Engine* engine)
+ParticleSystem::ParticleSystem(Engine* engine)
 {
 	this->engine = engine;
 
@@ -25,7 +25,7 @@ ParticleSystem::ParticleSystem(GameEngine::Engine* engine)
 	vBD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vBD.Usage = D3D11_USAGE_DYNAMIC;
 
-	engine->graphics->device->CreateBuffer(&vBD, NULL, &vertexBuffer);
+	engine->graphics->device->CreateBuffer(&vBD, nullptr, &vertexBuffer);
 
 	ZeroMemory(&vBD, sizeof(D3D11_BUFFER_DESC));
 	vBD.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -33,14 +33,14 @@ ParticleSystem::ParticleSystem(GameEngine::Engine* engine)
 	vBD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vBD.Usage = D3D11_USAGE_DYNAMIC;
 
-	engine->graphics->device->CreateBuffer(&vBD, NULL, &indexBuffer);
+	engine->graphics->device->CreateBuffer(&vBD, nullptr, &indexBuffer);
 
 	//HACK: Need to refactor
 	ID3D10Blob *buff = nullptr, *err = nullptr;
 	HRESULT success = D3DCompileFromFile(
 		L"shaders_particle.hlsl",
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		"VShader",
 		"vs_5_0",
 		D3DCOMPILE_DEBUG,
@@ -54,13 +54,13 @@ ParticleSystem::ParticleSystem(GameEngine::Engine* engine)
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
-	engine->graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &vtx);
+	engine->graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &vtx);
 	success = D3DCompileFromFile(
 		L"shaders_particle.hlsl",
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		"PShader",
 		"ps_5_0",
 		D3DCOMPILE_DEBUG,
@@ -74,9 +74,9 @@ ParticleSystem::ParticleSystem(GameEngine::Engine* engine)
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
-	engine->graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &pix);
+	engine->graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &pix);
 
 	D3D11_BLEND_DESC bDsc;
 	ZeroMemory(&bDsc, sizeof(D3D11_BLEND_DESC));
@@ -111,7 +111,7 @@ void ParticleSystem::Initialise(DirectX::XMFLOAT3 pos)
 	for (int i = 0; i < 300; ++i)
 	{
 		position[i] = pos;
-		velocity[i] = { rand() / static_cast<float>(RAND_MAX) - 0.5f,
+		velocity[i] = {rand() / static_cast<float>(RAND_MAX) - 0.5f,
 			rand() / static_cast<float>(RAND_MAX) - 0.5f,
 			rand() / static_cast<float>(RAND_MAX) - 0.5f};
 	}
@@ -128,14 +128,14 @@ void ParticleSystem::Initialise(DirectX::XMFLOAT3 pos)
 		indices.push_back(1 + 4 * i);
 		indices.push_back(3 + 4 * i);
 
-		vertices[0 + 4 * i].normal = { 1.0f, 1.0f, 1.0f };
-		vertices[0 + 4 * i].tex = { 0.0f, 0.0f, 0.0f };
-		vertices[1 + 4 * i].normal = { 1.0f, 1.0f, 1.0f };
-		vertices[1 + 4 * i].tex = { 1.0f, 0.0f, 0.0f };
-		vertices[2 + 4 * i].normal = { 1.0f, 1.0f, 1.0f };
-		vertices[2 + 4 * i].tex = { 0.0f, 1.0f, 0.0f };
-		vertices[3 + 4 * i].normal = { 1.0f, 1.0f, 1.0f };
-		vertices[3 + 4 * i].tex = { 1.0f, 1.0f, 0.0f };
+		vertices[0 + 4 * i].normal = {1.0f, 1.0f, 1.0f};
+		vertices[0 + 4 * i].tex = {0.0f, 0.0f, 0.0f};
+		vertices[1 + 4 * i].normal = {1.0f, 1.0f, 1.0f};
+		vertices[1 + 4 * i].tex = {1.0f, 0.0f, 0.0f};
+		vertices[2 + 4 * i].normal = {1.0f, 1.0f, 1.0f};
+		vertices[2 + 4 * i].tex = {0.0f, 1.0f, 0.0f};
+		vertices[3 + 4 * i].normal = {1.0f, 1.0f, 1.0f};
+		vertices[3 + 4 * i].tex = {1.0f, 1.0f, 0.0f};
 	}
 }
 
@@ -149,7 +149,7 @@ void ParticleSystem::Update()
 	}
 	for (size_t i = 0; i < position.size(); ++i)
 	{
-		DirectX::XMStoreFloat3(&position[i], DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&position[i]), DirectX::XMLoadFloat3(&velocity[i])));
+		XMStoreFloat3(&position[i], DirectX::XMVectorAdd(XMLoadFloat3(&position[i]), XMLoadFloat3(&velocity[i])));
 	}
 }
 
@@ -162,15 +162,15 @@ void ParticleSystem::Draw()
 	DirectX::XMVECTOR right = DirectX::XMVectorScale(engine->graphics->m_camera->obj->GetComponent<Elements::Transform>()->GetRight(), 4.5f);
 	for (int i = 0; i < 300; ++i)
 	{
-		DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&position[i]);
-		DirectX::XMStoreFloat3(&vertices[0 + 4 * i].pos, pos);
-		DirectX::XMStoreFloat3(&vertices[1 + 4 * i].pos, DirectX::XMVectorAdd(pos, right));
-		DirectX::XMStoreFloat3(&vertices[2 + 4 * i].pos, DirectX::XMVectorAdd(pos, up));
-		DirectX::XMStoreFloat3(&vertices[3 + 4 * i].pos, DirectX::XMVectorAdd(pos, DirectX::XMVectorAdd(up, right)));
+		DirectX::XMVECTOR pos = XMLoadFloat3(&position[i]);
+		XMStoreFloat3(&vertices[0 + 4 * i].pos, pos);
+		XMStoreFloat3(&vertices[1 + 4 * i].pos, DirectX::XMVectorAdd(pos, right));
+		XMStoreFloat3(&vertices[2 + 4 * i].pos, DirectX::XMVectorAdd(pos, up));
+		XMStoreFloat3(&vertices[3 + 4 * i].pos, DirectX::XMVectorAdd(pos, DirectX::XMVectorAdd(up, right)));
 	}
 
-	engine->graphics->devContext->VSSetShader(vtx, NULL, 0);
-	engine->graphics->devContext->PSSetShader(pix, NULL, 0);
+	engine->graphics->devContext->VSSetShader(vtx, nullptr, 0);
+	engine->graphics->devContext->PSSetShader(pix, nullptr, 0);
 
 	D3D11_MAPPED_SUBRESOURCE mp;
 	engine->graphics->devContext->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
@@ -189,7 +189,7 @@ void ParticleSystem::Draw()
 	ID3D11ShaderResourceView* srv = m_texture->GetSRV();
 	engine->graphics->devContext->PSSetShaderResources(0, 1, &srv);
 
-	engine->graphics->devContext->OMSetBlendState(blendState, NULL, 0xffffffff);
+	engine->graphics->devContext->OMSetBlendState(blendState, nullptr, 0xffffffff);
 	engine->graphics->devContext->OMSetDepthStencilState(depthState, 1);
 
 	engine->graphics->devContext->DrawIndexed(300 * 6, 0, 0);

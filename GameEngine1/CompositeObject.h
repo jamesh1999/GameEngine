@@ -15,7 +15,6 @@ namespace GameEngine
 	{
 		class CompositeObject : public Element
 		{
-
 		public:
 			std::vector<ElementPtr<Component>> m_components;
 			ElementPtr<Transform> m_transform;
@@ -31,7 +30,7 @@ namespace GameEngine
 				}
 			}
 
-			void Destroy()
+			void Destroy() override
 			{
 				for (auto c : m_components)
 					if (c != nullptr)
@@ -55,7 +54,7 @@ namespace GameEngine
 				return nullptr;
 			}
 
-			template<class T>
+			template <class T>
 			T* AttachComponent()
 			{
 				T* component = engine->elementFactory->Create<T>();
@@ -65,7 +64,7 @@ namespace GameEngine
 				return component;
 			}
 
-			template<class T>
+			template <class T>
 			T* AttachComponent(T* component)
 			{
 				m_components.push_back(component);
@@ -78,10 +77,10 @@ namespace GameEngine
 		template <>
 		Transform* CompositeObject::GetComponent<Transform>();
 
-		template<>
+		template <>
 		Transform* CompositeObject::AttachComponent<Transform>();
 
-		template<>
+		template <>
 		Transform* CompositeObject::AttachComponent<Transform>(Transform*);
 	}
 }

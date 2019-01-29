@@ -25,7 +25,7 @@ namespace GameEngine
 
 	public:
 
-		void Destroy();
+		void Destroy() override;
 
 		void Render(int);
 

@@ -24,6 +24,7 @@ namespace GameEngine
 		public:
 
 			LazyOrderedContainer() = default;
+
 			LazyOrderedContainer(TComp& comp)
 			{
 				m_comp = comp;
@@ -45,7 +46,7 @@ namespace GameEngine
 
 			void Erase(const T& itm)
 			{
-				TCont::iterator it = std::find(m_container.begin(), m_container.end(), itm);
+				typename TCont::iterator it = std::find(m_container.begin(), m_container.end(), itm);
 				m_container.erase(it);
 			}
 

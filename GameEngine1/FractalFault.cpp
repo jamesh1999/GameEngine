@@ -59,7 +59,7 @@ void Generation::FractalFault::Generate(float* out, int w, int h, int n)
 
 	for (int i = 0; i < n; ++i)
 	{
-		float grad = std::tan((rand() - RAND_MAX / 2) / 3.1416f);
+		float grad = tan((rand() - RAND_MAX / 2) / 3.1416f);
 		int offset = rand() % h;
 		bool greater = rand() % 2 == 0;
 		float val = 1.0f / (120 + i);

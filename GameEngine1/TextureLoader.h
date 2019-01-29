@@ -75,17 +75,14 @@ namespace GameEngine
 
 			struct PNGChunkPLTE
 			{
-
 			};
 
 			struct PNGChunkIDAT
 			{
-
 			};
 
 			struct PNGChunkIEND
 			{
-
 			};
 
 			const static uint64_t pngSignature = 0x89504e470d0a1a0a;

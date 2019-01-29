@@ -10,16 +10,19 @@ namespace GameEngine
 	{
 		class Clock;
 	}
+
 	namespace Graphics
 	{
 		class GraphicsController;
 		class ParticleSystem;
 	}
+
 	namespace Elements
 	{
 		class World;
 		class ElementFactory;
 	}
+
 	namespace Resources
 	{
 		class ResourceFactory;

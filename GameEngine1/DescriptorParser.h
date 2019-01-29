@@ -10,7 +10,12 @@ class DescriptorParser
 {
 public:
 
-	enum Type { Atom, List, Object };
+	enum Type
+	{
+		Atom,
+		List,
+		Object
+	};
 
 	// Determine the type of a given section in a descriptor
 	static Type GetType(const std::string& descriptor)
@@ -114,8 +119,6 @@ public:
 
 		while (pos != -1)
 		{
-			
-
 			switch (descriptor[pos])
 			{
 			case '[':
@@ -147,11 +150,10 @@ public:
 	{
 		size_t idx = filename.find_last_of('.');
 		std::string extension = filename.substr(idx + 1, filename.size() - idx - 1);
-		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+		transform(extension.begin(), extension.end(), extension.begin(), tolower);
 
 		return extension;
 	}
-
 };
 
 #endif

@@ -18,25 +18,25 @@ void Terrain::ApplyHeightmap(GameEngine::Resources::Mesh* mesh)
 
 
 	//Apply heights
-	for(int i = 0; i < 101 * 101; ++i)
+	for (int i = 0; i < 101 * 101; ++i)
 	{
 		mesh->vertices[i].pos.y = perlinTex[i] * 6.0f;
 	}
 
 	//Correct normals
-	for(int x = 1; x < 100; ++x)
-		for(int y = 1; y < 100; ++y)
+	for (int x = 1; x < 100; ++x)
+		for (int y = 1; y < 100; ++y)
 		{
-			DirectX::XMVECTOR x0 = DirectX::XMLoadFloat3(&mesh->vertices[y + (x - 1) * 101].pos);
-			DirectX::XMVECTOR x1 = DirectX::XMLoadFloat3(&mesh->vertices[y + (x + 1) * 101].pos);
-			DirectX::XMVECTOR y0 = DirectX::XMLoadFloat3(&mesh->vertices[y - 1 + x * 101].pos);
-			DirectX::XMVECTOR y1 = DirectX::XMLoadFloat3(&mesh->vertices[y + 1 + x * 101].pos);
+			DirectX::XMVECTOR x0 = XMLoadFloat3(&mesh->vertices[y + (x - 1) * 101].pos);
+			DirectX::XMVECTOR x1 = XMLoadFloat3(&mesh->vertices[y + (x + 1) * 101].pos);
+			DirectX::XMVECTOR y0 = XMLoadFloat3(&mesh->vertices[y - 1 + x * 101].pos);
+			DirectX::XMVECTOR y1 = XMLoadFloat3(&mesh->vertices[y + 1 + x * 101].pos);
 
 			DirectX::XMVECTOR dX = DirectX::XMVectorSubtract(x1, x0);
 			DirectX::XMVECTOR dY = DirectX::XMVectorSubtract(y1, y0);
 
-			DirectX::XMStoreFloat3(&mesh->vertices[y + x * 101].normal,
-				DirectX::XMVector3Normalize(DirectX::XMVector3Cross(dX, dY)));
+			XMStoreFloat3(&mesh->vertices[y + x * 101].normal,
+			              DirectX::XMVector3Normalize(DirectX::XMVector3Cross(dX, dY)));
 		}
 
 	delete[] perlinTex;
@@ -63,30 +63,30 @@ void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, GameE
 	double block_z = 1.0 / (quad_z - 1);
 
 	//Base grass/dirt colours
-	DirectX::XMFLOAT3 green = { 0.1f, 0.5f, 0.03f };
-	DirectX::XMFLOAT3 brown = { 0.65f, 0.3f, 0.1f };
+	DirectX::XMFLOAT3 green = {0.1f, 0.5f, 0.03f};
+	DirectX::XMFLOAT3 brown = {0.65f, 0.3f, 0.1f};
 
-	for(Vertex& v : in->vertices)
+	for (Vertex& v : in->vertices)
 	{
 		DirectX::XMFLOAT3 colour =
 			v.normal.y < -0.8
-			? green
-			: brown;
+				? green
+				: brown;
 
-		int max_x = static_cast<int>(std::round((v.tex.x + block_x / 2) * x));
-		int max_y = static_cast<int>(std::round((v.tex.y + block_z / 2) * y));
+		int max_x = static_cast<int>(round((v.tex.x + block_x / 2) * x));
+		int max_y = static_cast<int>(round((v.tex.y + block_z / 2) * y));
 
-		for (int cur_x = static_cast<int>(std::round((v.tex.x - block_x / 2) * x)); cur_x < max_x; ++cur_x)
+		for (int cur_x = static_cast<int>(round((v.tex.x - block_x / 2) * x)); cur_x < max_x; ++cur_x)
 		{
 			if (cur_x < 0
 				|| cur_x >= x)
-				continue;;
+				continue;
 
-			for (int cur_y = static_cast<int>(std::round((v.tex.y - block_z / 2) * y)); cur_y < max_y; ++cur_y)
+			for (int cur_y = static_cast<int>(round((v.tex.y - block_z / 2) * y)); cur_y < max_y; ++cur_y)
 			{
 				if (cur_y < 0
 					|| cur_y >= y)
-					continue;;
+					continue;
 
 				(*out)[cur_y * x + cur_x].x = colour.x;
 				(*out)[cur_y * x + cur_x].y = colour.y;
@@ -97,7 +97,7 @@ void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, GameE
 
 	//Texture::GaussianBlur(out, x, y, 4.0f);
 
-	for(int i = 0; i < x * y; ++i)
+	for (int i = 0; i < x * y; ++i)
 	{
 		(*out)[i].x += noiseTex[i] * 0.2f;
 		if ((*out)[i].x < 0.0f)
@@ -121,15 +121,15 @@ void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, GameE
 
 void Terrain::ThermalErosion(float* heightmap, int w, int h, int n, float amount)
 {
-	for(int i = 0; i < n; ++i)
+	for (int i = 0; i < n; ++i)
 	{
-		for(int y = 0; y < h; ++y)
-			for(int x = 0; x < w; ++x)
+		for (int y = 0; y < h; ++y)
+			for (int x = 0; x < w; ++x)
 			{
 				//Apply thermal erosion in x and y
 
 				//X
-				if(x > 0)
+				if (x > 0)
 				{
 					float delta = heightmap[y * w + x] - heightmap[y * w + x - 1];
 					heightmap[y * w + x - 1] += delta * amount;

@@ -37,7 +37,10 @@ private:
 public:
 
 	GeometryBuffer(ID3D11Device*, ID3D11DeviceContext*, bool);
-	GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc) : GeometryBuffer(d, dc, false) {};
+
+	GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc) : GeometryBuffer(d, dc, false)
+	{
+	};
 	~GeometryBuffer();
 
 	GeometryBuffer(const GeometryBuffer&) = delete;

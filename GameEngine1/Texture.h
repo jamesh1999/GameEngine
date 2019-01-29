@@ -15,8 +15,8 @@ namespace GameEngine
 		// CPU-side individual texture
 		class Texture : public Resource
 		{
-			friend class GameEngine::Resources::TextureLoader;
-			friend class GameEngine::Resources::TextureArray;
+			friend class TextureLoader;
+			friend class TextureArray;
 
 		private:
 
@@ -28,7 +28,7 @@ namespace GameEngine
 
 		protected:
 
-			Texture* CloneResource();
+			Texture* CloneResource() override;
 
 		public:
 

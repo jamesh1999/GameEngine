@@ -31,10 +31,9 @@ void Light::Create()
 	srDsc.Texture2D.MipLevels = 1;
 	srDsc.Texture2D.MostDetailedMip = 0;
 
-	engine->graphics->device->CreateTexture2D(&tDsc, NULL, &depthTex);
+	engine->graphics->device->CreateTexture2D(&tDsc, nullptr, &depthTex);
 	engine->graphics->device->CreateRenderTargetView(depthTex, &rtvDsc, &renderTarget);
 	engine->graphics->device->CreateShaderResourceView(depthTex, &srDsc, &shaderResource);
-
 
 
 	//Create depth and stencil buffer
@@ -50,7 +49,7 @@ void Light::Create()
 	depthDesc.Height = 4096;
 	depthDesc.Width = 4096;
 
-	engine->graphics->device->CreateTexture2D(&depthDesc, NULL, &depthBuffer);
+	engine->graphics->device->CreateTexture2D(&depthDesc, nullptr, &depthBuffer);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvD;
 	ZeroMemory(&dsvD, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));

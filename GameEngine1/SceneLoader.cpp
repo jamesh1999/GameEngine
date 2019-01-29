@@ -28,21 +28,21 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 	v.x = static_cast<float>(pos.mData[0]);
 	v.y = static_cast<float>(pos.mData[1]);
 	v.z = static_cast<float>(pos.mData[2]);
-	vec = DirectX::XMLoadFloat3A(&v);
+	vec = XMLoadFloat3A(&v);
 	t->SetPosition(vec);
 
 	FbxVector4 rot = node->EvaluateLocalRotation();
 	v.x = static_cast<float>(rot.mData[0]);
 	v.y = static_cast<float>(rot.mData[1]);
 	v.z = static_cast<float>(rot.mData[2]);
-	vec = DirectX::XMLoadFloat3A(&v);
+	vec = XMLoadFloat3A(&v);
 	t->SetRotation(vec);
 
 	FbxVector4 scale = node->EvaluateLocalScaling();
 	v.x = 1;// scale.mData[0];
 	v.y = 1;// scale.mData[1];
 	v.z = 1;// scale.mData[2];
-	vec = DirectX::XMLoadFloat3A(&v);
+	vec = XMLoadFloat3A(&v);
 	t->SetScale(vec);
 
 	// Recurse through children and set their parents
@@ -79,7 +79,7 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 
 				// Attach renderer
 				//Renderer* r = co->AttachComponent<Renderer>();
-				
+
 
 				// Load & attach textures
 				FbxLayerElementMaterial* lE = node->GetGeometry()->GetLayer(i)->GetMaterials();
@@ -87,17 +87,16 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 				{
 				case FbxLayerElement::eAllSame:
 					{
-					
 						FbxSurfaceMaterial* surf = node->GetMaterial(lE->GetIndexArray()[0]);
 						if (surf == nullptr) break;
-						
+
 						FbxProperty prop = surf->FindProperty(FbxSurfaceMaterial::sDiffuse);
 						FbxFileTexture* fTex = prop.GetSrcObject<FbxFileTexture>();
 						if (fTex == nullptr) break;
 
 						std::string name = fTex->GetFileName();
-						Resources::Texture* tex = engine->resourceFactory->Create<Resources::Texture>(name);
-						
+						Texture* tex = engine->resourceFactory->Create<Texture>(name);
+
 						Renderer* r = co->AttachComponent<Renderer>();
 						r->SetTexture(tex);
 						r->Init(mat, mesh);
@@ -120,15 +119,15 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 							if (fTex == nullptr) continue;
 
 							std::string name = fTex->GetFileName();
-							Resources::Texture* tex = engine->resourceFactory->Create<Resources::Texture>(name);
+							Texture* tex = engine->resourceFactory->Create<Texture>(name);
 
-							Resources::ResourcePtr<Resources::TextureArray> texArray = engine->resourceFactory->Create<Resources::TextureArray>();
+							ResourcePtr<TextureArray> texArray = engine->resourceFactory->Create<TextureArray>();
 							texArray = texArray->Add(tex);
 
 							Elements::CompositeObject* ro = engine->elementFactory->Create<Elements::CompositeObject>();
-							ro->GetComponent<Elements::Transform>()->SetPosition({ 0.0f, 0.0f, 0.0f });
-							ro->GetComponent<Elements::Transform>()->SetRotation({ 0.0f, 0.0f, 0.0f });
-							ro->GetComponent<Elements::Transform>()->SetScale({ 1.0f, 1.0f, 1.0f });
+							ro->GetComponent<Elements::Transform>()->SetPosition({0.0f, 0.0f, 0.0f});
+							ro->GetComponent<Elements::Transform>()->SetRotation({0.0f, 0.0f, 0.0f});
+							ro->GetComponent<Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
 							ro->GetComponent<Elements::Transform>()->SetParent(co->GetComponent<Elements::Transform>());
 
 							Renderer* r = ro->AttachComponent<Renderer>();
@@ -151,7 +150,6 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 
 
 							r->Init(mat, mm);
-
 						}
 
 						// Update polygon texcoords to reference respective textures

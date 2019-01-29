@@ -40,7 +40,10 @@ namespace GameEngine
 				m_resource = resource;
 				IncResource();
 			}
-			ResourcePtr() : ResourcePtr(nullptr) {};
+
+			ResourcePtr() : ResourcePtr(nullptr)
+			{
+			};
 
 			~ResourcePtr() { DecResource(); }
 
@@ -49,6 +52,7 @@ namespace GameEngine
 				m_resource = other.m_resource;
 				IncResource();
 			}
+
 			ResourcePtr<TResource>& operator=(const ResourcePtr<TResource>& other)
 			{
 				DecResource();

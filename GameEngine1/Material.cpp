@@ -14,8 +14,8 @@ void RenderPass::LoadVS(std::wstring filename, std::string entry, D3D11_INPUT_EL
 	ID3D10Blob *buff = nullptr, *err = nullptr;
 	HRESULT success = D3DCompileFromFile(
 		filename.c_str(),
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		entry.c_str(),
 		"vs_5_0",
 		D3DCOMPILE_DEBUG,
@@ -29,12 +29,12 @@ void RenderPass::LoadVS(std::wstring filename, std::string entry, D3D11_INPUT_EL
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
 
 	//Create shader and input layout
 	engine->graphics->device->CreateVertexShader(
-		buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &vs);
+		buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &vs);
 	engine->graphics->device->CreateInputLayout(
 		inputDesc, numElements, buff->GetBufferPointer(), buff->GetBufferSize(), &layout);
 }
@@ -47,8 +47,8 @@ void RenderPass::LoadPS(std::wstring filename, std::string entry)
 	ID3D10Blob *buff = nullptr, *err = nullptr;
 	HRESULT success = D3DCompileFromFile(
 		filename.c_str(),
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		entry.c_str(),
 		"ps_5_0",
 		D3DCOMPILE_DEBUG,
@@ -62,12 +62,12 @@ void RenderPass::LoadPS(std::wstring filename, std::string entry)
 		system("pause");
 		exit(-1);
 	}
-	else if (err != nullptr)
+	if (err != nullptr)
 		err->Release();
 
 	//Create shader
 	engine->graphics->device->CreatePixelShader(
-		buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &ps);
+		buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &ps);
 }
 
 Material* Material::CloneResource()
@@ -81,7 +81,7 @@ Material* Material::CloneResource()
 
 Material::~Material()
 {
-	for(size_t i = 0; i < passes.size(); ++i)
+	for (size_t i = 0; i < passes.size(); ++i)
 	{
 		passes[i].vs->Release();
 		passes[i].ps->Release();

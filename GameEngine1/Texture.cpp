@@ -36,7 +36,7 @@ int Texture::GetHeight() const
 	return m_h;
 }
 
-bool GameEngine::Resources::Texture::IsOpaque() const
+bool Texture::IsOpaque() const
 {
 	return m_opaque;
 }
@@ -61,10 +61,10 @@ Texture* Texture::Resize(int width, int height)
 			float orig_y = (static_cast<float>(y) + 0.5f) / height * m_h - 0.5f;
 
 			//Original pixels to blend/coefficients
-			int col_x0 = static_cast<int>(std::floorf(orig_x));
-			int col_x1 = static_cast<int>(std::ceilf(orig_x));
-			int col_y0 = static_cast<int>(std::floorf(orig_y));
-			int col_y1 = static_cast<int>(std::ceilf(orig_y));
+			int col_x0 = static_cast<int>(floorf(orig_x));
+			int col_x1 = static_cast<int>(ceilf(orig_x));
+			int col_y0 = static_cast<int>(floorf(orig_y));
+			int col_y1 = static_cast<int>(ceilf(orig_y));
 
 			float coeff_x0 = 1.0f - (orig_x - col_x0);
 			float coeff_x1 = 1.0f - coeff_x0;//1.0f - (col_x1 - orig_x);
@@ -128,24 +128,24 @@ Texture* Texture::Resize(int width, int height)
 
 void GaussianBlur(DirectX::XMFLOAT3** tex, int x, int y, float sigma)
 {
-	int radius = static_cast<int>(std::ceil(3 * sigma));
+	int radius = static_cast<int>(ceil(3 * sigma));
 
 	float* coefficients = new float[(2 * radius + 1) * (2 * radius + 1)];
-	double twoSdSquared = 2 * std::pow(sigma, 2.0);
+	double twoSdSquared = 2 * pow(sigma, 2.0);
 	double reciprocalPiTwoSdSquared = 1.0 / (twoSdSquared * DirectX::XM_PI);
-	for(int i = -radius; i <= radius; ++i)
-		for(int j = -radius; j <= radius; ++j)
+	for (int i = -radius; i <= radius; ++i)
+		for (int j = -radius; j <= radius; ++j)
 		{
 			coefficients[(i + radius) * (2 * radius + 1) + (j + radius)] =
-				static_cast<float>(reciprocalPiTwoSdSquared * std::pow(TEX_E,
-					- (i * i + j * j) / twoSdSquared));
+				static_cast<float>(reciprocalPiTwoSdSquared * pow(TEX_E,
+				                                                       - (i * i + j * j) / twoSdSquared));
 		}
 
 	DirectX::XMFLOAT3* new_tex = new DirectX::XMFLOAT3[x * y];
-	for(int i = 0; i < y; ++i)
-		for(int j = 0; j < x; ++j)
+	for (int i = 0; i < y; ++i)
+		for (int j = 0; j < x; ++j)
 		{
-			new_tex[i * x + j] = { 0.0f, 0.0f, 0.0f };
+			new_tex[i * x + j] = {0.0f, 0.0f, 0.0f};
 
 			float tot = 0.0f;
 			for (int k = -radius; k <= radius; ++k)

@@ -11,7 +11,6 @@
 
 namespace GameEngine
 {
-
 	namespace Elements
 	{
 		//Handles initialisation of Elements i.e. objects within the world heirarchy

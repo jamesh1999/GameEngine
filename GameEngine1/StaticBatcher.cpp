@@ -62,13 +62,14 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 	nr->Init(*renderers[0]->mat, m);*/
 
 	bool unbatched = true;
-	while (unbatched) {
+	while (unbatched)
+	{
 		unbatched = false;
 		GameEngine::Elements::CompositeObject* trans = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetParent(root->GetComponent<GameEngine::Elements::Transform>());
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetScale({ 1.0f, 1.0f, 1.0f });
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({ 0.0f, 0.0f, 0.0f });
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({ 0.0f, 0.0f, 0.0f });
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({0.0f, 0.0f, 0.0f});
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({0.0f, 0.0f, 0.0f});
 
 		auto m = new GameEngine::Resources::Mesh;
 		GameEngine::Renderer* tr = trans->AttachComponent<GameEngine::Renderer>();
@@ -81,7 +82,11 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 			if (r->GetTransparent()) continue;
 			if (!r->m_active) continue;
 			if (mat == nullptr) mat = r->mat.Get();
-			if (r->mat.Get() != mat) { unbatched = true; continue; }
+			if (r->mat.Get() != mat)
+			{
+				unbatched = true;
+				continue;
+			}
 			r->m_active = false;
 
 			int* map = new int[r->m_textures->Size()];
@@ -113,13 +118,14 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 	}
 
 	unbatched = true;
-	while (unbatched) {
+	while (unbatched)
+	{
 		unbatched = false;
 		GameEngine::Elements::CompositeObject* trans = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetParent(root->GetComponent<GameEngine::Elements::Transform>());
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetScale({ 1.0f, 1.0f, 1.0f });
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({ 0.0f, 0.0f, 0.0f });
-		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({ 0.0f, 0.0f, 0.0f });
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({0.0f, 0.0f, 0.0f});
+		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({0.0f, 0.0f, 0.0f});
 
 		auto m = new GameEngine::Resources::Mesh;
 		GameEngine::Renderer* tr = trans->AttachComponent<GameEngine::Renderer>();
@@ -131,7 +137,11 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 		{
 			if (!r->m_active) continue;
 			if (mat == nullptr) mat = r->mat.Get();
-			if (r->mat.Get() != mat) { unbatched = true; continue; }
+			if (r->mat.Get() != mat)
+			{
+				unbatched = true;
+				continue;
+			}
 			r->m_active = false;
 
 			int* map = new int[r->m_textures->Size()];

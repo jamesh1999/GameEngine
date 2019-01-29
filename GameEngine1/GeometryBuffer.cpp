@@ -60,11 +60,11 @@ void GeometryBuffer::Push()
 		auto iData = &r->GetMesh()->indices;
 
 		memcpy(reinterpret_cast<uint8_t*>(mpV.pData) + vPos * sizeof(Vertex),
-			&(*vData)[0],
-			vData->size() * sizeof(Vertex));
+		       &(*vData)[0],
+		       vData->size() * sizeof(Vertex));
 		memcpy(reinterpret_cast<uint8_t*>(mpI.pData) + iPos * sizeof(unsigned),
-			&(*iData)[0],
-			iData->size() * sizeof(unsigned));
+		       &(*iData)[0],
+		       iData->size() * sizeof(unsigned));
 
 		vPos += r->GetMesh()->vertices.size();
 		iPos += r->GetMesh()->indices.size();
@@ -76,7 +76,7 @@ void GeometryBuffer::Push()
 	m_pushed = true;
 }
 
-GeometryBuffer::GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc, bool s) : dev(d), devContext(dc), m_static(s)
+GeometryBuffer::GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc, bool s) : m_static(s), dev(d), devContext(dc)
 {
 	dev->AddRef();
 	devContext->AddRef();
@@ -84,7 +84,7 @@ GeometryBuffer::GeometryBuffer(ID3D11Device* d, ID3D11DeviceContext* dc, bool s)
 
 GeometryBuffer::~GeometryBuffer()
 {
- 	if (dev != nullptr) dev->Release();
+	if (dev != nullptr) dev->Release();
 	if (devContext != nullptr) devContext->Release();
 	if (vertexBuffer != nullptr)
 		vertexBuffer->Release();
@@ -132,7 +132,7 @@ GeometryBuffer::BufferLocation GeometryBuffer::AddRenderer(GameEngine::Renderer*
 	m_pushed = false;
 	m_renderers.push_back(r);
 
-	GeometryBuffer::BufferLocation ret = std::make_tuple(vertexPos, indexPos);
+	BufferLocation ret = std::make_tuple(vertexPos, indexPos);
 
 	vertexPos += r->GetMesh()->vertices.size();
 	indexPos += r->GetMesh()->indices.size();

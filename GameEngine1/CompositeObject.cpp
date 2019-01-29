@@ -8,13 +8,13 @@ Transform* CompositeObject::GetComponent<Transform>()
 	return m_transform.Get();
 }
 
-template<>
+template <>
 Transform* CompositeObject::AttachComponent<Transform>()
 {
 	exit(-1);
 }
 
-template<>
+template <>
 Transform* CompositeObject::AttachComponent<Transform>(Transform* component)
 {
 	exit(-1);
