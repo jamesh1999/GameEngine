@@ -141,13 +141,13 @@ void ParticleSystem::Initialise(DirectX::XMFLOAT3 pos)
 
 void ParticleSystem::Update()
 {
-	lifetime += engine->clock->DeltaT();
+	lifetime += static_cast<float>(engine->clock->DeltaT());
 	if (lifetime > 0.7f)
 	{
 		position.clear();
 		velocity.clear();
 	}
-	for (int i = 0; i < position.size(); ++i)
+	for (size_t i = 0; i < position.size(); ++i)
 	{
 		DirectX::XMStoreFloat3(&position[i], DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&position[i]), DirectX::XMLoadFloat3(&velocity[i])));
 	}

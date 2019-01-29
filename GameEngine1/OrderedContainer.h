@@ -41,12 +41,12 @@ namespace GameEngine
 
 			//Accessors to underlying container
 
-			typename const TCont::iterator begin()
+			typename TCont::iterator begin()
 			{
 				return container.begin();
 			}
 
-			typename const TCont::iterator end()
+			typename TCont::iterator end()
 			{
 				return container.end();
 			}

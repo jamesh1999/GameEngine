@@ -8,10 +8,10 @@ void Terrain::ApplyHeightmap(GameEngine::Resources::Mesh* mesh)
 	for (int i = 0; i < 101 * 101; ++i)
 		perlinTex[i] = 0.0f;
 
-	Perlin::GeneratePerlin(perlinTex, 101, 101, 3.0f, 0.0002);
-	Perlin::GeneratePerlin(perlinTex, 101, 101, 1.4f, 0.0004);
-	Perlin::GeneratePerlin(perlinTex, 101, 101, 0.4f, 0.006);
-	Perlin::GeneratePerlin(perlinTex, 101, 101, 0.1f, 0.012);
+	Perlin::GeneratePerlin(perlinTex, 101, 101, 3.0f, 0.0002f);
+	Perlin::GeneratePerlin(perlinTex, 101, 101, 1.4f, 0.0004f);
+	Perlin::GeneratePerlin(perlinTex, 101, 101, 0.4f, 0.006f);
+	Perlin::GeneratePerlin(perlinTex, 101, 101, 0.1f, 0.012f);
 	Generation::FractalFault::Generate(perlinTex, 101, 101, 140000);
 
 	ThermalErosion(perlinTex, 101, 101, 40, 0.007f);
@@ -49,8 +49,8 @@ void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, GameE
 	for (int i = 0; i < x * y; ++i)
 		noiseTex[i] = 0.0f;
 
-	Perlin::GeneratePerlin(noiseTex, x, y, 1.2f, 0.01);
-	Perlin::GeneratePerlin(noiseTex, x, y, 0.5f, 0.2);
+	Perlin::GeneratePerlin(noiseTex, x, y, 1.2f, 0.01f);
+	Perlin::GeneratePerlin(noiseTex, x, y, 0.5f, 0.2f);
 
 	//Calculate width/height of input Quad
 	float max = -FLT_MAX;
@@ -73,16 +73,16 @@ void Terrain::GenerateGroundTexture(DirectX::XMFLOAT3** out, int x, int y, GameE
 			? green
 			: brown;
 
-		int max_x = std::round((v.tex.x + block_x / 2) * x);
-		int max_y = std::round((v.tex.y + block_z / 2) * y);
+		int max_x = static_cast<int>(std::round((v.tex.x + block_x / 2) * x));
+		int max_y = static_cast<int>(std::round((v.tex.y + block_z / 2) * y));
 
-		for (int cur_x = std::round((v.tex.x - block_x / 2) * x); cur_x < max_x; ++cur_x)
+		for (int cur_x = static_cast<int>(std::round((v.tex.x - block_x / 2) * x)); cur_x < max_x; ++cur_x)
 		{
 			if (cur_x < 0
 				|| cur_x >= x)
 				continue;;
 
-			for (int cur_y = std::round((v.tex.y - block_z / 2) * y); cur_y < max_y; ++cur_y)
+			for (int cur_y = static_cast<int>(std::round((v.tex.y - block_z / 2) * y)); cur_y < max_y; ++cur_y)
 			{
 				if (cur_y < 0
 					|| cur_y >= y)

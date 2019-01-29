@@ -186,6 +186,9 @@
     <ClCompile Include="ElementPtr.cpp">
       <Filter>Source Files\Engine\Base</Filter>
     </ClCompile>
+    <ClCompile Include="CompositeObject.cpp">
+      <Filter>Source Files\Engine\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShipController.h">

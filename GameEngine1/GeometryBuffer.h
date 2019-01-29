@@ -31,7 +31,7 @@ private:
 	ID3D11Device* dev = nullptr;
 	ID3D11DeviceContext* devContext = nullptr;
 
-	void Resize(int, int);
+	void Resize(unsigned, unsigned);
 	void Push();
 
 public:

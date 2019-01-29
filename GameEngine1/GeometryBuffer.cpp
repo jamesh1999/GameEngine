@@ -92,7 +92,7 @@ GeometryBuffer::~GeometryBuffer()
 		indexBuffer->Release();
 }
 
-void GeometryBuffer::Resize(int vSize, int iSize)
+void GeometryBuffer::Resize(unsigned vSize, unsigned iSize)
 {
 	if (vSize > vertexSize)
 	{
@@ -105,7 +105,7 @@ void GeometryBuffer::Resize(int vSize, int iSize)
 		vBD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		vBD.Usage = D3D11_USAGE_DYNAMIC;
 
-		dev->CreateBuffer(&vBD, NULL, &vertexBuffer);
+		dev->CreateBuffer(&vBD, nullptr, &vertexBuffer);
 
 		vertexSize = vSize;
 	}
@@ -121,7 +121,7 @@ void GeometryBuffer::Resize(int vSize, int iSize)
 		iBD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		iBD.Usage = D3D11_USAGE_DYNAMIC;
 
-		dev->CreateBuffer(&iBD, NULL, &indexBuffer);
+		dev->CreateBuffer(&iBD, nullptr, &indexBuffer);
 
 		indexSize = iSize;
 	}

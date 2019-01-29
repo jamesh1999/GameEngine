@@ -18,11 +18,11 @@ void Renderer::Render(int i)
 	ID3D11ShaderResourceView* srv = m_textures->GetSRV();
 	engine->graphics->devContext->PSSetShaderResources(0, 1, &srv);
 
-	for (int j = 0; j < mat->passes.size(); ++j)
+	for (size_t j = 0; j < mat->passes.size(); ++j)
 	{
 		engine->graphics->devContext->IASetInputLayout(mat->passes[j].layout);
-		engine->graphics->devContext->VSSetShader(mat->passes[j].vs, NULL, NULL);
-		engine->graphics->devContext->PSSetShader(mat->passes[j].ps, NULL, NULL);
+		engine->graphics->devContext->VSSetShader(mat->passes[j].vs, nullptr, 0);
+		engine->graphics->devContext->PSSetShader(mat->passes[j].ps, nullptr, 0);
 
 		engine->graphics->devContext->DrawIndexed(mesh->indices.size(), std::get<0>(idxes), std::get<1>(idxes));
 	}

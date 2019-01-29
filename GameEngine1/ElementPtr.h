@@ -8,12 +8,12 @@ namespace GameEngine
 	namespace Elements
 	{
 		class CompositeObject;
-
+		
 		template <class TElement>
 		class ElementPtr
 		{
 			template <class>
-			friend class std::hash;
+			friend struct std::hash;
 			friend class Element;
 
 		private:

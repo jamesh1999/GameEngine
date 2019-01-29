@@ -25,16 +25,16 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 	DirectX::XMVECTOR vec;
 
 	FbxVector4 pos = node->EvaluateLocalTranslation();
-	v.x = pos.mData[0];
-	v.y = pos.mData[1];
-	v.z = pos.mData[2];
+	v.x = static_cast<float>(pos.mData[0]);
+	v.y = static_cast<float>(pos.mData[1]);
+	v.z = static_cast<float>(pos.mData[2]);
 	vec = DirectX::XMLoadFloat3A(&v);
 	t->SetPosition(vec);
 
 	FbxVector4 rot = node->EvaluateLocalRotation();
-	v.x = rot.mData[0];
-	v.y = rot.mData[1];
-	v.z = rot.mData[2];
+	v.x = static_cast<float>(rot.mData[0]);
+	v.y = static_cast<float>(rot.mData[1]);
+	v.z = static_cast<float>(rot.mData[2]);
 	vec = DirectX::XMLoadFloat3A(&v);
 	t->SetRotation(vec);
 

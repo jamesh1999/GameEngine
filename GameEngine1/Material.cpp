@@ -81,7 +81,7 @@ Material* Material::CloneResource()
 
 Material::~Material()
 {
-	for(int i = 0; i < passes.size(); ++i)
+	for(size_t i = 0; i < passes.size(); ++i)
 	{
 		passes[i].vs->Release();
 		passes[i].ps->Release();

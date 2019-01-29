@@ -14,7 +14,7 @@ void TrackLayout::SetTrack(GameEngine::Resources::Mesh* mesh)
 	instance->m_trackSegments.clear();
 
 	Segment s;
-	for (int i = 0; i < mesh->indices.size(); i += 3)
+	for (size_t i = 0; i < mesh->indices.size(); i += 3)
 	{
 		s.p1 = mesh->vertices[mesh->indices[i]].pos;
 		s.p2 = mesh->vertices[mesh->indices[i + 1]].pos;

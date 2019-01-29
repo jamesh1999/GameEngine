@@ -128,7 +128,7 @@ Texture* Texture::Resize(int width, int height)
 
 void GaussianBlur(DirectX::XMFLOAT3** tex, int x, int y, float sigma)
 {
-	int radius = std::ceil(3 * sigma);
+	int radius = static_cast<int>(std::ceil(3 * sigma));
 
 	float* coefficients = new float[(2 * radius + 1) * (2 * radius + 1)];
 	double twoSdSquared = 2 * std::pow(sigma, 2.0);
@@ -137,8 +137,8 @@ void GaussianBlur(DirectX::XMFLOAT3** tex, int x, int y, float sigma)
 		for(int j = -radius; j <= radius; ++j)
 		{
 			coefficients[(i + radius) * (2 * radius + 1) + (j + radius)] =
-				reciprocalPiTwoSdSquared * std::pow(TEX_E,
-					- (i * i + j * j) / twoSdSquared);
+				static_cast<float>(reciprocalPiTwoSdSquared * std::pow(TEX_E,
+					- (i * i + j * j) / twoSdSquared));
 		}
 
 	DirectX::XMFLOAT3* new_tex = new DirectX::XMFLOAT3[x * y];

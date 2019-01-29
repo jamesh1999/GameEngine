@@ -11,12 +11,12 @@ namespace GameEngine
 		class LazyOrderedContainer
 		{
 		private:
-			TCont m_container;
+			mutable TCont m_container;
 			TComp m_comp;
 
 			bool m_dirty = false;
 
-			void Sort()
+			void Sort() const
 			{
 				std::sort(m_container.begin(), m_container.end(), m_comp);
 			}

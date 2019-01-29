@@ -4,7 +4,7 @@
 namespace Perlin
 {
 	void FillGradientVectors(float*, int, int);
-	void GeneratePerlin(float*, int, int, float, double);
+	void GeneratePerlin(float*, int, int, float, float);
 }
 
 #endif

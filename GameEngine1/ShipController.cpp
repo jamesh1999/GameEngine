@@ -48,14 +48,14 @@ void ShipController::Update()
 
 	DirectX::XMVECTOR shipPos = transform->GetPosition();
 	float height = 0.0f;
-	float dist = engine->clock->DeltaT() * 40.0;
+	float dist = static_cast<float>(engine->clock->DeltaT()) * 40.0f;
 	float dpos = 0.0f;
 	if (Input::InputManager::KeyIsPressed(Input::KeyW))
 	{
 		dpos += dist;
 
 		if (Input::InputManager::KeyIsPressed((Input::KeyF)))
-			dpos *= 10;
+			dpos *= 10.0f;
 	}
 	if (Input::InputManager::KeyIsPressed(Input::KeyS))
 	{
@@ -73,14 +73,14 @@ void ShipController::Update()
 	float drot = 0.0f;
 	if (Input::InputManager::KeyIsPressed(Input::KeyD))
 	{
-		drot += dist * 0.03;
+		drot += dist * 0.03f;
 		curRoll -= dist * rollSpeed;
 		if (curRoll < -rollMax)
 			curRoll = -rollMax;
 	}
 	else if (Input::InputManager::KeyIsPressed(Input::KeyA))
 	{
-		drot -= dist * 0.03;
+		drot -= dist * 0.03f;
 		curRoll += dist * rollSpeed;
 		if (curRoll > rollMax)
 			curRoll = rollMax;
@@ -120,9 +120,9 @@ void ShipController::Update()
 			)) - 5.0f;
 		
 		if (vDist > engine->clock->DeltaT() * vertSpeed)
-			vDist = engine->clock->DeltaT() * vertSpeed;
+			vDist = static_cast<float>(engine->clock->DeltaT()) * vertSpeed;
 		else if (vDist < -engine->clock->DeltaT() * vertSpeed)
-			vDist = -engine->clock->DeltaT() * vertSpeed;
+			vDist = -static_cast<float>(engine->clock->DeltaT()) * vertSpeed;
 
 		//Add on repulsion force
 		shipPos = DirectX::XMVectorAdd(DirectX::XMVectorScale(norm, -vDist), shipPos);
@@ -130,7 +130,7 @@ void ShipController::Update()
 
 	shipPos = DirectX::XMVectorAdd(
 		shipPos,
-		DirectX::XMVectorScale(v, engine->clock->DeltaT())
+		DirectX::XMVectorScale(v, static_cast<float>(engine->clock->DeltaT()))
 	);
 	transform->SetPosition(shipPos);
 
@@ -140,7 +140,7 @@ void ShipController::Update()
 			DirectX::XMVectorPow(
 				v,
 				{ 2.0f, 2.0f, 2.0f }),
-			drag * engine->clock->DeltaT()
+			drag * static_cast<float>(engine->clock->DeltaT())
 		);
 
 	DirectX::XMFLOAT3 manualD, manualV;

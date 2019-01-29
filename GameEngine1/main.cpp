@@ -46,7 +46,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	//Otherwise use the default handling
 	default:
-		DefWindowProc(hWnd, message, wParam, lParam);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 }
 
@@ -68,7 +68,7 @@ void DestroyBackwards(GameEngine::Elements::CompositeObject* co)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	//Random seed
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	//Allocate a console and bind cout/cerr to it
 	AllocConsole();
@@ -85,7 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	winClass.cbSize = sizeof(winClass);
 	winClass.style = CS_HREDRAW | CS_VREDRAW;
 	winClass.lpfnWndProc = WndProc;
-	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	winClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	winClass.hInstance = hInstance;
 	winClass.lpszClassName = L"CLASS1";
 
@@ -101,10 +101,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		CW_USEDEFAULT,
 		width,
 		height,
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		hInstance,
-		NULL
+		nullptr
 	);
 
 	//Finally show the windows
@@ -150,12 +150,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ID3D10Blob *buff = nullptr, *err = nullptr;
 	HRESULT success = D3DCompileFromFile(
 		L"depth.hlsl",
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		"VShader",
 		"vs_5_0",
 		D3DCOMPILE_DEBUG,
-		NULL,
+		0,
 		&buff,
 		&err);
 
@@ -167,17 +167,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->dpthVtx);
+	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->dpthVtx);
 	game.graphics->device->CreateInputLayout(
 		iLayout, 3, buff->GetBufferPointer(), buff->GetBufferSize(), &game.graphics->dpthILayout);
 	success = D3DCompileFromFile(
 		L"depth.hlsl",
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		"PShader",
 		"ps_5_0",
 		D3DCOMPILE_DEBUG,
-		NULL,
+		0,
 		&buff,
 		&err);
 
@@ -189,16 +189,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->dpthPx);
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->dpthPx);
 
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		"VShader",
 		"vs_5_0",
 		D3DCOMPILE_DEBUG,
-		NULL,
+		0,
 		&buff,
 		&err);
 
@@ -210,15 +210,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->bloomVtx);
+	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomVtx);
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		"PShader",
 		"ps_5_0",
 		D3DCOMPILE_DEBUG,
-		NULL,
+		0,
 		&buff,
 		&err);
 
@@ -230,16 +230,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->bloomPx);
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomPx);
 
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		"PShaderV",
 		"ps_5_0",
 		D3DCOMPILE_DEBUG,
-		NULL,
+		0,
 		&buff,
 		&err);
 
@@ -251,7 +251,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else if (err != nullptr)
 		err->Release();
-	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), NULL, &game.graphics->bloomPxV);
+	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr, &game.graphics->bloomPxV);
 	
 	//MeshData* skybox = new MeshData;
 	//std::vector<std::string> tex_skybox;
@@ -329,7 +329,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG message;
 	while (true)
 	{
-		if (PeekMessage(&message, hWnd, NULL, NULL, true))
+		if (PeekMessage(&message, hWnd, 0, 0, true))
 		{
 			//Translate then handle in WndProc()
 			TranslateMessage(&message);

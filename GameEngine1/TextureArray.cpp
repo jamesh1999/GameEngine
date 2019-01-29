@@ -91,7 +91,7 @@ void TextureArray::Push()
 
 	//Populate with texture data
 	D3D11_SUBRESOURCE_DATA* texData = new D3D11_SUBRESOURCE_DATA[m_textures.size()];
-	for (int i = 0; i < m_textures.size(); ++i)
+	for (size_t i = 0; i < m_textures.size(); ++i)
 	{
 		texData[i].SysMemSlicePitch = 4 * sizeof(float) * max_height * max_width;
 		texData[i].SysMemPitch = 4 * sizeof(float) * max_width;
@@ -114,4 +114,11 @@ ID3D11ShaderResourceView* TextureArray::GetSRV()
 {
 	if (!m_pushed) Push();
 	return m_SRV;
+}
+
+int TextureArray::Find(Texture* t)
+{
+	for (size_t i = 0; i < m_textures.size(); ++i)
+		if (m_textures[i].Get() == t) return i;
+	return -1;
 }

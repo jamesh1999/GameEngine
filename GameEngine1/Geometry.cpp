@@ -64,7 +64,7 @@ void Geometry::GenerateCuboid(GameEngine::Resources::Mesh* mesh, float w, float 
 void Geometry::GenerateSphere(GameEngine::Resources::Mesh* mesh, float radius, int nSlices, int nSegments)
 {
 	//Sides
-	float deltaH = 2.0 / nSlices;
+	float deltaH = 2.0f / nSlices;
 	float deltaTheta = DirectX::XM_2PI / nSegments;
 
 	Vertex buff;

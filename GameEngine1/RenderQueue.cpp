@@ -14,7 +14,7 @@ RenderQueue::RenderQueue()
 
 void RenderQueue::AddRenderer(GameEngine::Renderer* r)
 {
-	m_priorities[r->GetID()] = 0.0f;
+	m_priorities[r->GetID()] = 0;
 	m_queue.Insert(r);
 }
 
@@ -38,7 +38,7 @@ void RenderQueue::Refresh(DirectX::XMVECTOR forwards)
 
 		// Opaque near->far followed by transparent far->near
 		priority >>= 1;
-		if (priority & 0x40000000 == 0) priority ^= 0x3fffffff;
+		if ((priority & 0x40000000) == 0) priority ^= 0x3fffffff;
 		if (r->GetTransparent()) priority = ~priority;
 
 		m_priorities[r->GetID()] = *reinterpret_cast<int*>(&priority);

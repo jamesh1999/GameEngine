@@ -98,7 +98,7 @@ public:
 		tokens.push_back(descriptor.substr(start, pos - start));
 
 		std::unordered_map<std::string, std::string> kvps;
-		for (int i = 0; i < tokens.size(); i += 2)
+		for (size_t i = 0; i < tokens.size(); i += 2)
 			kvps[tokens[i]] = tokens[i + 1];
 
 		return kvps;

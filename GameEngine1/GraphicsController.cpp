@@ -188,7 +188,7 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 
 	rsD.AntialiasedLineEnable = false;
 	rsD.CullMode = D3D11_CULL_BACK;
-	rsD.DepthBias = 0.0;
+	rsD.DepthBias = 0;
 	rsD.DepthBiasClamp = 0.0;
 	rsD.DepthClipEnable = true;
 	rsD.FillMode = D3D11_FILL_SOLID;
@@ -207,8 +207,8 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd)
 	vP.TopLeftY = 0;
 	vP.MinDepth = 0.0;
 	vP.MaxDepth = 1.0;
-	vP.Height = h;
-	vP.Width = w;
+	vP.Height = static_cast<float>(h);
+	vP.Width = static_cast<float>(w);
 
 	devContext->RSSetViewports(1, &vP);
 
@@ -520,8 +520,8 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	vP.TopLeftY = 0;
 	vP.MinDepth = 0.0;
 	vP.MaxDepth = 1.0;
-	vP.Height = m_scrHeight;
-	vP.Width = m_scrWidth;
+	vP.Height = static_cast<float>(m_scrHeight);
+	vP.Width = static_cast<float>(m_scrWidth);
 	devContext->RSSetViewports(1, &vP);
 
 	return true;

@@ -167,7 +167,7 @@ void TextureLoader::GetPixelTGA(float* out, int x, int y, TGA* img)
 	{
 	case 16:
 		*(out + 0) = ((*(pixelPtr + 1) & 0x7c) >> 2) / 31.0f;
-		*(out + 1) = (((*(pixelPtr + 1) & 0x03) << 3) || ((*(pixelPtr + 0) & 0xe0) >> 5)) / 31.0f;
+		*(out + 1) = (((*(pixelPtr + 1) & 0x03) << 3) | ((*(pixelPtr + 0) & 0xe0) >> 5)) / 31.0f;
 		*(out + 2) = (*(pixelPtr + 0) & 0x1f) / 31.0f;
 		*(out + 3) = (*(pixelPtr + 1) & 0x80) / 128.0f;
 		break;

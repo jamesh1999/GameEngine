@@ -10,9 +10,9 @@ using namespace GameEngine::Resources;
 
 void MeshLoader::FBXGetVertexPos(FbxMesh* in, int ctrlPointIdx, DirectX::XMFLOAT3& out)
 {
-	out.x = in->GetControlPointAt(ctrlPointIdx).mData[0] / 100;
-	out.y = in->GetControlPointAt(ctrlPointIdx).mData[1] / 100;
-	out.z = in->GetControlPointAt(ctrlPointIdx).mData[2] / 100;
+	out.x = static_cast<float>(in->GetControlPointAt(ctrlPointIdx).mData[0]) / 100.0f;
+	out.y = static_cast<float>(in->GetControlPointAt(ctrlPointIdx).mData[1]) / 100.0f;
+	out.z = static_cast<float>(in->GetControlPointAt(ctrlPointIdx).mData[2]) / 100.0f;
 }
 
 void MeshLoader::FBXGetNormal(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX::XMFLOAT3& out)
@@ -26,15 +26,15 @@ void MeshLoader::FBXGetNormal(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX
 		case FbxGeometryElement::eIndexToDirect:
 		{
 			int idx = norm->GetIndexArray().GetAt(ctrlPointIdx);
-			out.x = norm->GetDirectArray().GetAt(idx).mData[0];
-			out.y = norm->GetDirectArray().GetAt(idx).mData[1];
-			out.z = norm->GetDirectArray().GetAt(idx).mData[2];
+			out.x = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[0]);
+			out.y = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[1]);
+			out.z = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[2]);
 			break;
 		}
 		case FbxGeometryElement::eDirect:
-			out.x = norm->GetDirectArray().GetAt(ctrlPointIdx).mData[0];
-			out.y = norm->GetDirectArray().GetAt(ctrlPointIdx).mData[1];
-			out.z = norm->GetDirectArray().GetAt(ctrlPointIdx).mData[2];
+			out.x = static_cast<float>(norm->GetDirectArray().GetAt(ctrlPointIdx).mData[0]);
+			out.y = static_cast<float>(norm->GetDirectArray().GetAt(ctrlPointIdx).mData[1]);
+			out.z = static_cast<float>(norm->GetDirectArray().GetAt(ctrlPointIdx).mData[2]);
 			break;
 		}
 		break;
@@ -44,15 +44,15 @@ void MeshLoader::FBXGetNormal(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX
 		case FbxGeometryElement::eIndexToDirect:
 		{
 			int idx = norm->GetIndexArray().GetAt(vtxIdx);
-			out.x = norm->GetDirectArray().GetAt(idx).mData[0];
-			out.y = norm->GetDirectArray().GetAt(idx).mData[1];
-			out.z = norm->GetDirectArray().GetAt(idx).mData[2];
+			out.x = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[0]);
+			out.y = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[1]);
+			out.z = static_cast<float>(norm->GetDirectArray().GetAt(idx).mData[2]);
 			break;
 		}
 		case FbxGeometryElement::eDirect:
-			out.x = norm->GetDirectArray().GetAt(vtxIdx).mData[0];
-			out.y = norm->GetDirectArray().GetAt(vtxIdx).mData[1];
-			out.z = norm->GetDirectArray().GetAt(vtxIdx).mData[2];
+			out.x = static_cast<float>(norm->GetDirectArray().GetAt(vtxIdx).mData[0]);
+			out.y = static_cast<float>(norm->GetDirectArray().GetAt(vtxIdx).mData[1]);
+			out.z = static_cast<float>(norm->GetDirectArray().GetAt(vtxIdx).mData[2]);
 			break;
 		}
 		break;
@@ -73,14 +73,14 @@ void MeshLoader::FBXGetUV(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX::XM
 		case FbxGeometryElement::eIndexToDirect:
 		{
 			int idx = uv->GetIndexArray().GetAt(ctrlPointIdx);
-			out.x = uv->GetDirectArray().GetAt(idx).mData[0];
-			out.y = 1.0f - uv->GetDirectArray().GetAt(idx).mData[1];
+			out.x = static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[0]);
+			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[1]);
 			out.z = 0.0f;
 			break;
 		}
 		case FbxGeometryElement::eDirect:
-			out.x = uv->GetDirectArray().GetAt(ctrlPointIdx).mData[0];
-			out.y = 1.0f - uv->GetDirectArray().GetAt(ctrlPointIdx).mData[1];
+			out.x = static_cast<float>(uv->GetDirectArray().GetAt(ctrlPointIdx).mData[0]);
+			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(ctrlPointIdx).mData[1]);
 			out.z = 0.0f;
 			break;
 		}
@@ -91,14 +91,14 @@ void MeshLoader::FBXGetUV(FbxMesh* in, int ctrlPointIdx, int vtxIdx, DirectX::XM
 		case FbxGeometryElement::eIndexToDirect:
 		{
 			int idx = uv->GetIndexArray().GetAt(vtxIdx);
-			out.x = uv->GetDirectArray().GetAt(idx).mData[0];
-			out.y = 1.0f - uv->GetDirectArray().GetAt(idx).mData[1];
+			out.x = static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[0]);
+			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(idx).mData[1]);
 			out.z = 0.0f;
 			break;
 		}
 		case FbxGeometryElement::eDirect:
-			out.x = uv->GetDirectArray().GetAt(vtxIdx).mData[0];
-			out.y = 1.0f - uv->GetDirectArray().GetAt(vtxIdx).mData[1];
+			out.x = static_cast<float>(uv->GetDirectArray().GetAt(vtxIdx).mData[0]);
+			out.y = 1.0f - static_cast<float>(uv->GetDirectArray().GetAt(vtxIdx).mData[1]);
 			out.z = 0.0f;
 			break;
 		}
@@ -128,7 +128,7 @@ void MeshLoader::ApplyFbxRecursive(Mesh* out, FbxNode* node, bool track)
 			int lCnt = in->GetLayerCount();
 			for (int j = 0; j < lCnt; ++j)
 			{
-				unsigned polygonCount = in->GetPolygonCount();
+				int polygonCount = in->GetPolygonCount();
 
 				Vertex buff;
 				int vtxIdx = 0;
@@ -171,7 +171,7 @@ Mesh* MeshLoader::LoadFBX(FbxMesh* in)
 	int lCnt = in->GetLayerCount();
 	for (int j = 0; j < lCnt; ++j)
 	{
-		unsigned polygonCount = in->GetPolygonCount();
+		int polygonCount = in->GetPolygonCount();
 		out->indices.reserve(polygonCount * 3);
 		out->vertices.reserve(polygonCount * 3);
 

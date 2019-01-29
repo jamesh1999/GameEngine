@@ -20,7 +20,7 @@ void Perlin::FillGradientVectors(float* out, int w, int h)
 		}
 }
 
-void Perlin::GeneratePerlin(float* out, int w, int h, float weight, double frequency)
+void Perlin::GeneratePerlin(float* out, int w, int h, float weight, float frequency)
 {
 	int vec_w = static_cast<int>(std::ceil(w * frequency)) + 1;
 	int vec_h = static_cast<int>(std::ceil(h * frequency)) + 1;
@@ -31,9 +31,9 @@ void Perlin::GeneratePerlin(float* out, int w, int h, float weight, double frequ
 	for(int x = 0; x < w; ++x)
 		for(int y = 0; y < h; ++y)
 		{
-			int x0 = std::floor(x * frequency);
+			int x0 = static_cast<int>(std::floor(x * frequency));
 			int x1 = x0 + 1;
-			int y0 = std::floor(y * frequency);
+			int y0 = static_cast<int>(std::floor(y * frequency));
 			int y1 = y0 + 1;
 
 			float dx = static_cast<float>(x) * frequency - x0;

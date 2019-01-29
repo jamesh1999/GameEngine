@@ -93,14 +93,14 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 				map[i] = ta->Size() - 1;
 			}
 
-			for (int i = 0; i < r->mesh->vertices.size(); ++i)
+			for (size_t i = 0; i < r->mesh->vertices.size(); ++i)
 			{
 				Vertex v = r->mesh->vertices[i];
-				v.tex.z = map[static_cast<int>(v.tex.z)];
+				v.tex.z = static_cast<float>(map[static_cast<int>(v.tex.z)]);
 				m->vertices.push_back(v);
 			}
 
-			for (int i = 0; i < r->mesh->indices.size(); ++i)
+			for (size_t i = 0; i < r->mesh->indices.size(); ++i)
 				m->indices.push_back(r->mesh->indices[i] + idxOffset);
 
 			idxOffset += r->mesh->vertices.size();
@@ -143,14 +143,14 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 				map[i] = ta->Size() - 1;
 			}
 
-			for (int i = 0; i < r->mesh->vertices.size(); ++i)
+			for (size_t i = 0; i < r->mesh->vertices.size(); ++i)
 			{
 				Vertex v = r->mesh->vertices[i];
-				v.tex.z = map[static_cast<int>(v.tex.z)];
+				v.tex.z = static_cast<float>(map[static_cast<int>(v.tex.z)]);
 				m->vertices.push_back(v);
 			}
 
-			for (int i = 0; i < r->mesh->indices.size(); ++i)
+			for (size_t i = 0; i < r->mesh->indices.size(); ++i)
 				m->indices.push_back(r->mesh->indices[i] + idxOffset);
 
 			idxOffset += r->mesh->vertices.size();

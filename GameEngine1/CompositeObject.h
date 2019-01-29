@@ -46,18 +46,13 @@ namespace GameEngine
 			template <class T>
 			T* GetComponent()
 			{
-				for (int i = 0; i < m_components.size(); ++i)
+				for (size_t i = 0; i < m_components.size(); ++i)
 				{
 					if (dynamic_cast<T*>(m_components[i].Get()) != nullptr)
 						return dynamic_cast<T*>(m_components[i].Get());
 				}
 
 				return nullptr;
-			}
-			template <>
-			Transform* GetComponent<Transform>()
-			{
-				return m_transform.Get();
 			}
 
 			template<class T>
@@ -69,11 +64,6 @@ namespace GameEngine
 				static_cast<Component*>(component)->Create();
 				return component;
 			}
-			template<>
-			Transform* AttachComponent<Transform>()
-			{
-				exit(-1);
-			}
 
 			template<class T>
 			T* AttachComponent(T* component)
@@ -83,12 +73,16 @@ namespace GameEngine
 				static_cast<Component*>(component)->Create();
 				return component;
 			}
-			template<>
-			Transform* AttachComponent<Transform>(Transform* component)
-			{
-				exit(-1);
-			}
 		};
+
+		template <>
+		Transform* CompositeObject::GetComponent<Transform>();
+
+		template<>
+		Transform* CompositeObject::AttachComponent<Transform>();
+
+		template<>
+		Transform* CompositeObject::AttachComponent<Transform>(Transform*);
 	}
 }
 

@@ -28,7 +28,7 @@ namespace GameEngine
 
 		protected:
 
-			TextureArray* CloneResource();
+			TextureArray* CloneResource() override;
 
 		public:
 
@@ -45,12 +45,7 @@ namespace GameEngine
 			ID3D11ShaderResourceView* GetSRV();
 
 			bool GetTransparent() { return m_transparent; }
-			int Find(Texture* t)
-			{
-				for (int i = 0; i < m_textures.size(); ++i)
-					if (m_textures[i].Get() == t) return i;
-				return -1;
-			}
+			int Find(Texture*);
 			int Size() { return m_textures.size(); }
 		};
 	}
