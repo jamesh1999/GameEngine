@@ -23,13 +23,13 @@ typedef struct
 	DirectX::XMFLOAT4X4A p;
 	DirectX::XMFLOAT3A lightPos;
 	float padding;
-} LightBuffer;
+} LightBufferS;
 
 GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) : hWnd(wnd), m_fullscreen(fullscreen),
                                                                                   m_scrWidth(w), m_scrHeight(h)
 {
 	//instance = this;
-
+	
 	//Create device and device context
 	D3D_FEATURE_LEVEL featureLevel;
 	D3D11CreateDevice(
@@ -282,7 +282,7 @@ GraphicsController::~GraphicsController()
 	indexBuffer->Release();
 	cBufferFrame->Release();
 	cBufferObject->Release();
-
+	
 	delete geomBuff;
 
 	device->Release();
@@ -294,6 +294,8 @@ GraphicsController::~GraphicsController()
 
 void GraphicsController::StartDraw()
 {
+	ConstructLightBuffer();
+	devContext->PSSetShaderResources(2, 1, &lightUAV);
 	devContext->ClearRenderTargetView(backBuffer, DirectX::XMVECTORF32{0.0, 0.0, 0.0, 1.0});
 	devContext->ClearRenderTargetView(bloomBuffer, DirectX::XMVECTORF32{0.0, 0.0, 0.0, 1.0});
 	devContext->ClearRenderTargetView(bloomBuffer2, DirectX::XMVECTORF32{0.0, 0.0, 0.0, 1.0});
@@ -328,7 +330,7 @@ void GraphicsController::StartDraw()
 	rq.Refresh(viewDir);
 
 	//Fill light buffer
-	LightBuffer light;
+	LightBufferS light;
 
 	//Get WV matrix
 	mat = m_light->obj->GetComponent<Elements::Transform>()->GetTransform();
@@ -340,7 +342,7 @@ void GraphicsController::StartDraw()
 	XMStoreFloat3A(&light.lightPos, m_light->obj->GetComponent<Elements::Transform>()->GetPosition());
 
 	devContext->Map(cBufferLight, 0, D3D11_MAP_WRITE_DISCARD, NULL, &mp);
-	memcpy(mp.pData, &light, sizeof(LightBuffer));
+	memcpy(mp.pData, &light, sizeof(LightBufferS));
 	devContext->Unmap(cBufferLight, 0);
 
 	devContext->VSSetConstantBuffers(2, 1, &cBufferLight);
@@ -530,12 +532,66 @@ void GraphicsController::SetCamera(Camera* cam)
 	m_camera = cam;
 }
 
-void GraphicsController::SetLight(Light* light)
+void GraphicsController::AddLight(Light* light)
 {
-	m_light = light;
+	m_lights.push_back(light);
+	if (light->m_shadows) m_light = light;
 }
 
-void GraphicsController::RenderLightDepth()
+void GraphicsController::RemoveLight(Light* light)
+{
+	auto it = std::find(m_lights.begin(), m_lights.end(), light);
+	m_lights.erase(it);
+}
+
+void GraphicsController::ShadowPasses()
+{
+	for (Light* l : m_lights)
+	{
+		if (!l->m_shadows) continue;
+
+		RenderLightDepth(l);
+	}
+}
+
+void GraphicsController::ConstructLightBuffer()
+{
+	if (lightBuff != nullptr) lightBuff->Release();
+	if (lightUAV != nullptr) lightUAV->Release();
+
+	LightBuffer* data = new LightBuffer[m_lights.size()];
+	for (int i = 0; i < m_lights.size(); ++i)
+		m_lights[i]->FillLightBuffer(data + i);
+	
+	D3D11_BUFFER_DESC bD;
+	ZeroMemory(&bD, sizeof(bD));
+	bD.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	bD.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bD.Usage = D3D11_USAGE_DYNAMIC;
+	bD.StructureByteStride = sizeof(LightBuffer);
+	bD.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	bD.ByteWidth = m_lights.size() * sizeof(LightBuffer);
+
+	D3D11_SUBRESOURCE_DATA bufferInitData;
+	ZeroMemory((&bufferInitData), sizeof(bufferInitData));
+	bufferInitData.pSysMem = data;
+
+	device->CreateBuffer(&bD, &bufferInitData, &lightBuff);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC uavD;
+	ZeroMemory(&uavD, sizeof(uavD));
+	uavD.Format = DXGI_FORMAT_UNKNOWN;
+	uavD.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	uavD.Buffer.ElementWidth = m_lights.size();
+	device->CreateShaderResourceView(lightBuff, &uavD, &lightUAV);
+/*
+	D3D11_MAPPED_SUBRESOURCE mSR;
+	devContext->Map(lightBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mSR);
+	memcpy(mSR.pData, data, sizeof(LightBuffer) * m_lights.size());
+	devContext->Unmap(lightBuff, 0);*/
+}
+
+void GraphicsController::RenderLightDepth(Light* light)
 {
 	ID3D11RenderTargetView* rtv = m_light->GetRTV();
 	devContext->OMSetRenderTargets(1, &rtv, m_light->depthBuff);

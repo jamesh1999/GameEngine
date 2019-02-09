@@ -35,7 +35,7 @@ void Engine::Loop() const
 	world->Update();
 	particleSystem->Update();
 	Input::InputManager::Update();
-	graphics->RenderLightDepth();
+	graphics->ShadowPasses();
 	graphics->StartDraw();
 	graphics->RenderObjects();
 	particleSystem->Draw();

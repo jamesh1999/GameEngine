@@ -1,6 +1,10 @@
 #include "Light.h"
 #include <minwinbase.h>
+#include "CompositeObject.h"
 #include "GraphicsController.h"
+#include "Transform.h"
+
+using namespace GameEngine::Graphics;
 
 void Light::Create()
 {
@@ -82,6 +86,8 @@ void Light::Create()
 	sD.MaxLOD = D3D11_FLOAT32_MAX;
 
 	engine->graphics->device->CreateSamplerState(&sD, &ss);
+
+	//engine->graphics->AddLight(this);
 }
 
 Light::~Light()
@@ -92,6 +98,16 @@ Light::~Light()
 	ss->Release();
 	depthBuff->Release();
 	depthBuffer->Release();
+}
+
+void Light::FillLightBuffer(LightBuffer* buff) const
+{
+	buff->colour = m_colour;
+	DirectX::XMStoreFloat3(&buff->position, obj->GetComponent<Elements::Transform>()->GetPosition());
+	buff->radius = m_radius;
+	buff->type = m_type;
+
+	buff->shadowTex = m_shadows ? 1 : -1;
 }
 
 ID3D11RenderTargetView* Light::GetRTV() const

@@ -12,7 +12,7 @@ struct VOut
     float3 tex : TEXCOORD0;
     float3 color : TEXCOORD2;
     float4 lightViewPos : TEXCOORD3;
-    float3 lightPos : TEXCOORD4;
+    float3 worldPos : TEXCOORD4;
 };
 
 cbuffer perFrame : register(b0)
@@ -42,6 +42,18 @@ struct POut
     float4 bloom : SV_TARGET1;
 };
 
+struct lightEntry
+{
+	float3 pos;
+	int type;
+	float3 color;
+	float radius;
+	int shad;
+	int3 padding;
+};
+
+StructuredBuffer<lightEntry> lightBuff : register(t2);
+
 VOut VShader(float4 position : POSITION, float3 color : NORMAL, float3 tex : TEXCOORD0)
 {
     VOut output;
@@ -55,7 +67,7 @@ VOut VShader(float4 position : POSITION, float3 color : NORMAL, float3 tex : TEX
     output.color = float3(1.0, 1.0, 1.0);
 
     output.lightViewPos = mul(mul(worldPos, lightViewMatrix), lightProjMatrix);
-    output.lightPos = lightPosition.xyz - worldPos.xyz;
+    output.worldPos = worldPos;
 
     return output;
 }
@@ -97,7 +109,7 @@ float4 PShader(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view 
 	return float4(color, 1.0) * c + specular;
 }
 
-POut PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view : TEXCOORD1, float3 tex : TEXCOORD0, float3 color : TEXCOORD2, float4 lightViewPos : TEXCOORD3, float3 lightPos : TEXCOORD4) : SV_TARGET
+POut PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view : TEXCOORD1, float3 tex : TEXCOORD0, float3 color : TEXCOORD2, float4 lightViewPos : TEXCOORD3, float3 worldPos : TEXCOORD4) : SV_TARGET
 {
     float4 c = float4(0.04, 0.05, 0.07, 1.0);
     float4 specular = float4(0.0,0.0,0.0,0.0);
@@ -116,24 +128,43 @@ POut PShaderTex(float4 position : SV_POSITION, float3 norm : NORMAL, float3 view
     	if(actualDepth < lightDepth)
     	{
 
-    		float3 lightDir = normalize(lightPos);
+    		float3 lightDir = normalize(lightPosition.xyz - worldPos.xyz);
     		float intensity = dot(lightDir, norm);
-    		float multiplier = pow(length(lightPos) / 100.0, -2.0);
+    		float multiplier = pow(length(lightPosition.xyz - worldPos.xyz) / 100.0, -2.0);
 
 		    if(intensity > 0.0)
 		    {
-		        c += intensity * float4(0.75, 0.8, 0.85, 1.0) * multiplier * 0.5;
+		        c += intensity * float4(0.75, 0.8, 0.85, 0.0) * multiplier * 0.5;
 
 		        float3 reflection = normalize(-lightDir + 2 * intensity * norm); 
-		        specular = float4(1.0, 1.0, 1.0, 0.0) * pow(saturate(dot(reflection, view)), 10.0) * 0.1 * multiplier;
+		        specular += float4(1.0, 1.0, 1.0, 0.0) * pow(saturate(dot(reflection, view)), 10.0) * 0.1 * multiplier;
 		    }
 		}
+	}
+
+	uint l = 0;
+	uint d = 0;
+	lightBuff.GetDimensions(l, d);
+	for (uint i = 0; i < l; ++i)
+	{
+		float3 lightDir = normalize(lightBuff[i].pos - worldPos.xyz);
+		float intensity = dot(lightDir, norm);
+		float multiplier = pow(length(lightBuff[i].pos - worldPos.xyz) / 20.0, -2.0);
+
+	    if(intensity > 0.0)
+	    {
+	        c += intensity * float4(lightBuff[i].color, 0.0) * multiplier * 0.5;
+
+	        float3 reflection = normalize(-lightDir + 2 * intensity * norm); 
+	        specular += float4(lightBuff[i].color, 0.0) * pow(saturate(dot(reflection, view)), 10.0) * 0.1 * multiplier;
+	    }
 	}
 
     float4 texCol = pow(shaderTexture.Sample(samplerWrap, tex), 2.2);
 
     POut output;
-    output.main = pow(texCol * c + specular,1/2.2);
+    float4 col = texCol * c + specular;
+    output.main = pow(col,1/2.2);
 
     output.bloom = float4(0.0, 0.0, 0.0, 1.0);
 

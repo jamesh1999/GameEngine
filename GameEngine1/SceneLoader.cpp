@@ -2,6 +2,8 @@
 #include <DirectXMath.h>
 #include "Component.h"
 #include "ElementFactory.h"
+#include "GraphicsController.h"
+#include "Light.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "MeshLoader.h"
@@ -176,7 +178,13 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 	case FbxNodeAttribute::eLight:
 		{
 			FbxLight* light = node->GetLight();
-			//Light* l = co->AttachComponent<Light>();
+			Graphics::Light* l = co->AttachComponent<Graphics::Light>();
+			l->m_shadows = false;
+			l->m_colour.x = light->Color.Get().mData[0];
+			l->m_colour.y = light->Color.Get().mData[1];
+			l->m_colour.z = light->Color.Get().mData[2];
+
+			engine->graphics->AddLight(l);
 		}
 		break;
 	default:

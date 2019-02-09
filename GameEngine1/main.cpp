@@ -327,6 +327,51 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	t->SetRotation(DirectX::XMQuaternionIdentity());
 	t->SetScale({1.0f, 1.0f, 1.0f});
 
+	GameEngine::Elements::CompositeObject* l = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	auto cmp = l->AttachComponent<GameEngine::Graphics::Light>();
+	cmp->m_colour = { 0.0f, 1.0f, 0.0f };
+	t = l->GetComponent<GameEngine::Elements::Transform>();
+	t->SetPosition({ -707.0f, 13.0f, -58.0f });
+	t->SetRotation(DirectX::XMQuaternionIdentity());
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	game.graphics->AddLight(cmp);
+
+	l = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	cmp = l->AttachComponent<GameEngine::Graphics::Light>();
+	cmp->m_colour = { 1.0f, 1.0f, 1.0f };
+	t = l->GetComponent<GameEngine::Elements::Transform>();
+	t->SetPosition({ -707.0f, 13.0f, -8.0f });
+	t->SetRotation(DirectX::XMQuaternionIdentity());
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	game.graphics->AddLight(cmp);
+
+	l = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	cmp = l->AttachComponent<GameEngine::Graphics::Light>();
+	cmp->m_colour = { 1.0f, 0.0f, 0.0f };
+	t = l->GetComponent<GameEngine::Elements::Transform>();
+	t->SetPosition({ -707.0f, 13.0f, 42.0f });
+	t->SetRotation(DirectX::XMQuaternionIdentity());
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	game.graphics->AddLight(cmp);
+
+	l = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	cmp = l->AttachComponent<GameEngine::Graphics::Light>();
+	cmp->m_colour = { 1.0f, 1.0f, 1.0f };
+	t = l->GetComponent<GameEngine::Elements::Transform>();
+	t->SetPosition({ -707.0f, 13.0f, -108.0f });
+	t->SetRotation(DirectX::XMQuaternionIdentity());
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	game.graphics->AddLight(cmp);
+
+	l = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	cmp = l->AttachComponent<GameEngine::Graphics::Light>();
+	cmp->m_colour = { 0.0f, 0.0f, 1.0f };
+	t = l->GetComponent<GameEngine::Elements::Transform>();
+	t->SetPosition({ -707.0f, 13.0f, -158.0f });
+	t->SetRotation(DirectX::XMQuaternionIdentity());
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
+	game.graphics->AddLight(cmp);
+
 	ship->AttachComponent<ShipController>();
 
 	game.particleSystem = new GameEngine::Graphics::ParticleSystem(&game);

@@ -2,6 +2,7 @@
 #define __GRAPHICS_CONTROLLER_INCLUDED__
 
 #include <d3d11.h>
+#include <vector>
 #include <windows.h>
 #include "Renderer.h"
 #include "Camera.h"
@@ -45,6 +46,7 @@ namespace GameEngine
 			Camera* m_camera;
 		private:
 			Light* m_light;
+			std::vector<Light*> m_lights;
 			D3D11_VIEWPORT vP;
 
 		public:
@@ -80,6 +82,9 @@ namespace GameEngine
 			ID3D11PixelShader* dpthPx;
 			ID3D11InputLayout* dpthILayout;
 
+			ID3D11Buffer* lightBuff;
+			ID3D11ShaderResourceView* lightUAV;
+
 			GraphicsController(int, int, bool, HWND);
 			~GraphicsController();
 
@@ -98,11 +103,15 @@ namespace GameEngine
 			bool HandleMessage(HWND, UINT, WPARAM, LPARAM);
 
 			void SetCamera(Camera*);
-			void SetLight(Light*);
+			void AddLight(Light*);
+			void RemoveLight(Light*);
 
-			void RenderLightDepth();
+			void RenderLightDepth(Light*);
 			void DisableDepthWrite();
 			void EnableDepthWrite();
+
+			void ShadowPasses();
+			void ConstructLightBuffer();
 		};
 	}
 }

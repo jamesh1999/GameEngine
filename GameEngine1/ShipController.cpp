@@ -7,6 +7,7 @@
 #include "ElementFactory.h"
 #include "GraphicsController.h"
 #include "InputManager.h"
+#include "Light.h"
 #include "MeshLoader.h"
 #include "ParticleSystem.h"
 #include "ResourceFactory.h"
@@ -326,8 +327,10 @@ void ShipController::Create()
 	t->SetScale({1.0f, 1.0f, 1.0f});
 	t->SetParent(obj->GetComponent<GameEngine::Elements::Transform>());
 
-	light->AttachComponent<Light>();
-	engine->graphics->SetLight(light->GetComponent<Light>());
+	light->AttachComponent<GameEngine::Graphics::Light>();
+	light->GetComponent<GameEngine::Graphics::Light>()->m_shadows = true;
+	light->GetComponent<GameEngine::Graphics::Light>()->m_colour = { 1.0f, 1.0f, 1.0f };
+	engine->graphics->AddLight(light->GetComponent<GameEngine::Graphics::Light>());
 
 	facingDirection = {0.0f, 0.0f, 1.0f};
 	velocity = {0.0f, 0.0f, 0.0f};
