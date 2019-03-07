@@ -22,6 +22,8 @@ namespace GameEngine
 			static int id;
 
 		public:
+			ElementFactory(Engine*);
+
 			template <class T>
 			T* Create();
 		};

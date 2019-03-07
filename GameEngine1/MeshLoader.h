@@ -35,6 +35,7 @@ namespace GameEngine
 			static Mesh* LoadOBJ(const std::string&);
 
 			static Mesh* Load(const std::string&);
+			static void Save(Mesh*, const std::string&);
 		};
 	}
 }

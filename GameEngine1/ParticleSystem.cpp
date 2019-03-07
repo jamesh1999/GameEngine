@@ -127,10 +127,10 @@ void ParticleSystem::Initialise(DirectX::XMFLOAT3 pos)
 	for (int i = 0; i < 300; ++i)
 	{
 		indices.push_back(0 + 4 * i);
-		indices.push_back(1 + 4 * i);
-		indices.push_back(2 + 4 * i);
 		indices.push_back(2 + 4 * i);
 		indices.push_back(1 + 4 * i);
+		indices.push_back(1 + 4 * i);
+		indices.push_back(2 + 4 * i);
 		indices.push_back(3 + 4 * i);
 
 		vertices[0 + 4 * i].normal = {1.0f, 1.0f, 1.0f};

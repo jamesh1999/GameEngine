@@ -22,7 +22,7 @@ namespace GameEngine
 		class Light : public Elements::Component
 		{
 		public:
-			enum Type { POINT = 0, SPOT = 1, DIRECTIONAL = 2 };
+			enum Type { POINT = 0, SPOT = 1, DIRECTIONAL = 2, AMBIENT = 3 };
 
 		private:
 			ID3D11Texture2D* depthTex;

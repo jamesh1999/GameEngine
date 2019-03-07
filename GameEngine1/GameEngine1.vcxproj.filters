@@ -186,6 +186,9 @@
     <ClCompile Include="CompositeObject.cpp">
       <Filter>Source Files\Engine\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShipController.h">
@@ -322,6 +325,9 @@
     </ClInclude>
     <ClInclude Include="ResourcePtr.h">
       <Filter>Header Files\Engine\Base\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

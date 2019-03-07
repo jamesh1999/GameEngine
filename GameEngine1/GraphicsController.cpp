@@ -25,11 +25,8 @@ typedef struct
 	float padding;
 } LightBufferS;
 
-GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) : hWnd(wnd), m_fullscreen(fullscreen),
-                                                                                  m_scrWidth(w), m_scrHeight(h)
-{
-	//instance = this;
-	
+GraphicsController::GraphicsController(Engine* e) : engine(e)
+{	
 	//Create device and device context
 	D3D_FEATURE_LEVEL featureLevel;
 	D3D11CreateDevice(
@@ -59,14 +56,14 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) 
 
 	swpDesc.BufferCount = 1; //Double buffered
 	swpDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	swpDesc.BufferDesc.Height = m_scrHeight;
-	swpDesc.BufferDesc.Width = m_scrWidth;
+	swpDesc.BufferDesc.Height = engine->window->GetHeight();
+	swpDesc.BufferDesc.Width = engine->window->GetWidth();
 	swpDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swpDesc.OutputWindow = hWnd;
+	swpDesc.OutputWindow = engine->window->GetHandle();
 	swpDesc.SampleDesc.Count = 1;
 	swpDesc.SampleDesc.Quality = 0;
 	swpDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	swpDesc.Windowed = !m_fullscreen;
+	swpDesc.Windowed = !engine->window->GetFullscreen();
 	swpDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	IDXGIDevice* dxgiDevice;
@@ -96,8 +93,8 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) 
 	tD.ArraySize = 1;
 	tD.Usage = D3D11_USAGE_DEFAULT;
 	tD.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-	tD.Height = m_scrHeight;
-	tD.Width = m_scrWidth;
+	tD.Height = engine->window->GetHeight();
+	tD.Width = engine->window->GetWidth();
 	tD.MiscFlags = 0;
 	tD.MipLevels = 1;
 	tD.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -129,8 +126,8 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) 
 	depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthDesc.ArraySize = 1;
 	depthDesc.MipLevels = 1;
-	depthDesc.Height = m_scrHeight;
-	depthDesc.Width = m_scrWidth;
+	depthDesc.Height = engine->window->GetHeight();
+	depthDesc.Width = engine->window->GetWidth();
 
 	ID3D11Texture2D* pDepthBuffer;
 	device->CreateTexture2D(&depthDesc, nullptr, &pDepthBuffer);
@@ -205,8 +202,8 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) 
 	vP.TopLeftY = 0;
 	vP.MinDepth = 0.0;
 	vP.MaxDepth = 1.0;
-	vP.Height = static_cast<float>(h);
-	vP.Width = static_cast<float>(w);
+	vP.Height = static_cast<float>(engine->window->GetHeight());
+	vP.Width = static_cast<float>(engine->window->GetWidth());
 
 	devContext->RSSetViewports(1, &vP);
 
@@ -278,8 +275,6 @@ GraphicsController::GraphicsController(int w, int h, bool fullscreen, HWND wnd) 
 
 GraphicsController::~GraphicsController()
 {
-	vertexBuffer->Release();
-	indexBuffer->Release();
 	cBufferFrame->Release();
 	cBufferObject->Release();
 	
@@ -315,7 +310,7 @@ void GraphicsController::StartDraw()
 
 	XMStoreFloat4x4A(&data.wv, XMMatrixTranspose(XMMatrixInverse(&det, mat)));
 	XMStoreFloat4x4A(&data.vp, XMMatrixTranspose(
-		                 DirectX::XMMatrixPerspectiveFovLH(0.82547f, static_cast<float>(m_scrWidth) / m_scrHeight, 8.0f,
+		                 DirectX::XMMatrixPerspectiveFovLH(0.82547f, static_cast<float>(engine->window->GetWidth()) / engine->window->GetHeight(), 8.0f,
 		                                                   2000.0f)));
 	XMStoreFloat3A(&data.camPos, m_camera->obj->GetComponent<Elements::Transform>()->GetPosition());
 
@@ -443,17 +438,15 @@ void GraphicsController::FillBuffers(Renderer* r, bool tex)
 bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message != WM_SIZE) return false;
-	m_scrWidth = LOWORD(lParam);
-	m_scrHeight = HIWORD(lParam);
 
-	if (m_scrWidth == 0 || m_scrHeight == 0) return true;
+	if (engine->window->GetWidth() == 0 || engine->window->GetHeight() == 0) return true;
 
 	//Release old resources
 	devContext->OMSetRenderTargets(0, nullptr, nullptr);
 	depthBuffer->Release();
 	backBuffer->Release();
 
-	swapChain->ResizeBuffers(0, m_scrWidth, m_scrHeight, DXGI_FORMAT_UNKNOWN, 0);
+	swapChain->ResizeBuffers(0, engine->window->GetWidth(), engine->window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 	ID3D11Texture2D* pBackBuffer;
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 	device->CreateRenderTargetView(pBackBuffer, nullptr, &backBuffer);
@@ -470,8 +463,8 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthDesc.ArraySize = 1;
 	depthDesc.MipLevels = 1;
-	depthDesc.Height = m_scrHeight;
-	depthDesc.Width = m_scrWidth;
+	depthDesc.Height = engine->window->GetHeight();
+	depthDesc.Width = engine->window->GetWidth();
 
 	ID3D11Texture2D* pDepthBuffer;
 	device->CreateTexture2D(&depthDesc, nullptr, &pDepthBuffer);
@@ -491,8 +484,8 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	tD.ArraySize = 1;
 	tD.Usage = D3D11_USAGE_DEFAULT;
 	tD.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-	tD.Height = m_scrHeight;
-	tD.Width = m_scrWidth;
+	tD.Height = engine->window->GetHeight();
+	tD.Width = engine->window->GetWidth();
 	tD.MiscFlags = 0;
 	tD.MipLevels = 1;
 	tD.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -520,8 +513,8 @@ bool GraphicsController::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, L
 	vP.TopLeftY = 0;
 	vP.MinDepth = 0.0;
 	vP.MaxDepth = 1.0;
-	vP.Height = static_cast<float>(m_scrHeight);
-	vP.Width = static_cast<float>(m_scrWidth);
+	vP.Height = static_cast<float>(engine->window->GetHeight());
+	vP.Width = static_cast<float>(engine->window->GetWidth());
 	devContext->RSSetViewports(1, &vP);
 
 	return true;

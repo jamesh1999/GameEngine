@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "Camera.h"
 #include "Light.h"
+#include "Window.h"
 #include "GeometryBufferContainer.h"
 #include "RenderQueue.h"
 
@@ -26,12 +27,6 @@ namespace GameEngine
 
 		class GraphicsController
 		{
-			HWND hWnd;
-			HINSTANCE hInstance;
-			bool m_fullscreen;
-
-			ID3D11Buffer* vertexBuffer;
-			ID3D11Buffer* indexBuffer;
 			ID3D11Buffer* cBufferFrame;
 			ID3D11Buffer* cBufferObject;
 			ID3D11Buffer* cBufferLight;
@@ -42,19 +37,16 @@ namespace GameEngine
 			RenderQueue rq;
 		private:
 			UINT numQualityLevels;
-		public:
-			Camera* m_camera;
 		private:
 			Light* m_light;
 			std::vector<Light*> m_lights;
 			D3D11_VIEWPORT vP;
 
 		public:
-			GeometryBufferContainer* geomBuff;
+			Engine* engine;
 
-			int m_scrWidth;
-			int m_scrHeight;
-			//static GraphicsController* instance;
+			Camera* m_camera;
+			GeometryBufferContainer* geomBuff;
 
 			bool running = true;
 
@@ -85,7 +77,7 @@ namespace GameEngine
 			ID3D11Buffer* lightBuff;
 			ID3D11ShaderResourceView* lightUAV;
 
-			GraphicsController(int, int, bool, HWND);
+			GraphicsController(Engine*);
 			~GraphicsController();
 
 			GraphicsController(const GraphicsController&) = delete;
@@ -112,6 +104,8 @@ namespace GameEngine
 
 			void ShadowPasses();
 			void ConstructLightBuffer();
+
+			//void Draw();
 		};
 	}
 }

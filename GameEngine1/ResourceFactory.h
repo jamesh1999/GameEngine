@@ -25,6 +25,7 @@ namespace GameEngine
 			TResource* Load(const std::string&);
 
 		public:
+			ResourceFactory(Engine*);
 
 			template <class TResource>
 			TResource* Create(std::string = "");

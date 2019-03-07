@@ -1,4 +1,6 @@
 #include "MeshLoader.h"
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include "DescriptorParser.h"
 
@@ -252,7 +254,55 @@ Mesh* MeshLoader::LoadFBX(const std::string& filename, const std::string& path)
 
 Mesh* MeshLoader::LoadOBJ(const std::string& filename)
 {
-	return nullptr;
+	std::vector<DirectX::XMFLOAT3> vertexPos;
+	std::vector<DirectX::XMFLOAT3> vertexTex;
+	std::vector<DirectX::XMFLOAT3> vertexNorm;
+	std::vector<int[3]> faces;
+
+	std::ifstream ifile(filename);
+	std::string line;
+	std::stringstream ss;
+
+	Mesh* mesh = new Mesh;
+	while (std::getline(ifile, line))
+	{
+		ss << line;
+
+		std::string type;
+		float data[3];
+		ss >> type;
+		
+		if (type[0] == 'v')
+			ss >> data[0] >> data[1] >> data[2];
+		if (type == "v") vertexPos.push_back({ data[0], data[1], data[2] });
+		else if (type == "vt") vertexTex.push_back({ data[0], data[1], data[2] });
+		else if (type == "vn") vertexNorm.push_back({ data[0], data[1], data[2] });
+
+		if (type == "f")
+		{
+			for (int i = 0; i < 3; ++i)
+			{
+				Vertex v;
+				int x;
+				char buff;
+				ss >> x;
+				v.pos = vertexPos[x];
+				ss >> buff;
+				ss >> x;
+				v.tex = vertexTex[x];
+				ss >> buff;
+				ss >> x;
+				v.normal = vertexNorm[x];
+
+				mesh->vertices.push_back(v);
+				mesh->indices.push_back(mesh->indices.size() - 1);
+			}
+		}
+
+		ss.clear();
+	}
+
+	return mesh;
 }
 
 Mesh* MeshLoader::Load(const std::string& descriptor)
@@ -268,4 +318,9 @@ Mesh* MeshLoader::Load(const std::string& descriptor)
 	if (extension == "obj") return LoadOBJ(parts[0]);
 
 	return nullptr;
+}
+
+void MeshLoader::Save(Mesh* mesh, const std::string& filename)
+{
+
 }

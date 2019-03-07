@@ -4,6 +4,9 @@
 #include "TextureArrayLoader.h"
 
 using namespace GameEngine::Resources;
+using namespace GameEngine;
+
+ResourceFactory::ResourceFactory(Engine* e) : engine(e) {}
 
 template <>
 Texture* ResourceFactory::Load<Texture>(const std::string& descriptor)

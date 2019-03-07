@@ -200,6 +200,7 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="TrackLayout.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +248,7 @@
     <ClInclude Include="Clock.h" />
     <ClInclude Include="TrackLayout.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

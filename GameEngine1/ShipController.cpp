@@ -49,35 +49,35 @@ void ShipController::Update()
 	float height = 0.0f;
 	float dist = static_cast<float>(engine->clock->DeltaT()) * 40.0f;
 	float dpos = 0.0f;
-	if (Input::InputManager::KeyIsPressed(Input::KeyW))
+	if (engine->input->KeyIsPressed(GameEngine::Input::KeyW))
 	{
 		dpos += dist;
 
-		if (Input::InputManager::KeyIsPressed(Input::KeyF))
+		if (engine->input->KeyIsPressed(GameEngine::Input::KeyF))
 			dpos *= 10.0f;
 	}
-	if (Input::InputManager::KeyIsPressed(Input::KeyS))
+	if (engine->input->KeyIsPressed(GameEngine::Input::KeyS))
 	{
 		dpos -= dist * 0.5f;
 	}
-	if (Input::InputManager::KeyIsPressed(Input::KeyQ))
+	if (engine->input->KeyIsPressed(GameEngine::Input::KeyQ))
 	{
 		height += dist * 0.4f;
 	}
-	if (Input::InputManager::KeyIsPressed(Input::KeyE))
+	if (engine->input->KeyIsPressed(GameEngine::Input::KeyE))
 	{
 		height -= dist * 0.4f;
 	}
 
 	float drot = 0.0f;
-	if (Input::InputManager::KeyIsPressed(Input::KeyD))
+	if (engine->input->KeyIsPressed(GameEngine::Input::KeyD))
 	{
 		drot += dist * 0.03f;
 		curRoll -= dist * rollSpeed;
 		if (curRoll < -rollMax)
 			curRoll = -rollMax;
 	}
-	else if (Input::InputManager::KeyIsPressed(Input::KeyA))
+	else if (engine->input->KeyIsPressed(GameEngine::Input::KeyA))
 	{
 		drot -= dist * 0.03f;
 		curRoll += dist * rollSpeed;
@@ -273,7 +273,7 @@ void ShipController::Update()
 	//if (DirectX::XMVectorGetY(shipPos) > 8.0f && std::fabs(DirectX::XMVectorGetX(v)) > 0.001)
 	//engine->graphics->RemoveRenderer(obj->GetComponent<GameEngine::Renderer>());
 
-	if (Input::InputManager::KeyIsPressed(Input::KeyZ))
+	if (engine->input->KeyIsPressed(GameEngine::Input::KeyZ))
 	{
 		DirectX::XMFLOAT3 wp;
 		XMStoreFloat3(&wp, transform->GetPosition());
@@ -289,7 +289,7 @@ void ShipController::Create()
 	light = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
 	//Init camera
-	cam->AttachComponent<Camera>();
+	cam->AttachComponent<GameEngine::Graphics::Camera>();
 	cam->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
 
 	//Init model child object

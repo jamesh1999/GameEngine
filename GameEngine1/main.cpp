@@ -25,31 +25,7 @@
 #include "PropertyDict.h"
 #include "Component.h"
 #include <d3dcompiler.h>
-
-int width = 1000;
-int height = 1000;
-GameEngine::Engine game;
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	//Handle input messages
-	if (Input::HandleMessage(hWnd, message, wParam, lParam))
-		return message;
-	if (game.HandleMessage(hWnd, message, wParam, lParam))
-		return message;
-
-	switch (message)
-	{
-		//Quit the window
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-
-		//Otherwise use the default handling
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-}
+#include "Window.h"
 
 void DestroyBackwards(GameEngine::Elements::CompositeObject* co)
 {
@@ -71,6 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Random seed
 	srand(time(nullptr));
 
+#ifndef NDEBUG
 	//Allocate a console and bind cout/cerr to it
 	AllocConsole();
 	std::ofstream consoleStream("CONOUT$", std::ios::out);
@@ -78,53 +55,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::cerr.rdbuf(consoleStream.rdbuf());
 	std::wofstream wConsoleStream("CONOUT$", std::ios::out);
 	std::wcout.rdbuf(wConsoleStream.rdbuf());
-
-	//Create the window class
-	WNDCLASSEX winClass;
-	ZeroMemory(&winClass, sizeof(WNDCLASSEX));
-
-	winClass.cbSize = sizeof(winClass);
-	winClass.style = CS_HREDRAW | CS_VREDRAW;
-	winClass.lpfnWndProc = WndProc;
-	winClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	winClass.hInstance = hInstance;
-	winClass.lpszClassName = L"CLASS1";
-
-	//Register the window class
-	RegisterClassEx(&winClass);
-
-	//Create a window with CLASS1
-	HWND hWnd =	CreateWindow(
-		L"CLASS1",
-		L"GameEngine1",
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		width,
-		height,
-		nullptr,
-		nullptr,
-		hInstance,
-		nullptr
-	);
-
-	//Finally show the windows
-	ShowWindow(hWnd, nCmdShow);
-
-	//Try to lock cursor?
-	RECT cursorPos = {400, 400, 500, 500};
-	ShowCursor(false);
+#endif
 
 	//-----------------
 	// Game Initialisation
 	//-----------------
 
-	game.clock = new GameEngine::Time::Clock;
-	game.graphics = new GameEngine::Graphics::GraphicsController(width, height, false, hWnd);
-	game.world = new GameEngine::Elements::World;
-	game.resources = new GameEngine::Resources::ResourceTable;
-
-	Input::InputManager input;
+	GameEngine::Engine game(hInstance);
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
@@ -374,12 +311,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	ship->AttachComponent<ShipController>();
 
-	game.particleSystem = new GameEngine::Graphics::ParticleSystem(&game);
-
+	// Windows main loop
 	MSG message;
 	while (true)
 	{
-		if (PeekMessage(&message, hWnd, 0, 0, true))
+		if (PeekMessage(&message, game.window->GetHandle(), 0, 0, true))
 		{
 			//Translate then handle in WndProc()
 			TranslateMessage(&message);

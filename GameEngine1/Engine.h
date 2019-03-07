@@ -14,6 +14,7 @@ namespace GameEngine
 	{
 		class GraphicsController;
 		class ParticleSystem;
+		class Window;
 	}
 
 	namespace Elements
@@ -28,6 +29,11 @@ namespace GameEngine
 		class ResourceTable;
 	}
 
+	namespace Input
+	{
+		class InputManager;
+	}
+
 	class Engine
 	{
 		//std::list<CompositeObject*> objects;
@@ -35,19 +41,24 @@ namespace GameEngine
 		Time::Clock* clock = nullptr;
 		Graphics::GraphicsController* graphics = nullptr;
 		Graphics::ParticleSystem* particleSystem = nullptr;
+		Graphics::Window* window = nullptr;
 		Elements::World* world = nullptr;
 		Elements::ElementFactory* elementFactory = nullptr;
 		Resources::ResourceFactory* resourceFactory = nullptr;
 		Resources::ResourceTable* resources = nullptr;
+		Input::InputManager* input = nullptr;
 
-		Engine();
+		Engine(HINSTANCE);
 
 		~Engine();
 		Engine(const Engine&) = delete;
 		Engine& operator=(const Engine&) = delete;
 
 		void Loop() const;
+
 		bool HandleMessage(HWND, UINT, WPARAM, LPARAM) const;
+
+		static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	};
 }
 

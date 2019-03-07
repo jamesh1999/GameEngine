@@ -1,8 +1,11 @@
 #include "ElementFactory.h"
 
 using namespace GameEngine::Elements;
+using namespace GameEngine;
 
 int ElementFactory::id = 0;
+
+ElementFactory::ElementFactory(Engine* e) : engine(e) {}
 
 template <>
 CompositeObject* ElementFactory::Create<CompositeObject>()
