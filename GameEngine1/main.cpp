@@ -47,21 +47,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Random seed
 	srand(time(nullptr));
 
-#ifndef NDEBUG
-	//Allocate a console and bind cout/cerr to it
-	AllocConsole();
-	std::ofstream consoleStream("CONOUT$", std::ios::out);
-	std::cout.rdbuf(consoleStream.rdbuf());
-	std::cerr.rdbuf(consoleStream.rdbuf());
-	std::wofstream wConsoleStream("CONOUT$", std::ios::out);
-	std::wcout.rdbuf(wConsoleStream.rdbuf());
-#endif
-
 	//-----------------
 	// Game Initialisation
 	//-----------------
 
 	GameEngine::Engine game(hInstance);
+
+	RegisterComponent(GameEngine::Renderer);
+	RegisterComponent(GameEngine::Elements::PropertyDict);
+	RegisterComponent(GameEngine::Graphics::Light);
+	RegisterComponent(GameEngine::Graphics::Camera);
+	RegisterComponent(ShipController);
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{

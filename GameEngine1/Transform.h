@@ -27,6 +27,9 @@ namespace GameEngine
 
 			void Destroy() override;
 
+			Transform& operator<<(std::istream&);
+			Transform& operator>>(std::ostream&);
+
 			DirectX::XMMATRIX GetTransform() const;
 			DirectX::XMVECTOR GetPosition() const;
 			DirectX::XMVECTOR GetRotation() const;

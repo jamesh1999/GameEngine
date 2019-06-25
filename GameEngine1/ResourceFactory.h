@@ -13,6 +13,8 @@ namespace GameEngine
 {
 	namespace Resources
 	{
+		class Resource;
+
 		class ResourceFactory
 		{
 			friend class Engine;
@@ -29,6 +31,7 @@ namespace GameEngine
 
 			template <class TResource>
 			TResource* Create(std::string = "");
+			Resource* Deserialize(std::istream&);
 		};
 
 		//Set up resource
@@ -69,6 +72,9 @@ namespace GameEngine
 		{
 			return new TResource;
 		}
+
+		template <>
+		Resource* ResourceFactory::Load<Resource>(const std::string&);
 
 		template <>
 		Texture* ResourceFactory::Load<Texture>(const std::string&);

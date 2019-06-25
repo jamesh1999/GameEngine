@@ -189,6 +189,9 @@
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceTable.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShipController.h">
@@ -284,9 +287,6 @@
     <ClInclude Include="ParticleSystem.h">
       <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Serializable.h">
-      <Filter>Header Files\Engine\Base\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceFactory.h">
       <Filter>Header Files\Engine\Base\Resources</Filter>
     </ClInclude>
@@ -328,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISerializable.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="LazyPtr.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

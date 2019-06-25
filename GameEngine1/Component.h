@@ -1,6 +1,8 @@
 #ifndef __COMPONENT_INCLUDED__
 #define __COMPONENT_INCLUDED__
 
+#define RegisterComponent(comp) (GameEngine::Elements::ElementFactory::components[typeid(comp).name()] = [](){ return static_cast<GameEngine::Elements::Component*>(new comp); })
+
 #include <cstdlib>
 #include <malloc.h>
 #include <new>
@@ -44,6 +46,9 @@ namespace GameEngine
 			{
 				_aligned_free(ptr);
 			}
+
+			Component& operator>>(std::ostream&);
+			Component& operator<<(std::istream&);
 
 			//Preferable to constructor because initialisation has finished
 			virtual void Create() { }

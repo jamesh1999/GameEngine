@@ -17,6 +17,24 @@ void Transform::Destroy()
 	Element::Destroy();
 }
 
+Transform& Transform::operator<<(std::istream& in)
+{
+	in >> m_position.x >> m_position.y >> m_position.z;
+	in >> m_rotation.x >> m_rotation.y >> m_rotation.z >> m_rotation.w;
+	in >> m_scale.x >> m_scale.y >> m_scale.z;
+
+	return *this;
+}
+
+Transform& Transform::operator>>(std::ostream& out)
+{
+	out << m_position.x << m_position.y << m_position.z;
+	out << m_rotation.x << m_rotation.y << m_rotation.z << m_rotation.w;
+	out << m_scale.x << m_scale.y << m_scale.z;
+
+	return *this;
+}
+
 DirectX::XMMATRIX Transform::GetTransform() const
 {
 	if (m_parent != nullptr)
@@ -142,11 +160,10 @@ std::vector<ElementPtr<Transform>> Transform::GetChildren()
 void Transform::SetParent(Transform* parent)
 {
 	if (m_parent != nullptr)
-	{
 		m_parent->m_children.erase(this);
-	}
 
 	m_parent = parent;
 
-	if (parent != nullptr) parent->m_children.emplace(this);
+	if (parent != nullptr)
+		parent->m_children.emplace(this);
 }

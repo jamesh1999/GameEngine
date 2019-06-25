@@ -17,7 +17,7 @@ namespace GameEngine
 			friend class Element;
 
 		private:
-			TElement* m_element = nullptr;
+			mutable TElement* m_element = nullptr;
 
 			void AttachPtr();
 			void DetachPtr();
@@ -64,7 +64,7 @@ namespace GameEngine
 				return *this;
 			}
 
-			TElement* Get() const
+			virtual TElement *const Get() const
 			{
 				return m_element;
 			}
@@ -100,7 +100,7 @@ namespace GameEngine
 			}
 		};
 
-		// Attach this ptr to the new element
+		// Remove reference to this ptr from element
 		template <class TElement>
 		void ElementPtr<TElement>::DetachPtr()
 		{
@@ -111,7 +111,7 @@ namespace GameEngine
 		template <>
 		void ElementPtr<CompositeObject>::DetachPtr();
 
-		// Remove reference to this ptr from element
+		// Attach this ptr to the new element
 		template <class TElement>
 		void ElementPtr<TElement>::AttachPtr()
 		{

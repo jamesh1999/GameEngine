@@ -8,6 +8,7 @@
 #include "Script.h"
 #include "Transform.h"
 #include "World.h"
+#include "ElementFactory.h"
 
 namespace GameEngine
 {
@@ -71,6 +72,32 @@ namespace GameEngine
 				static_cast<Component*>(component)->obj = this;
 				static_cast<Component*>(component)->Create();
 				return component;
+			}
+
+			CompositeObject& operator<<(std::istream& in)
+			{
+				*m_transform << in;
+				int componentCount;
+				in >> componentCount;
+
+				for (int i = 0; i < componentCount; ++i)
+				{
+					Component* c = engine->elementFactory->Deserialize(in);
+					AttachComponent<Component>(c);
+				}
+
+				return *this;
+			}
+
+			CompositeObject& operator>>(std::ostream& out)
+			{
+				*m_transform >> out;
+				out << m_components.size() << '\n';
+
+				for (ElementPtr<Component>& c : m_components)
+					*c >> out;
+
+				return *this;
 			}
 		};
 

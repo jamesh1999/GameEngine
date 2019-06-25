@@ -2,8 +2,9 @@
 #define __ELEMENT_FACTORY_INCLUDED__
 
 #include <type_traits>
+#include <unordered_map>
+#include <string>
 #include "Component.h"
-#include "CompositeObject.h"
 #include "Element.h"
 #include "Engine.h"
 #include "Transform.h"
@@ -12,6 +13,8 @@ namespace GameEngine
 {
 	namespace Elements
 	{
+		class CompositeObject;
+
 		//Handles initialisation of Elements i.e. objects within the world heirarchy
 		class ElementFactory
 		{
@@ -22,10 +25,14 @@ namespace GameEngine
 			static int id;
 
 		public:
+			static std::unordered_map<std::string, Component* (*)()> components;
+
 			ElementFactory(Engine*);
 
 			template <class T>
 			T* Create();
+
+			Component* Deserialize(std::istream&);
 		};
 	}
 }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Engine.h"
+#include "ISerializable.h"
 
 namespace GameEngine
 {
@@ -12,7 +13,7 @@ namespace GameEngine
 		template <class TResource>
 		class ResourcePtr;
 
-		class Resource
+		class Resource : public Utils::ISerializable
 		{
 			friend class ResourceFactory;
 			template <class>
@@ -21,7 +22,7 @@ namespace GameEngine
 		private:
 			unsigned m_refCount = 0;
 
-			// Should only be accessible through ResourceRef<> for clean up!!
+			// Should only be accessible through ResourcePtr<> for clean up!!
 			void Destroy();
 
 		protected:
@@ -34,10 +35,11 @@ namespace GameEngine
 
 			virtual ~Resource() { }
 
-			std::string GetIdentifier() const
-			{
-				return m_identifier;
-			}
+			Resource& operator>>(std::ostream&);
+			Resource& operator<<(std::istream&);
+
+			std::string GetIdentifier() const;
+			void Save(const std::string&);
 		};
 	}
 }

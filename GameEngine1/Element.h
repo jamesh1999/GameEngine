@@ -3,6 +3,7 @@
 
 #include <unordered_set>
 #include "Engine.h"
+#include "ISerializable.h"
 
 namespace GameEngine
 {
@@ -12,7 +13,7 @@ namespace GameEngine
 		template <class TElement>
 		class ElementPtr;
 
-		class Element
+		class Element : public Utils::ISerializable
 		{
 			friend class ElementFactory;
 			template <class>

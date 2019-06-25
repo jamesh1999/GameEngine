@@ -1,9 +1,11 @@
 #include "ElementFactory.h"
+#include "CompositeObject.h"
 
 using namespace GameEngine::Elements;
 using namespace GameEngine;
 
 int ElementFactory::id = 0;
+std::unordered_map<std::string, Component* (*)()> ElementFactory::components;
 
 ElementFactory::ElementFactory(Engine* e) : engine(e) {}
 
@@ -23,4 +25,15 @@ CompositeObject* ElementFactory::Create<CompositeObject>()
 	t->Create();
 
 	return obj;
+}
+
+Component* ElementFactory::Deserialize(std::istream& in)
+{
+	std::string type;
+	in >> type;
+	
+	Component* c = components[type]();
+	*c << in;
+
+	return c;
 }

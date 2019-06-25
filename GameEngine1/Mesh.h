@@ -3,13 +3,19 @@
 
 #include <DirectXMath.h>
 #include <vector>
+#include <string>
 #include "Resource.h"
+#include "ISerializable.h"
 
-struct Vertex
+class Vertex : public GameEngine::Utils::ISerializable
 {
+public:
 	DirectX::XMFLOAT3 pos;
 	DirectX::XMFLOAT3 normal;
 	DirectX::XMFLOAT3 tex;
+
+	Vertex& operator<<(std::istream&);
+	Vertex& operator>>(std::ostream&);
 };
 
 namespace GameEngine
@@ -32,6 +38,9 @@ namespace GameEngine
 			Mesh* CombineMesh(Mesh*);
 
 			DirectX::XMVECTOR GetCentroid();
+
+			Mesh& operator<<(std::istream&);
+			Mesh& operator>>(std::ostream&);
 		};
 	}
 }

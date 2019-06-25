@@ -1,4 +1,8 @@
 #include "Engine.h"
+#include <iostream>
+#include <fstream>
+
+#include <Windows.h>
 #include "Clock.h"
 #include "ElementFactory.h"
 #include "GraphicsController.h"
@@ -7,11 +11,28 @@
 #include "ResourceFactory.h"
 #include "World.h"
 
+#include "Renderer.h"
+#include "Camera.h"
+#include "Light.h"
+#include "PropertyDict.h"
+
 using namespace GameEngine;
 
 //Initialise factories with a reference to the engine
 Engine::Engine(HINSTANCE hInstance)
 {
+#ifndef NDEBUG
+	//Allocate a console and bind cout/cerr to it
+	AllocConsole();
+	std::ofstream consoleStream("CONOUT$", std::ios::out);
+	std::cout.rdbuf(consoleStream.rdbuf());
+	std::cerr.rdbuf(consoleStream.rdbuf());
+	std::wofstream wConsoleStream("CONOUT$", std::ios::out);
+	std::wcout.rdbuf(wConsoleStream.rdbuf());
+#endif
+
+
+	// Initialise all systems
 	elementFactory = new Elements::ElementFactory(this);
 	resourceFactory = new Resources::ResourceFactory(this);
 	clock = new GameEngine::Time::Clock;
@@ -19,10 +40,14 @@ Engine::Engine(HINSTANCE hInstance)
 	window = new GameEngine::Graphics::Window(hInstance, WndProc, 1000, 1000);
 	graphics = new GameEngine::Graphics::GraphicsController(this);
 	world = new GameEngine::Elements::World;
-	resources = new GameEngine::Resources::ResourceTable;
+	resources = new GameEngine::Resources::ResourceTable(this);
 	particleSystem = new GameEngine::Graphics::ParticleSystem(this);
 
-	SetWindowLongPtr(window->GetHandle(), 0, (long)this);
+	// Attach HandleMessage()
+	SetWindowLongPtr(window->GetHandle(), GWLP_USERDATA, (LONG_PTR)this);
+
+	// Register default components
+	
 }
 
 //Clean up dynamic allocation
@@ -75,7 +100,7 @@ bool Engine::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 LRESULT CALLBACK Engine::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Engine* engine = (Engine*) GetWindowLongPtr(hWnd, 0);
+	Engine* engine = (Engine*) GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	if (engine && engine->HandleMessage(hWnd, message, wParam, lParam)) return message;
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
