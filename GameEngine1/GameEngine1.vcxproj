@@ -170,6 +170,7 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementFactory.cpp" />
     <ClCompile Include="ElementPtr.cpp" />
+    <ClCompile Include="ElementTable.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FractalFault.cpp" />
     <ClCompile Include="Geometry.cpp" />
@@ -213,12 +214,14 @@
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementFactory.h" />
     <ClInclude Include="ElementPtr.h" />
+    <ClInclude Include="ElementTable.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FractalFault.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryBuffer.h" />
     <ClInclude Include="GeometryBufferContainer.h" />
     <ClInclude Include="GraphicsController.h" />
+    <ClInclude Include="Identifier.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ISerializable.h" />
     <ClInclude Include="LazyOrderedContainer.h" />

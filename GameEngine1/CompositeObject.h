@@ -22,90 +22,54 @@ namespace GameEngine
 
 		public:
 
-			void Update()
-			{
-				for (const auto& c : m_components)
-				{
-					if (dynamic_cast<Script*>(c.Get()) == nullptr) continue;
-					dynamic_cast<Script*>(c.Get())->Update();
-				}
-			}
-
-			void Destroy() override
-			{
-				for (const auto& c : m_components)
-					if (c != nullptr)
-						c->Destroy();
-				if (m_transform != nullptr) m_transform->Destroy();
-
-				engine->world->objects.erase(this);
-
-				Element::Destroy();
-			}
+			void Create() override;
+			void Update();
+			void Destroy() override;
 
 			template <class T>
-			T* GetComponent()
-			{
-				for (size_t i = 0; i < m_components.size(); ++i)
-				{
-					if (dynamic_cast<T*>(m_components[i].Get()) != nullptr)
-						return dynamic_cast<T*>(m_components[i].Get());
-				}
-
-				return nullptr;
-			}
-
+			T* GetComponent();
 			template <class T>
-			T* AttachComponent()
-			{
-				T* component = engine->elementFactory->Create<T>();
-				m_components.push_back(component);
-				static_cast<Component*>(component)->obj = this;
-				static_cast<Component*>(component)->Create();
-				return component;
-			}
-
+			T* AttachComponent();
 			template <class T>
-			T* AttachComponent(T* component)
-			{
-				m_components.push_back(component);
-				static_cast<Component*>(component)->obj = this;
-				static_cast<Component*>(component)->Create();
-				return component;
-			}
+			T* AttachComponent(T* component);
 
-			CompositeObject& operator<<(std::istream& in)
-			{
-				*m_transform << in;
-				int componentCount;
-				in >> componentCount;
-
-				for (int i = 0; i < componentCount; ++i)
-				{
-					Component* c = engine->elementFactory->Deserialize(in);
-					AttachComponent<Component>(c);
-				}
-
-				return *this;
-			}
-
-			CompositeObject& operator>>(std::ostream& out)
-			{
-				*m_transform >> out;
-				out << m_components.size() << '\n';
-
-				for (ElementPtr<Component>& c : m_components)
-					*c >> out;
-
-				return *this;
-			}
+			CompositeObject& operator<<(std::istream& in);
+			CompositeObject& operator>>(std::ostream& out);
 		};
+
+		template <class T>
+		T* CompositeObject::GetComponent()
+		{
+			for (size_t i = 0; i < m_components.size(); ++i)
+			{
+				if (dynamic_cast<T*>(m_components[i].Get()) != nullptr)
+					return dynamic_cast<T*>(m_components[i].Get());
+			}
+
+			return nullptr;
+		}
 
 		template <>
 		Transform* CompositeObject::GetComponent<Transform>();
 
+		template <class T>
+		T* CompositeObject::AttachComponent()
+		{
+			T* component = engine->elementFactory->Create<T>();
+			return AttachComponent<T>(component);
+		}
+
 		template <>
 		Transform* CompositeObject::AttachComponent<Transform>();
+
+		template <class T>
+		T* CompositeObject::AttachComponent(T* component)
+		{
+			m_components.push_back(component);
+			static_cast<Component*>(component)->obj = this;
+			static_cast<Component*>(component)->Create();
+			return component;
+		}
 
 		template <>
 		Transform* CompositeObject::AttachComponent<Transform>(Transform*);

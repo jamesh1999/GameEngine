@@ -5,12 +5,14 @@
 #include <Windows.h>
 #include "Clock.h"
 #include "ElementFactory.h"
+#include "ElementTable.h"
 #include "GraphicsController.h"
 #include "InputManager.h"
 #include "ParticleSystem.h"
 #include "ResourceFactory.h"
 #include "World.h"
 
+#include "CompositeObject.h"
 #include "Renderer.h"
 #include "Camera.h"
 #include "Light.h"
@@ -34,20 +36,25 @@ Engine::Engine(HINSTANCE hInstance)
 
 	// Initialise all systems
 	elementFactory = new Elements::ElementFactory(this);
+	elements = new Elements::ElementTable;
 	resourceFactory = new Resources::ResourceFactory(this);
 	clock = new GameEngine::Time::Clock;
 	input = new Input::InputManager;
 	window = new GameEngine::Graphics::Window(hInstance, WndProc, 1000, 1000);
 	graphics = new GameEngine::Graphics::GraphicsController(this);
-	world = new GameEngine::Elements::World;
+	world = new GameEngine::Elements::World(this);
 	resources = new GameEngine::Resources::ResourceTable(this);
 	particleSystem = new GameEngine::Graphics::ParticleSystem(this);
 
 	// Attach HandleMessage()
 	SetWindowLongPtr(window->GetHandle(), GWLP_USERDATA, (LONG_PTR)this);
 
+	RegisterElement(Elements::CompositeObject);
 	// Register default components
-	
+	RegisterComponent(Renderer);
+	RegisterComponent(Elements::PropertyDict);
+	RegisterComponent(Graphics::Light);
+	RegisterComponent(Graphics::Camera);
 }
 
 //Clean up dynamic allocation
@@ -61,6 +68,7 @@ Engine::~Engine()
 	delete input;
 	delete window;
 	delete elementFactory;
+	delete elements;
 	delete resourceFactory;
 }
 

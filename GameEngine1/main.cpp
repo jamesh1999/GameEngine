@@ -53,10 +53,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	GameEngine::Engine game(hInstance);
 
-	RegisterComponent(GameEngine::Renderer);
-	RegisterComponent(GameEngine::Elements::PropertyDict);
-	RegisterComponent(GameEngine::Graphics::Light);
-	RegisterComponent(GameEngine::Graphics::Camera);
 	RegisterComponent(ShipController);
 
 	D3D11_INPUT_ELEMENT_DESC iLayout[]

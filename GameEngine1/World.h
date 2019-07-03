@@ -2,6 +2,10 @@
 #define __WORLD_INCLUDED__
 
 #include <unordered_set>
+#include "ISerializable.h"
+#include "Engine.h"
+#include <istream>
+#include <ostream>
 
 namespace GameEngine
 {
@@ -9,13 +13,20 @@ namespace GameEngine
 	{
 		class CompositeObject;
 
-		class World
+		class World : public Utils::ISerializable
 		{
 		public:
 			std::unordered_set<CompositeObject*> objects;
+			Engine* engine;
 
 		public:
+
+			World(Engine*);
+
 			void Update();
+
+			World& operator<<(std::istream&);
+			World& operator>>(std::ostream&);
 		};
 	}
 }

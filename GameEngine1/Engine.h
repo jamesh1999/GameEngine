@@ -2,6 +2,7 @@
 #define __GameEngine_INCLUDED__
 
 #include <Windows.h>
+#include <unordered_map>
 
 namespace GameEngine
 {
@@ -21,6 +22,7 @@ namespace GameEngine
 	{
 		class World;
 		class ElementFactory;
+		class ElementTable;
 	}
 
 	namespace Resources
@@ -36,7 +38,6 @@ namespace GameEngine
 
 	class Engine
 	{
-		//std::list<CompositeObject*> objects;
 	public:
 		Time::Clock* clock = nullptr;
 		Graphics::GraphicsController* graphics = nullptr;
@@ -44,6 +45,7 @@ namespace GameEngine
 		Graphics::Window* window = nullptr;
 		Elements::World* world = nullptr;
 		Elements::ElementFactory* elementFactory = nullptr;
+		Elements::ElementTable* elements = nullptr;
 		Resources::ResourceFactory* resourceFactory = nullptr;
 		Resources::ResourceTable* resources = nullptr;
 		Input::InputManager* input = nullptr;

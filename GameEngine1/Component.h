@@ -1,13 +1,13 @@
 #ifndef __COMPONENT_INCLUDED__
 #define __COMPONENT_INCLUDED__
 
-#define RegisterComponent(comp) (GameEngine::Elements::ElementFactory::components[typeid(comp).name()] = [](){ return static_cast<GameEngine::Elements::Component*>(new comp); })
-
 #include <cstdlib>
 #include <malloc.h>
 #include <new>
 #include "Element.h"
 #include "ElementPtr.h"
+
+#define RegisterComponent(c) (RegisterElement(c))
 
 namespace GameEngine
 {
@@ -18,21 +18,12 @@ namespace GameEngine
 
 		class alignas(16) Component : public Element
 		{
-		public:
 			friend class ElementFactory;
-
-		private:
-			unsigned id = 0;
 
 		public:
 			ElementPtr<CompositeObject> obj;
 
 			virtual ~Component() = default;
-
-			unsigned GetID() const
-			{
-				return id;
-			}
 
 			void* operator new(size_t cnt)
 			{
@@ -49,9 +40,6 @@ namespace GameEngine
 
 			Component& operator>>(std::ostream&);
 			Component& operator<<(std::istream&);
-
-			//Preferable to constructor because initialisation has finished
-			virtual void Create() { }
 
 			void Destroy() override;
 		};

@@ -21,11 +21,11 @@ namespace GameEngine
 
 				bool operator()(Renderer* a, Renderer* b)
 				{
-					return (*m_priorities)[a->GetID()] > (*m_priorities)[b->GetID()];
+					return (*m_priorities)[a->GetUID()] > (*m_priorities)[b->GetUID()];
 				}
 			};
 
-			std::unordered_map<unsigned, int> m_priorities;
+			std::unordered_map<Elements::Element::UID, int> m_priorities;
 			Utils::LazyOrderedContainer<Renderer*, std::vector<Renderer*>, RQComp> m_queue;
 
 		public:

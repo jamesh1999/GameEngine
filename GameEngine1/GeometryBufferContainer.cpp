@@ -19,11 +19,11 @@ GeometryBufferContainer::~GeometryBufferContainer()
 void GeometryBufferContainer::AddRenderer(GameEngine::Renderer* r)
 {
 	if (r->obj->GetComponent<GameEngine::Elements::Transform>()->m_static)
-		m_lookup.insert(make_pair(r->GetID(), make_pair(0, m_buffers[0].AddRenderer(r))));
+		m_lookup.insert(make_pair(r->GetUID(), make_pair(0, m_buffers[0].AddRenderer(r))));
 	else
 	{
 		m_buffers.emplace_back(dev, devContext);
-		m_lookup.insert(make_pair(r->GetID(), make_pair(m_buffers.size() - 1, m_buffers.back().AddRenderer(r))));
+		m_lookup.insert(make_pair(r->GetUID(), make_pair(m_buffers.size() - 1, m_buffers.back().AddRenderer(r))));
 	}
 }
 
@@ -32,7 +32,7 @@ void GeometryBufferContainer::RemoveRenderer(GameEngine::Renderer* r)
 	GeometryBuffer::BufferLocation pos;
 	unsigned buff;
 
-	auto it = m_lookup.find(r->GetID());
+	auto it = m_lookup.find(r->GetUID());
 	if (it == m_lookup.end()) return;
 
 	tie(buff, pos) = std::get<1>(*it);
@@ -45,7 +45,7 @@ GeometryBuffer::BufferLocation GeometryBufferContainer::FindRenderer(GameEngine:
 	GeometryBuffer::BufferLocation pos;
 	unsigned buff;
 
-	auto it = m_lookup.find(r->GetID());
+	auto it = m_lookup.find(r->GetUID());
 	if (it == m_lookup.end()) return std::make_tuple(-1, -1);
 	tie(buff, pos) = std::get<1>(*it);
 
@@ -63,7 +63,7 @@ GeometryBuffer::BufferLocation GeometryBufferContainer::SelectGeometry(GameEngin
 	GeometryBuffer::BufferLocation pos;
 	unsigned buff;
 
-	auto it = m_lookup.find(r->GetID());
+	auto it = m_lookup.find(r->GetUID());
 	if (it == m_lookup.end()) return std::make_tuple(-1, -1);
 	tie(buff, pos) = std::get<1>(*it);
 

@@ -49,15 +49,6 @@
     <Filter Include="Source Files\Engine\Graphics">
       <UniqueIdentifier>{467dd0eb-d93e-4d08-a637-a7df6e32ce16}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Resources">
-      <UniqueIdentifier>{89eebf28-a9b8-4181-9c04-5ecb526ef1a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Base\Components">
-      <UniqueIdentifier>{b14034f4-4261-4a7c-a68d-9e36836dc4ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Resources\Initialisation">
-      <UniqueIdentifier>{4e426ea4-5e90-48cf-9dd1-9d36facd6156}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine\Base\Elements">
       <UniqueIdentifier>{6910af9e-c65c-4f1d-8c32-ba3c32f2a3a9}</UniqueIdentifier>
     </Filter>
@@ -72,6 +63,21 @@
     </Filter>
     <Filter Include="Header Files\Engine\Base\Utils">
       <UniqueIdentifier>{dba0667c-2af0-4816-a17d-8e99d39083b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Base\Resources">
+      <UniqueIdentifier>{89eebf28-a9b8-4181-9c04-5ecb526ef1a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Base\Resources\Initialisation">
+      <UniqueIdentifier>{4e426ea4-5e90-48cf-9dd1-9d36facd6156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Base\Elements">
+      <UniqueIdentifier>{853cd8fa-51e6-4fff-a310-2412f90daae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Base\Elements\Components">
+      <UniqueIdentifier>{b14034f4-4261-4a7c-a68d-9e36836dc4ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Base\Identifiers">
+      <UniqueIdentifier>{fd28262f-5ca1-4580-99af-3f1a43a3d297}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -121,13 +127,13 @@
       <Filter>Source Files\Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>Source Files\Engine\Base\Components</Filter>
+      <Filter>Source Files\Engine\Base\Elements\Components</Filter>
     </ClCompile>
     <ClCompile Include="MeshLoader.cpp">
-      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+      <Filter>Source Files\Engine\Base\Resources\Initialisation</Filter>
     </ClCompile>
     <ClCompile Include="TextureLoader.cpp">
-      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+      <Filter>Source Files\Engine\Base\Resources\Initialisation</Filter>
     </ClCompile>
     <ClCompile Include="GeometryBufferContainer.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
@@ -141,9 +147,6 @@
     <ClCompile Include="World.cpp">
       <Filter>Source Files\Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="ElementFactory.cpp">
-      <Filter>Source Files\Engine\Base</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
     </ClCompile>
@@ -151,19 +154,19 @@
       <Filter>Source Files\Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="ResourceFactory.cpp">
-      <Filter>Source Files\Engine\Resources</Filter>
+      <Filter>Source Files\Engine\Base\Resources</Filter>
     </ClCompile>
     <ClCompile Include="SceneLoader.cpp">
-      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+      <Filter>Source Files\Engine\Base\Resources\Initialisation</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Engine\Resources</Filter>
+      <Filter>Source Files\Engine\Base\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resource.cpp">
-      <Filter>Source Files\Engine\Resources</Filter>
+      <Filter>Source Files\Engine\Base\Resources</Filter>
     </ClCompile>
     <ClCompile Include="TextureArrayLoader.cpp">
-      <Filter>Source Files\Engine\Resources\Initialisation</Filter>
+      <Filter>Source Files\Engine\Base\Resources\Initialisation</Filter>
     </ClCompile>
     <ClCompile Include="RenderQueue.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
@@ -172,25 +175,31 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
-      <Filter>Source Files\Engine\Base\Components</Filter>
+      <Filter>Source Files\Engine\Base\Elements\Components</Filter>
     </ClCompile>
     <ClCompile Include="PropertyDict.cpp">
-      <Filter>Source Files\Engine\Base\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Element.cpp">
-      <Filter>Source Files\Engine\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="ElementPtr.cpp">
-      <Filter>Source Files\Engine\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="CompositeObject.cpp">
-      <Filter>Source Files\Engine\Base</Filter>
+      <Filter>Source Files\Engine\Base\Elements\Components</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResourceTable.cpp">
-      <Filter>Source Files\Engine\Resources</Filter>
+      <Filter>Source Files\Engine\Base\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="CompositeObject.cpp">
+      <Filter>Source Files\Engine\Base\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Element.cpp">
+      <Filter>Source Files\Engine\Base\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementPtr.cpp">
+      <Filter>Source Files\Engine\Base\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementFactory.cpp">
+      <Filter>Source Files\Engine\Base\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementTable.cpp">
+      <Filter>Source Files\Engine\Base\Elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,11 +338,17 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LazyPtr.h">
+      <Filter>Header Files\Engine\Base\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="ISerializable.h">
       <Filter>Header Files\Engine\Base\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="LazyPtr.h">
-      <Filter>Header Files\Engine\Base\Utils</Filter>
+    <ClInclude Include="Identifier.h">
+      <Filter>Header Files\Engine\Base\Identifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="ElementTable.h">
+      <Filter>Header Files\Engine\Base\Elements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

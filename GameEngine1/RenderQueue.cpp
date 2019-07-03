@@ -15,13 +15,13 @@ RenderQueue::RenderQueue()
 
 void RenderQueue::AddRenderer(Renderer* r)
 {
-	m_priorities[r->GetID()] = 0;
+	m_priorities[r->GetUID()] = 0;
 	m_queue.Insert(r);
 }
 
 void RenderQueue::RemoveRenderer(Renderer* r)
 {
-	m_priorities.erase(r->GetID());
+	m_priorities.erase(r->GetUID());
 	m_queue.Erase(r);
 }
 
@@ -42,7 +42,7 @@ void RenderQueue::Refresh(DirectX::XMVECTOR forwards)
 		if ((priority & 0x40000000) == 0) priority ^= 0x3fffffff;
 		if (r->GetTransparent()) priority = ~priority;
 
-		m_priorities[r->GetID()] = *reinterpret_cast<int*>(&priority);
+		m_priorities[r->GetUID()] = *reinterpret_cast<int*>(&priority);
 	}
 
 	m_queue.SetDirty();
