@@ -211,12 +211,11 @@ std::list<TextureLoader::PNGChunk> TextureLoader::ReadPNG(std::ifstream& stream)
 }
 
 //Load a .tga from stream to memory
-Texture* TextureLoader::LoadTGA(std::ifstream& stream)
+void TextureLoader::LoadTGA(Texture* tex, std::ifstream& stream)
 {
 	std::unique_ptr<TGA> img = ReadTGA(stream);
 
 	// Set up Texture resource
-	Texture* tex = new Texture;
 	tex->m_h = img->header.height;
 	tex->m_w = img->header.width;
 	tex->m_data = new float[img->header.width * img->header.height * 4];
@@ -229,22 +228,17 @@ Texture* TextureLoader::LoadTGA(std::ifstream& stream)
 			// Texture opacity flag
 			if (tex->m_data[(y * img->header.width + x) * 4 + 3] < 1.0f) tex->m_opaque = false;
 		}
-
-	return tex;
 }
 
-Texture* TextureLoader::LoadPNG(std::ifstream& stream)
+void TextureLoader::LoadPNG(Texture* tex, std::ifstream& stream)
 {
 	//std::list<PNGChunk> img = ReadPNG(stream);
-
-	Texture* tex = new Texture;
-	return tex;
 }
 
 //Identify the type of texture (from extension) and load to memory
-Texture* TextureLoader::Load(const std::string& filename)
+void TextureLoader::Load(Texture* tex, const std::string& filename)
 {
-	if (filename == "") return new Texture;
+	if (filename == "") return;
 
 	int idx = filename.find_last_of('.');
 	std::string extension = filename.substr(idx + 1, filename.size() - idx - 1);
@@ -253,7 +247,14 @@ Texture* TextureLoader::Load(const std::string& filename)
 	std::ifstream stream(filename, std::ios::binary);
 
 	if (extension == "tga")
-		return LoadTGA(stream);
+	{
+		LoadTGA(tex, stream);
+		return;
+	}
 
-	return nullptr;
+	if (extension == "png")
+	{
+		LoadPNG(tex, stream);
+		return;
+	}
 }

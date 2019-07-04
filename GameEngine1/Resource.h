@@ -3,7 +3,16 @@
 
 #include <string>
 #include "Engine.h"
-#include "ISerializable.h"
+#include "Element.h"
+
+#define RegisterResource(resource, loader) \
+	{ \
+		RegisterElement(resource); \
+		GameEngine::Resources::ResourceFactory::_RegisterResource( \
+			typeid(resource).name(), \
+			[](GameEngine::Resources::Resource* r, const std::string& d) { loader::Load(static_cast<resource*>(r), d); } \
+		); \
+	} 0
 
 namespace GameEngine
 {
@@ -13,7 +22,8 @@ namespace GameEngine
 		template <class TResource>
 		class ResourcePtr;
 
-		class Resource : public Utils::ISerializable
+		// A reference counted Element representing disk based data
+		class Resource : public Elements::Element
 		{
 			friend class ResourceFactory;
 			template <class>
@@ -23,17 +33,17 @@ namespace GameEngine
 			unsigned m_refCount = 0;
 
 			// Should only be accessible through ResourcePtr<> for clean up!!
-			void Destroy();
+			void DestroyResource();
 
 		protected:
-			Engine* engine = nullptr;
 			std::string m_identifier;
 
 			virtual Resource* CloneResource() = 0;
 
 		public:
 
-			virtual ~Resource() { }
+			// To hide Element::Destroy
+			void Destroy() override;
 
 			Resource& operator>>(std::ostream&);
 			Resource& operator<<(std::istream&);

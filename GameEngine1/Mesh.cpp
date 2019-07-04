@@ -25,7 +25,7 @@ Vertex& Vertex::operator>>(std::ostream& out)
 
 Mesh* Mesh::CloneResource()
 {
-	Mesh* nMesh = engine->resourceFactory->Create<Mesh>("");
+	Mesh* nMesh = GetEngine()->resourceFactory->Create<Mesh>("");
 
 	nMesh->indices = indices;
 	nMesh->vertices = vertices;

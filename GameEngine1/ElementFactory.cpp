@@ -3,22 +3,32 @@
 #include "CompositeObject.h"
 #include "ElementTable.h"
 
-using namespace GameEngine::Elements;
 using namespace GameEngine;
+using namespace GameEngine::Elements;
 
 std::unordered_map<std::string, Element* (*)()> ElementFactory::elements;
 
-ElementFactory::ElementFactory(Engine* e) : engine(e)
+ElementFactory::ElementFactory(Engine* e) : m_engine(e)
 {
 	// Seed pseudo random generator
 	re = std::default_random_engine(rd());
 }
 
+Engine* ElementFactory::GetEngine()
+{
+	return m_engine;
+}
+
+void ElementFactory::_RegisterElement(std::string name, Element* (*instantiator)())
+{
+	elements[name] = instantiator;
+}
+
 void ElementFactory::Initialise(Element* e)
 {
-	e->engine = engine; // Create engine reference
+	e->m_engine = m_engine; // Create engine reference
 	e->m_uid = FindFreeUID(); // Assign a unique ID
-	engine->elements->m_elements[e->m_uid] = e; // Add to the ElementTable
+	m_engine->elements->m_elements[e->m_uid] = e; // Add to the ElementTable
 }
 
 Element::UID ElementFactory::FindFreeUID()
@@ -26,7 +36,7 @@ Element::UID ElementFactory::FindFreeUID()
 	// Poll random UIDs until a free one is located
 	Element::UID free;
 
-	while (engine->elements->operator[](free = rDist(re)) != nullptr);
+	while (m_engine->elements->operator[](free = rDist(re)) != nullptr);
 	return free;
 }
 

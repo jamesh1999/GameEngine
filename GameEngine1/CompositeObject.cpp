@@ -5,9 +5,9 @@ using namespace GameEngine::Elements;
 // Add to the active world & attach Transform
 void CompositeObject::Create()
 {
-	engine->world->objects.insert(this);
+	GetEngine()->world->objects.insert(this);
 
-	m_transform = engine->elementFactory->Create<Transform>();
+	m_transform = GetEngine()->elementFactory->Create<Transform>();
 	m_transform->obj = this;
 	m_transform->Create();
 }
@@ -30,7 +30,7 @@ void CompositeObject::Destroy()
 			c->Destroy();
 	if (m_transform != nullptr) m_transform->Destroy();
 
-	engine->world->objects.erase(this);
+	GetEngine()->world->objects.erase(this);
 
 	Element::Destroy();
 }
@@ -43,7 +43,7 @@ CompositeObject& CompositeObject::operator<<(std::istream& in)
 
 	for (int i = 0; i < componentCount; ++i)
 	{
-		Component* c = static_cast<Component*>(engine->elementFactory->Deserialize(in));
+		Component* c = static_cast<Component*>(GetEngine()->elementFactory->Deserialize(in));
 		AttachComponent<Component>(c);
 	}
 

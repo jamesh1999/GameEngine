@@ -75,7 +75,8 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 			for (int i = 0; i < lCnt; ++i)
 			{
 				// Load mesh & create material
-				Mesh* mesh = MeshLoader::LoadFBX(node->GetMesh());
+				Mesh* mesh = engine->elementFactory->Create<Mesh>();
+				MeshLoader::LoadFBX(mesh, node->GetMesh());
 				Material* mat = engine->resourceFactory->Create<Material>("Default Phong");
 
 				// Attach renderer

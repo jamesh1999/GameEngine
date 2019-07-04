@@ -27,14 +27,14 @@ namespace GameEngine
 		public:
 
 			// FBX loader functions
-			static Mesh* LoadFBX(FbxMesh*);
-			static Mesh* LoadFBX(FbxNode*, const std::string& = "");
-			static Mesh* LoadFBX(const std::string&, const std::string& = "");
+			static void LoadFBX(Mesh*, FbxMesh*);
+			static void LoadFBX(Mesh*, FbxNode*, const std::string& = "");
+			static void LoadFBX(Mesh*, const std::string&, const std::string& = "");
 
 			// OBJ loader functions
-			static Mesh* LoadOBJ(const std::string&);
+			static void LoadOBJ(Mesh*, const std::string&);
 
-			static Mesh* Load(const std::string&);
+			static void Load(Mesh*, const std::string&);
 			static void Save(Mesh*, const std::string&);
 		};
 	}

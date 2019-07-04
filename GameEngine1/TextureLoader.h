@@ -83,11 +83,11 @@ namespace GameEngine
 			static std::list<PNGChunk> ReadPNG(std::ifstream&);
 
 		public:
-			static Texture* LoadTGA(std::ifstream&);
+			static void LoadTGA(Texture*, std::ifstream&);
 
-			static Texture* LoadPNG(std::ifstream&);
+			static void LoadPNG(Texture*, std::ifstream&);
 
-			static Texture* Load(const std::string&);
+			static void Load(Texture*, const std::string&);
 		};
 	}
 }

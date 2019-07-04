@@ -6,25 +6,25 @@ using namespace GameEngine;
 
 void Renderer::Destroy()
 {
-	if (m_init) engine->graphics->RemoveRenderer(this);
+	if (m_init) GetEngine()->graphics->RemoveRenderer(this);
 	Component::Destroy();
 }
 
 void Renderer::Render(int i)
 {
-	GeometryBuffer::BufferLocation idxes = engine->graphics->geomBuff->FindRenderer(this);
+	GeometryBuffer::BufferLocation idxes = GetEngine()->graphics->geomBuff->FindRenderer(this);
 
 	if (m_textures.Get() == nullptr) return;
 	ID3D11ShaderResourceView* srv = m_textures->GetSRV();
-	engine->graphics->devContext->PSSetShaderResources(0, 1, &srv);
+	GetEngine()->graphics->devContext->PSSetShaderResources(0, 1, &srv);
 
 	for (size_t j = 0; j < mat->passes.size(); ++j)
 	{
-		engine->graphics->devContext->IASetInputLayout(mat->passes[j].layout);
-		engine->graphics->devContext->VSSetShader(mat->passes[j].vs, nullptr, 0);
-		engine->graphics->devContext->PSSetShader(mat->passes[j].ps, nullptr, 0);
+		GetEngine()->graphics->devContext->IASetInputLayout(mat->passes[j].layout);
+		GetEngine()->graphics->devContext->VSSetShader(mat->passes[j].vs, nullptr, 0);
+		GetEngine()->graphics->devContext->PSSetShader(mat->passes[j].ps, nullptr, 0);
 
-		engine->graphics->devContext->DrawIndexed(mesh->indices.size(), std::get<0>(idxes), std::get<1>(idxes));
+		GetEngine()->graphics->devContext->DrawIndexed(mesh->indices.size(), std::get<0>(idxes), std::get<1>(idxes));
 	}
 }
 
@@ -32,7 +32,7 @@ void Renderer::Init(Material* material, Resources::Mesh* m)
 {
 	mat = material;
 	mesh = m;
-	engine->graphics->AddRenderer(this);
+	GetEngine()->graphics->AddRenderer(this);
 	m_init = true;
 }
 
@@ -53,7 +53,7 @@ void Renderer::SetTexture(Resources::TextureArray* texArray)
 
 void Renderer::SetTexture(Resources::Texture* tex)
 {
-	m_textures = engine->resourceFactory->Create<Resources::TextureArray>();
+	m_textures = GetEngine()->resourceFactory->Create<Resources::TextureArray>();
 	m_textures = m_textures->Add(tex);
 }
 

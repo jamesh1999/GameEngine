@@ -7,17 +7,18 @@ using namespace GameEngine::Elements;
 
 Element::~Element()
 {
-	// Clear all references to this Element
-	for (auto ptr : m_ptrs)
-		ptr->Clear();
-
-	// Free the ID by removing from table
-	engine->elements->m_elements.erase(GetUID());
+	// Redirect the ID to nullptr
+	m_engine->elements->m_elements[m_uid] = nullptr;
 }
 
 void Element::Destroy()
 {
 	delete this;
+}
+
+Engine* Element::GetEngine()
+{
+	return m_engine;
 }
 
 Element::UID Element::GetUID()

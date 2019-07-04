@@ -164,10 +164,8 @@ void MeshLoader::ApplyFbxRecursive(Mesh* out, FbxNode* node, bool track)
 		ApplyFbxRecursive(out, node->GetChild(i), track);
 }
 
-Mesh* MeshLoader::LoadFBX(FbxMesh* in)
+void MeshLoader::LoadFBX(Mesh* out, FbxMesh* in)
 {
-	Mesh* out = new Mesh;
-
 	int lCnt = in->GetLayerCount();
 	for (int j = 0; j < lCnt; ++j)
 	{
@@ -202,19 +200,18 @@ Mesh* MeshLoader::LoadFBX(FbxMesh* in)
 			vtxTot += vcnt;
 		}
 	}
-
-	return out;
 }
 
-Mesh* MeshLoader::LoadFBX(FbxNode* node, const std::string& path)
+void MeshLoader::LoadFBX(Mesh* mesh, FbxNode* node, const std::string& path)
 {
 	// Load from this node
 	if (path == "")
 	{
 		FbxNodeAttribute* attr = node->GetNodeAttribute();
-		if (attr == nullptr || attr->GetAttributeType() != FbxNodeAttribute::eMesh) return nullptr;
+		if (attr == nullptr || attr->GetAttributeType() != FbxNodeAttribute::eMesh) return;
 
-		return LoadFBX(node->GetMesh());
+		LoadFBX(mesh, node->GetMesh());
+		return;
 	}
 
 	size_t len = path.find_first_of("\\/");
@@ -224,11 +221,11 @@ Mesh* MeshLoader::LoadFBX(FbxNode* node, const std::string& path)
 	// Traverse down heirarchy
 	FbxNode* next = node->FindChild(childName.c_str(), false);
 
-	if (next == nullptr) return nullptr;
-	return LoadFBX(next, remainder);
+	if (next == nullptr) return;
+	LoadFBX(mesh, next, remainder);
 }
 
-Mesh* MeshLoader::LoadFBX(const std::string& filename, const std::string& path)
+void MeshLoader::LoadFBX(Mesh* mesh, const std::string& filename, const std::string& path)
 {
 	// Create necessary resources
 	FbxManager* fbx = FbxManager::Create();
@@ -238,21 +235,19 @@ Mesh* MeshLoader::LoadFBX(const std::string& filename, const std::string& path)
 
 	bool success = fbxImporter->Initialize(filename.c_str(), -1, fbx->GetIOSettings());
 
-	if (!success) return nullptr;
+	if (!success) return;
 
 	FbxScene* fbxScene = FbxScene::Create(fbx, filename.c_str());
 	fbxImporter->Import(fbxScene);
 	fbxImporter->Destroy();
 
-	Mesh* mesh = LoadFBX(fbxScene->GetRootNode(), path);
+	LoadFBX(mesh, fbxScene->GetRootNode(), path);
 
 	// Clean up
 	fbx->Destroy();
-
-	return mesh;
 }
 
-Mesh* MeshLoader::LoadOBJ(const std::string& filename)
+void MeshLoader::LoadOBJ(Mesh* mesh, const std::string& filename)
 {
 	std::vector<DirectX::XMFLOAT3> vertexPos;
 	std::vector<DirectX::XMFLOAT3> vertexTex;
@@ -263,7 +258,6 @@ Mesh* MeshLoader::LoadOBJ(const std::string& filename)
 	std::string line;
 	std::stringstream ss;
 
-	Mesh* mesh = new Mesh;
 	while (std::getline(ifile, line))
 	{
 		ss << line;
@@ -301,23 +295,30 @@ Mesh* MeshLoader::LoadOBJ(const std::string& filename)
 
 		ss.clear();
 	}
-
-	return mesh;
 }
 
-Mesh* MeshLoader::Load(const std::string& descriptor)
+void MeshLoader::Load(Mesh* mesh, const std::string& descriptor)
 {
 	std::vector<std::string> parts = DescriptorParser::GetParts(descriptor);
 
 	std::string extension = DescriptorParser::GetExtension(parts[0]);
 	if (extension == "fbx")
 	{
-		if (parts.size() == 1) return LoadFBX(parts[0]);
-		return LoadFBX(parts[0], parts[1]);
-	}
-	if (extension == "obj") return LoadOBJ(parts[0]);
+		if (parts.size() == 1)
+		{
+			LoadFBX(mesh, parts[0]);
+			return;
+		}
 
-	return nullptr;
+		LoadFBX(mesh, parts[0], parts[1]);
+		return;
+	}
+
+	if (extension == "obj")
+	{
+		LoadOBJ(mesh, parts[0]);
+		return;
+	}
 }
 
 void MeshLoader::Save(Mesh* mesh, const std::string& filename)

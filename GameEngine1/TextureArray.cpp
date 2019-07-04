@@ -14,7 +14,7 @@ TextureArray::~TextureArray()
 
 TextureArray* TextureArray::CloneResource()
 {
-	TextureArray* nTA = engine->resourceFactory->Create<TextureArray>();
+	TextureArray* nTA = GetEngine()->resourceFactory->Create<TextureArray>();
 
 	nTA->m_textures = m_textures;
 
@@ -35,7 +35,7 @@ TextureArray* TextureArray::Add(Texture* tex)
 	ss << tex->GetIdentifier();
 	ss << ']';
 
-	return engine->resourceFactory->Create<TextureArray>(ss.str());
+	return GetEngine()->resourceFactory->Create<TextureArray>(ss.str());
 }
 
 Texture* TextureArray::operator[](int idx)
@@ -98,7 +98,7 @@ void TextureArray::Push()
 		texData[i].pSysMem = m_textures[i]->m_data;
 	}
 
-	engine->graphics->device->CreateTexture2D(&tD, texData, &m_texture);
+	GetEngine()->graphics->device->CreateTexture2D(&tD, texData, &m_texture);
 
 	delete[] texData;
 
@@ -107,7 +107,7 @@ void TextureArray::Push()
 	srvD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvD.Texture2D.MipLevels = -1;
 	srvD.Texture2D.MostDetailedMip = 0;
-	engine->graphics->device->CreateShaderResourceView(m_texture, nullptr, &m_SRV);
+	GetEngine()->graphics->device->CreateShaderResourceView(m_texture, nullptr, &m_SRV);
 }
 
 ID3D11ShaderResourceView* TextureArray::GetSRV()

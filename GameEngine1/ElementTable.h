@@ -20,6 +20,7 @@ namespace GameEngine
 			std::unordered_map<Element::UID, Element*> m_elements;
 
 		public:
+			ElementTable();
 			Element* operator[](Element::UID);
 		};
 	}

@@ -2,12 +2,18 @@
 #include <fstream>
 #include "ResourceTable.h"
 
+using namespace GameEngine;
 using namespace GameEngine::Resources;
+
+void Resource::DestroyResource()
+{
+	GetEngine()->resources->Erase(m_identifier);
+	Element::Destroy();
+}
 
 void Resource::Destroy()
 {
-	engine->resources->Erase(m_identifier);
-	delete this;
+	exit(-1);
 }
 
 Resource& Resource::operator>>(std::ostream& out)

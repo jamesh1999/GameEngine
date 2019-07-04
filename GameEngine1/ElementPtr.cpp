@@ -3,18 +3,9 @@
 
 using namespace GameEngine::Elements;
 
-// Attach this ptr to the new element
 template <>
-void ElementPtr<CompositeObject>::DetachPtr()
+CompositeObject *const ElementPtr<CompositeObject>::Get() const
 {
-	if (m_element == nullptr) return;
-	static_cast<Element*>(m_element)->m_ptrs.erase(reinterpret_cast<ElementPtr<Element>*>(this));
-}
-
-// Remove reference to this ptr from element
-template <>
-void ElementPtr<CompositeObject>::AttachPtr()
-{
-	if (m_element == nullptr) return;
-	static_cast<Element*>(m_element)->m_ptrs.insert(reinterpret_cast<ElementPtr<Element>*>(this));
+	if (m_engine == nullptr) return nullptr;
+	return static_cast<CompositeObject*>(m_engine->elements->operator[](m_uid));
 }

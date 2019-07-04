@@ -23,7 +23,9 @@ namespace GameEngine
 			friend class Engine;
 
 		private:
-			Engine* engine;
+			Engine* m_engine;
+
+			static std::unordered_map<std::string, Element* (*)()> elements;
 
 			std::random_device rd;
 			std::default_random_engine re;
@@ -33,22 +35,24 @@ namespace GameEngine
 			Element::UID FindFreeUID();
 
 		public:
-			static std::unordered_map<std::string, Element* (*)()> elements;
 
 			ElementFactory(Engine*);
 
-			template <class T>
-			T* Create();
+			Engine* GetEngine();
 
+			static void _RegisterElement(std::string, Element* (*)());
+
+			template <class TElement>
+			typename TElement* Create();
 			Element* Deserialize(std::istream&);
 		};
 
-		template <class T>
-		T* ElementFactory::Create()
+		template <class TElement>
+		TElement* ElementFactory::Create()
 		{
-			static_assert(std::is_base_of<Element, T>::value);
+			static_assert(std::is_base_of<Element, TElement>::value);
 
-			T* elem = new T;
+			TElement* elem = new TElement;
 			Initialise(elem);
 			return elem;
 		}

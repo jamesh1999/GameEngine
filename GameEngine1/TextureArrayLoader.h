@@ -12,7 +12,7 @@ namespace GameEngine
 		class TextureArrayLoader
 		{
 		public:
-			static TextureArray* Load(Engine*, const std::string&);
+			static void Load(TextureArray*, const std::string&);
 		};
 	}
 }

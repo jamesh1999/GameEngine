@@ -15,7 +15,7 @@ Texture::~Texture()
 
 Texture* Texture::CloneResource()
 {
-	Texture* nTex = engine->resourceFactory->Create<Texture>();
+	Texture* nTex = GetEngine()->resourceFactory->Create<Texture>();
 
 	nTex->m_h = m_h;
 	nTex->m_w = m_w;
@@ -44,7 +44,7 @@ bool Texture::IsOpaque() const
 //Resize the texture using bilinear filtering
 Texture* Texture::Resize(int width, int height)
 {
-	Texture* nTex = engine->resourceFactory->Create<Texture>();
+	Texture* nTex = GetEngine()->resourceFactory->Create<Texture>();
 
 	nTex->m_h = width;
 	nTex->m_w = height;

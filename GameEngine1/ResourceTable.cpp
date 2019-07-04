@@ -17,7 +17,8 @@ ResourceTable& ResourceTable::operator<<(std::istream& in)
 	{
 		std::string res;
 		in >> res;
-		engine->resourceFactory->Create<Resource>(res);
+		// TODO
+		//engine->resourceFactory->Create<Resource>(res);
 	}
 
 	return *this;

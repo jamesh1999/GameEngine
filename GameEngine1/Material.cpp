@@ -71,7 +71,7 @@ void RenderPass::LoadPS(std::wstring filename, std::string entry)
 
 Material* Material::CloneResource()
 {
-	Material* nMaterial = engine->resourceFactory->Create<Material>("");
+	Material* nMaterial = GetEngine()->resourceFactory->Create<Material>("");
 	nMaterial->passes = this->passes;
 	//Todo: Actually do this properly ^^ (copy DX rsources)
 
@@ -111,7 +111,7 @@ ID3D11SamplerState* Material::GetSampler()
 	sD.MinLOD = 0;
 	sD.MaxLOD = D3D11_FLOAT32_MAX;
 
-	engine->graphics->device->CreateSamplerState(&sD, &m_samplerState);
+	GetEngine()->graphics->device->CreateSamplerState(&sD, &m_samplerState);
 
 	m_pushed = true;
 

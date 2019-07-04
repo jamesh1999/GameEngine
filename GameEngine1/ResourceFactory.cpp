@@ -1,53 +1,30 @@
 #include "ResourceFactory.h"
 #include "Resource.h"
-#include "MeshLoader.h"
-#include "TextureLoader.h"
-#include "TextureArrayLoader.h"
 
 using namespace GameEngine::Resources;
-using namespace GameEngine;
 
-ResourceFactory::ResourceFactory(Engine* e) : engine(e) {}
+std::unordered_map<std::string, void(*)(Resource*, const std::string&)> ResourceFactory::resources;
+
+void ResourceFactory::_RegisterResource(std::string name, void(*loader)(Resource*, const std::string&))
+{
+	resources[name] = loader;
+}
 
 Resource* ResourceFactory::Deserialize(std::istream& in)
 {
-	std::string type;
-	in >> type;
+	Resource* resource = static_cast<Resource*>(ElementFactory::Deserialize(in));
 
-	Resource* ret = nullptr;
-	if (type == typeid(Mesh).name()) ret = new Mesh;
-	else if (type == typeid(Texture).name()) ret = new Texture;
-	else if (type == typeid(TextureArray).name()) ret = new TextureArray;
+	// Don't store failed resources
+	if (resource == nullptr) return nullptr;
 
-	// Return to original position now type is known
-	in.seekg(-static_cast<int>(type.size()), std::ios::cur);
+	// Use the UID as their identifier
+	std::stringstream ss;
+	ss << resource->GetUID();
+	std::string identifier = ss.str();
 
-	*ret << in;
+	static_cast<Resource*>(resource)->m_identifier = ss.str();
 
-	return ret;
-}
+	GetEngine()->resources->resources[ss.str()] = static_cast<Resource*>(resource);
 
-template <>
-Resource* ResourceFactory::Load<Resource>(const std::string& filename)
-{
-	std::ifstream in(filename);
-	return Deserialize(in);
-}
-
-template <>
-Texture* ResourceFactory::Load<Texture>(const std::string& descriptor)
-{
-	return TextureLoader::Load(descriptor);
-}
-
-template <>
-TextureArray* ResourceFactory::Load<TextureArray>(const std::string& descriptor)
-{
-	return TextureArrayLoader::Load(engine, descriptor);
-}
-
-template <>
-Mesh* ResourceFactory::Load<Mesh>(const std::string& descriptor)
-{
-	return MeshLoader::Load(descriptor);
+	return resource;
 }

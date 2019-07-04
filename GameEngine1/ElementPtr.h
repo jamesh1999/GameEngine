@@ -2,6 +2,8 @@
 #define __ELEMENT_PTR_INCLUDED__
 
 #include "Element.h"
+#include "Engine.h"
+#include "ElementTable.h"
 
 namespace GameEngine
 {
@@ -9,65 +11,34 @@ namespace GameEngine
 	{
 		class CompositeObject;
 
+		// Refers to an element with a pointer or UID & switches to nullptr on element destruction
 		template <class TElement>
 		class ElementPtr
 		{
 			template <class>
 			friend struct std::hash;
-			friend class Element;
 
 		private:
-			mutable TElement* m_element = nullptr;
-
-			void AttachPtr();
-			void DetachPtr();
-
-			void Clear() { m_element = nullptr; }
+			Engine* m_engine = nullptr;
+			Element::UID m_uid = 0;
 
 		public:
 
+			ElementPtr(Engine* engine, Element::UID uid) : m_engine(engine), m_uid(uid)
+			{
+				static_assert(std::is_base_of<Element, TElement>::value);
+			}
 			ElementPtr(TElement* element)
 			{
 				static_assert(std::is_base_of<Element, TElement>::value);
+				if (element == nullptr) return;
 
-				m_element = element;
-				AttachPtr();
+				m_engine = element->GetEngine();
+				m_uid = element->GetUID();
 			}
+			ElementPtr() : ElementPtr(nullptr) {}
 
-			ElementPtr() : ElementPtr(nullptr) { }
-
-			~ElementPtr() { DetachPtr(); }
-
-			ElementPtr(const ElementPtr<TElement>& other)
-			{
-				m_element = other.m_element;
-				AttachPtr();
-			}
-
-			ElementPtr<TElement>& operator=(const ElementPtr<TElement>& other)
-			{
-				DetachPtr();
-
-				m_element = other.m_element;
-				AttachPtr();
-
-				return *this;
-			}
-
-			ElementPtr<TElement>& operator=(TElement* element)
-			{
-				DetachPtr();
-
-				m_element = element;
-				AttachPtr();
-
-				return *this;
-			}
-
-			virtual TElement *const Get() const
-			{
-				return m_element;
-			}
+			TElement *const Get() const;
 
 			TElement* operator->() const
 			{
@@ -100,27 +71,15 @@ namespace GameEngine
 			}
 		};
 
-		// Remove reference to this ptr from element
 		template <class TElement>
-		void ElementPtr<TElement>::DetachPtr()
+		TElement *const ElementPtr<TElement>::Get() const
 		{
-			if (m_element == nullptr) return;
-			static_cast<Element*>(m_element)->m_ptrs.erase(reinterpret_cast<ElementPtr<Element>*>(this));
+			if (m_engine == nullptr) return nullptr;
+			return static_cast<TElement*>(m_engine->elements->operator[](m_uid));
 		}
 
 		template <>
-		void ElementPtr<CompositeObject>::DetachPtr();
-
-		// Attach this ptr to the new element
-		template <class TElement>
-		void ElementPtr<TElement>::AttachPtr()
-		{
-			if (m_element == nullptr) return;
-			static_cast<Element*>(m_element)->m_ptrs.insert(reinterpret_cast<ElementPtr<Element>*>(this));
-		}
-
-		template <>
-		void ElementPtr<CompositeObject>::AttachPtr();
+		CompositeObject *const ElementPtr<CompositeObject>::Get() const;
 	}
 }
 
@@ -132,7 +91,7 @@ namespace std
 		size_t operator()(const GameEngine::Elements::ElementPtr<TElement>& ptr) const
 		{
 			// Just hash on element pointer
-			return hash<TElement*>()(ptr.m_element);
+			return hash<Element::UID>()(ptr.m_uid);
 		}
 	};
 }

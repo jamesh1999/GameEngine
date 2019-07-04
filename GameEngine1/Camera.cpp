@@ -5,12 +5,12 @@ using namespace GameEngine::Graphics;
 
 void Camera::Create()
 {
-	engine->graphics->SetCamera(this);
+	GetEngine()->graphics->SetCamera(this);
 }
 
 void Camera::Draw()
 {
 	// Bind and render with this camera
-	engine->graphics->m_camera = this;
-	//engine->graphics->Draw();
+	GetEngine()->graphics->m_camera = this;
+	//GetEngine()->graphics->Draw();
 }

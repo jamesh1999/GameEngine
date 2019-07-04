@@ -1,6 +1,7 @@
 #ifndef __RESOURCE_PTR_INCLUDED__
 #define __RESOURCE_PTR_INCLUDED__
 
+#include "ElementPtr.h"
 #include "Resource.h"
 
 namespace GameEngine
@@ -8,54 +9,52 @@ namespace GameEngine
 	namespace Resources
 	{
 		template <class TResource>
-		class ResourcePtr
+		class ResourcePtr : public Elements::ElementPtr<TResource>
 		{
 		private:
-			TResource* m_resource = nullptr;
-
 			// Decrement the resource count and clean up
 			void DecResource()
 			{
-				if (m_resource == nullptr) return;
+				if (Get() == nullptr) return;
 
-				static_cast<Resource*>(m_resource)->m_refCount -= 1;
-				if (static_cast<Resource*>(m_resource)->m_refCount == 0)
-					static_cast<Resource*>(m_resource)->Destroy();
+				static_cast<Resource*>(Get())->m_refCount -= 1;
+				if (static_cast<Resource*>(Get())->m_refCount == 0)
+					static_cast<Resource*>(Get())->DestroyResource();
 			}
 
 			// Increment the resource count
 			void IncResource()
 			{
-				if (m_resource == nullptr) return;
+				if (Get() == nullptr) return;
 
-				static_cast<Resource*>(m_resource)->m_refCount += 1;
+				static_cast<Resource*>(Get())->m_refCount += 1;
 			}
 
 		public:
 
-			ResourcePtr(TResource* resource)
+			ResourcePtr(Engine* engine, Elements::Element::UID uid) : Elements::ElementPtr<TResource>(engine, uid)
 			{
 				static_assert(std::is_base_of<Resource, TResource>::value);
-
-				m_resource = resource;
 				IncResource();
 			}
+			ResourcePtr(TResource* resource) : Elements::ElementPtr<TResource>(resource)
+			{
+				static_assert(std::is_base_of<Resource, TResource>::value);
+				IncResource();
+			}
+			ResourcePtr() : ElementPtr(nullptr) {}
 
-			ResourcePtr() : ResourcePtr(nullptr) { }
+			ResourcePtr(const ResourcePtr<TResource>& other) : Elements::ElementPtr<TResource>(other)
+			{
+				IncResource();
+			}
 
 			~ResourcePtr() { DecResource(); }
-
-			ResourcePtr(const ResourcePtr<TResource>& other)
-			{
-				m_resource = other.m_resource;
-				IncResource();
-			}
 
 			ResourcePtr<TResource>& operator=(const ResourcePtr<TResource>& other)
 			{
 				DecResource();
-
-				m_resource = other.m_resource;
+				Elements::ElementPtr<TResource>::operator=(other);
 				IncResource();
 
 				return *this;
@@ -64,26 +63,10 @@ namespace GameEngine
 			ResourcePtr<TResource>& operator=(TResource* resource)
 			{
 				DecResource();
-
-				m_resource = resource;
+				Elements::ElementPtr<TResource>::operator=(resource);
 				IncResource();
 
 				return *this;
-			}
-
-			TResource* Get() const
-			{
-				return m_resource;
-			}
-
-			TResource* operator->() const
-			{
-				return Get();
-			}
-
-			TResource& operator*() const
-			{
-				return *Get();
 			}
 		};
 	}

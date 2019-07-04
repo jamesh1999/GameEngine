@@ -3,11 +3,9 @@
 
 #include <sstream>
 #include <unordered_map>
+#include "ElementFactory.h"
 #include "Engine.h"
-#include "Mesh.h"
 #include "ResourceTable.h"
-#include "Texture.h"
-#include "TextureArray.h"
 
 namespace GameEngine
 {
@@ -15,19 +13,19 @@ namespace GameEngine
 	{
 		class Resource;
 
-		class ResourceFactory
+		// Handles initialisation of resources
+		class ResourceFactory : public Elements::ElementFactory
 		{
-			friend class Engine;
-
 		private:
-			Engine* engine;
-			uint64_t resourceCount = 0;
-
 			template <class TResource>
-			TResource* Load(const std::string&);
+			void Load(TResource*, const std::string&);
+
+			static std::unordered_map<std::string, void (*)(Resource*, const std::string&)> resources;
 
 		public:
-			ResourceFactory(Engine*);
+			ResourceFactory(Engine* engine) : Elements::ElementFactory(engine) {};
+
+			static void _RegisterResource(std::string, void(*)(Resource*, const std::string&));
 
 			template <class TResource>
 			TResource* Create(std::string = "");
@@ -41,49 +39,35 @@ namespace GameEngine
 			static_assert(std::is_base_of<Resource, TResource>::value, "");
 
 			// Resource is already loaded
-			if (engine->resources->resources.find(identifier) != engine->resources->resources.end())
-				return static_cast<TResource*>(engine->resources->resources[identifier]);
+			if (GetEngine()->resources->resources.find(identifier) != GetEngine()->resources->resources.end())
+				return static_cast<TResource*>(GetEngine()->resources->resources[identifier]);
 
-			TResource* resource = Load<TResource>(identifier);
-
-			// For unnamed resources generate a unique identifier
-			if (identifier == "")
-			{
-				std::stringstream ss;
-				ss << resourceCount;
-				identifier = ss.str();
-
-				++resourceCount;
-			}
+			TResource* resource = ElementFactory::Create<TResource>();
+			Load<TResource>(resource, identifier);
 
 			// Don't store failed resources
 			if (resource == nullptr) return nullptr;
 
+			// For unnamed resources use their UID
+			if (identifier == "")
+			{
+				std::stringstream ss;
+				ss << resource->GetUID();
+				identifier = ss.str();
+			}
+
 			static_cast<Resource*>(resource)->m_identifier = identifier;
-			static_cast<Resource*>(resource)->engine = engine;
-			engine->resources->resources[identifier] = static_cast<Resource*>(resource);
+			GetEngine()->resources->resources[identifier] = static_cast<Resource*>(resource);
 
 			return resource;
 		}
 
 		//Load the resource from disk (specialise per type)
 		template <class TResource>
-		TResource* ResourceFactory::Load(const std::string&)
+		void ResourceFactory::Load(TResource* resource, const std::string& descriptor)
 		{
-			return new TResource;
+			resources[typeid(TResource).name()](resource, descriptor);
 		}
-
-		template <>
-		Resource* ResourceFactory::Load<Resource>(const std::string&);
-
-		template <>
-		Texture* ResourceFactory::Load<Texture>(const std::string&);
-
-		template <>
-		TextureArray* ResourceFactory::Load<TextureArray>(const std::string&);
-
-		template <>
-		Mesh* ResourceFactory::Load<Mesh>(const std::string&);
 	}
 }
 

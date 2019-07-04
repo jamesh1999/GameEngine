@@ -221,12 +221,12 @@
     <ClInclude Include="GeometryBuffer.h" />
     <ClInclude Include="GeometryBufferContainer.h" />
     <ClInclude Include="GraphicsController.h" />
-    <ClInclude Include="Identifier.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ISerializable.h" />
     <ClInclude Include="LazyOrderedContainer.h" />
     <ClInclude Include="LazyPtr.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="MaterialLoader.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="OrderedContainer.h" />
     <ClInclude Include="ParticleSystem.h" />

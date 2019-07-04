@@ -47,37 +47,37 @@ void ShipController::Update()
 
 	DirectX::XMVECTOR shipPos = transform->GetPosition();
 	float height = 0.0f;
-	float dist = static_cast<float>(engine->clock->DeltaT()) * 40.0f;
+	float dist = static_cast<float>(GetEngine()->clock->DeltaT()) * 40.0f;
 	float dpos = 0.0f;
-	if (engine->input->KeyIsPressed(GameEngine::Input::KeyW))
+	if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyW))
 	{
 		dpos += dist;
 
-		if (engine->input->KeyIsPressed(GameEngine::Input::KeyF))
+		if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyF))
 			dpos *= 10.0f;
 	}
-	if (engine->input->KeyIsPressed(GameEngine::Input::KeyS))
+	if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyS))
 	{
 		dpos -= dist * 0.5f;
 	}
-	if (engine->input->KeyIsPressed(GameEngine::Input::KeyQ))
+	if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyQ))
 	{
 		height += dist * 0.4f;
 	}
-	if (engine->input->KeyIsPressed(GameEngine::Input::KeyE))
+	if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyE))
 	{
 		height -= dist * 0.4f;
 	}
 
 	float drot = 0.0f;
-	if (engine->input->KeyIsPressed(GameEngine::Input::KeyD))
+	if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyD))
 	{
 		drot += dist * 0.03f;
 		curRoll -= dist * rollSpeed;
 		if (curRoll < -rollMax)
 			curRoll = -rollMax;
 	}
-	else if (engine->input->KeyIsPressed(GameEngine::Input::KeyA))
+	else if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyA))
 	{
 		drot -= dist * 0.03f;
 		curRoll += dist * rollSpeed;
@@ -118,10 +118,10 @@ void ShipController::Update()
 				norm
 			)) - 5.0f;
 
-		if (vDist > engine->clock->DeltaT() * vertSpeed)
-			vDist = static_cast<float>(engine->clock->DeltaT()) * vertSpeed;
-		else if (vDist < -engine->clock->DeltaT() * vertSpeed)
-			vDist = -static_cast<float>(engine->clock->DeltaT()) * vertSpeed;
+		if (vDist > GetEngine()->clock->DeltaT() * vertSpeed)
+			vDist = static_cast<float>(GetEngine()->clock->DeltaT()) * vertSpeed;
+		else if (vDist < -GetEngine()->clock->DeltaT() * vertSpeed)
+			vDist = -static_cast<float>(GetEngine()->clock->DeltaT()) * vertSpeed;
 
 		//Add on repulsion force
 		shipPos = DirectX::XMVectorAdd(DirectX::XMVectorScale(norm, -vDist), shipPos);
@@ -129,7 +129,7 @@ void ShipController::Update()
 
 	shipPos = DirectX::XMVectorAdd(
 		shipPos,
-		DirectX::XMVectorScale(v, static_cast<float>(engine->clock->DeltaT()))
+		DirectX::XMVectorScale(v, static_cast<float>(GetEngine()->clock->DeltaT()))
 	);
 	transform->SetPosition(shipPos);
 
@@ -139,7 +139,7 @@ void ShipController::Update()
 			DirectX::XMVectorPow(
 				v,
 				{2.0f, 2.0f, 2.0f}),
-			drag * static_cast<float>(engine->clock->DeltaT())
+			drag * static_cast<float>(GetEngine()->clock->DeltaT())
 		);
 
 	DirectX::XMFLOAT3 manualD, manualV;
@@ -273,27 +273,27 @@ void ShipController::Update()
 	//if (DirectX::XMVectorGetY(shipPos) > 8.0f && std::fabs(DirectX::XMVectorGetX(v)) > 0.001)
 	//engine->graphics->RemoveRenderer(obj->GetComponent<GameEngine::Renderer>());
 
-	if (engine->input->KeyIsPressed(GameEngine::Input::KeyZ))
+	if (GetEngine()->input->KeyIsPressed(GameEngine::Input::KeyZ))
 	{
 		DirectX::XMFLOAT3 wp;
 		XMStoreFloat3(&wp, transform->GetPosition());
-		engine->particleSystem->Initialise(wp);
+		GetEngine()->particleSystem->Initialise(wp);
 	}
 }
 
 void ShipController::Create()
 {
-	cam = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
-	model = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
-	base = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
-	light = engine->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	cam = GetEngine()->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	model = GetEngine()->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	base = GetEngine()->elementFactory->Create<GameEngine::Elements::CompositeObject>();
+	light = GetEngine()->elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
 	//Init camera
 	cam->AttachComponent<GameEngine::Graphics::Camera>();
 	cam->GetComponent<GameEngine::Elements::Transform>()->SetScale({1.0f, 1.0f, 1.0f});
 
 	//Init model child object
-	GameEngine::Resources::Mesh* mesh = engine->resourceFactory->Create<GameEngine::Resources::Mesh>(
+	GameEngine::Resources::Mesh* mesh = GetEngine()->resourceFactory->Create<GameEngine::Resources::Mesh>(
 		"test.fbx;lodGroup1/ship/");
 
 	GameEngine::Elements::Transform* t = model->GetComponent<GameEngine::Elements::Transform>();
@@ -309,15 +309,15 @@ void ShipController::Create()
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	Material* mat = engine->resourceFactory->Create<Material>("");
+	Material* mat = GetEngine()->resourceFactory->Create<Material>("");
 	mat->passes.push_back(RenderPass());
-	mat->passes[0].engine = engine;
+	mat->passes[0].engine = GetEngine();
 	mat->passes[0].LoadVS(L"shaders.hlsl", "VShader", iLayout, 3);
 	mat->passes[0].LoadPS(L"shaders.hlsl", "PShaderTex");
 
 	GameEngine::Renderer* r = model->AttachComponent<GameEngine::Renderer>();
 	r->Init(mat, mesh);
-	GameEngine::Resources::Texture* tex = engine->resourceFactory->Create<GameEngine::Resources::Texture>("test.tga");
+	GameEngine::Resources::Texture* tex = GetEngine()->resourceFactory->Create<GameEngine::Resources::Texture>("test.tga");
 	r->SetTexture(tex);
 
 	//Init light
@@ -330,7 +330,7 @@ void ShipController::Create()
 	light->AttachComponent<GameEngine::Graphics::Light>();
 	light->GetComponent<GameEngine::Graphics::Light>()->m_shadows = true;
 	light->GetComponent<GameEngine::Graphics::Light>()->m_colour = { 1.0f, 1.0f, 1.0f };
-	engine->graphics->AddLight(light->GetComponent<GameEngine::Graphics::Light>());
+	GetEngine()->graphics->AddLight(light->GetComponent<GameEngine::Graphics::Light>());
 
 	facingDirection = {0.0f, 0.0f, 1.0f};
 	velocity = {0.0f, 0.0f, 0.0f};

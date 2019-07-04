@@ -18,6 +18,15 @@
 #include "Light.h"
 #include "PropertyDict.h"
 
+#include "Texture.h"
+#include "TextureLoader.h"
+#include "Mesh.h"
+#include "MeshLoader.h"
+#include "TextureArray.h"
+#include "TextureArrayLoader.h"
+#include "Material.h"
+#include "MaterialLoader.h"
+
 using namespace GameEngine;
 
 //Initialise factories with a reference to the engine
@@ -44,17 +53,25 @@ Engine::Engine(HINSTANCE hInstance)
 	graphics = new GameEngine::Graphics::GraphicsController(this);
 	world = new GameEngine::Elements::World(this);
 	resources = new GameEngine::Resources::ResourceTable(this);
-	particleSystem = new GameEngine::Graphics::ParticleSystem(this);
+	
 
 	// Attach HandleMessage()
 	SetWindowLongPtr(window->GetHandle(), GWLP_USERDATA, (LONG_PTR)this);
 
+	// Default element, component, resource registration
 	RegisterElement(Elements::CompositeObject);
-	// Register default components
+
 	RegisterComponent(Renderer);
 	RegisterComponent(Elements::PropertyDict);
 	RegisterComponent(Graphics::Light);
 	RegisterComponent(Graphics::Camera);
+
+	RegisterResource(Resources::Texture, Resources::TextureLoader);
+	RegisterResource(Resources::TextureArray, Resources::TextureArrayLoader);
+	RegisterResource(Resources::Mesh, Resources::MeshLoader);
+	RegisterResource(Material, MaterialLoader);
+
+	particleSystem = new GameEngine::Graphics::ParticleSystem(this);
 }
 
 //Clean up dynamic allocation

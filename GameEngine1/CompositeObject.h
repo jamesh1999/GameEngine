@@ -55,7 +55,7 @@ namespace GameEngine
 		template <class T>
 		T* CompositeObject::AttachComponent()
 		{
-			T* component = engine->elementFactory->Create<T>();
+			T* component = GetEngine()->elementFactory->Create<T>();
 			return AttachComponent<T>(component);
 		}
 

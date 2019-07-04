@@ -76,9 +76,6 @@
     <Filter Include="Source Files\Engine\Base\Elements\Components">
       <UniqueIdentifier>{b14034f4-4261-4a7c-a68d-9e36836dc4ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\Base\Identifiers">
-      <UniqueIdentifier>{fd28262f-5ca1-4580-99af-3f1a43a3d297}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -192,13 +189,13 @@
     <ClCompile Include="Element.cpp">
       <Filter>Source Files\Engine\Base\Elements</Filter>
     </ClCompile>
-    <ClCompile Include="ElementPtr.cpp">
-      <Filter>Source Files\Engine\Base\Elements</Filter>
-    </ClCompile>
     <ClCompile Include="ElementFactory.cpp">
       <Filter>Source Files\Engine\Base\Elements</Filter>
     </ClCompile>
     <ClCompile Include="ElementTable.cpp">
+      <Filter>Source Files\Engine\Base\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementPtr.cpp">
       <Filter>Source Files\Engine\Base\Elements</Filter>
     </ClCompile>
   </ItemGroup>
@@ -344,11 +341,11 @@
     <ClInclude Include="ISerializable.h">
       <Filter>Header Files\Engine\Base\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Identifier.h">
-      <Filter>Header Files\Engine\Base\Identifiers</Filter>
-    </ClInclude>
     <ClInclude Include="ElementTable.h">
       <Filter>Header Files\Engine\Base\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialLoader.h">
+      <Filter>Header Files\Engine\Base\Resources\Initialisation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
