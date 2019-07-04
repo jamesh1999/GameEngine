@@ -31,8 +31,12 @@ namespace GameEngine
 			std::default_random_engine re;
 			std::uniform_int_distribution<Element::UID> rDist;
 
-			void Initialise(Element*);
+			void Initialise(Element*, Element::UID);
 			Element::UID FindFreeUID();
+
+		protected:
+
+			Element* DeserialiseHeader(std::istream&);
 
 		public:
 
@@ -53,7 +57,7 @@ namespace GameEngine
 			static_assert(std::is_base_of<Element, TElement>::value);
 
 			TElement* elem = new TElement;
-			Initialise(elem);
+			Initialise(elem, FindFreeUID());
 			return elem;
 		}
 

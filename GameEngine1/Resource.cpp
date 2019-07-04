@@ -18,18 +18,14 @@ void Resource::Destroy()
 
 Resource& Resource::operator>>(std::ostream& out)
 {
-	// Output the resource type only
-	out << typeid(*this).name() << '\n';
+	// Chain call base
+	Element::operator>>(out);
+	out << m_identifier << '\n';
 	return *this;
 }
 
-Resource& Resource::operator<<(std::istream& in)
-{
-	// Read in the resource type only
-	std::string type;
-	std::getline(in, type);
-	return *this;
-}
+// Read nothing this is the job of the ResourceFactory
+Resource& Resource::operator<<(std::istream& in) { return *this; }
 
 std::string Resource::GetIdentifier() const
 {

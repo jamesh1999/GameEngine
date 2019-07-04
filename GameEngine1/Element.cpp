@@ -25,3 +25,13 @@ Element::UID Element::GetUID()
 {
 	return m_uid;
 }
+
+// Read nothing this is the job of the ElementFactory
+Element& Element::operator<<(std::istream& in) { return *this; }
+
+Element& Element::operator>>(std::ostream& out)
+{
+	out << typeid(*this).name() << '\n';
+	out << m_uid << '\n';
+	return *this;
+}

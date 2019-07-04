@@ -22,6 +22,9 @@ namespace GameEngine
 
 			static std::unordered_map<std::string, void (*)(Resource*, const std::string&)> resources;
 
+		protected:
+			Resource* DeserialiseHeader(std::istream&, Resource*);
+
 		public:
 			ResourceFactory(Engine* engine) : Elements::ElementFactory(engine) {};
 

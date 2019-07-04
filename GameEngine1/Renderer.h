@@ -15,8 +15,7 @@ namespace GameEngine
 
 	public:
 		Resources::ResourcePtr<Material> mat;
-		//Resources::ResourceRef<Resources::Mesh> mesh;
-		Resources::Mesh* mesh;
+		Resources::ResourcePtr<Resources::Mesh> mesh;
 		Resources::ResourcePtr<Resources::TextureArray> m_textures;
 		bool m_active = true;
 		bool m_init = false;

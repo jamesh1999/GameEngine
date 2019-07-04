@@ -11,6 +11,7 @@
 #include "Renderer.h"
 #include "ResourceFactory.h"
 #include "Transform.h"
+#include "ResourcePtr.h"
 
 
 using namespace GameEngine::Resources;
@@ -75,8 +76,8 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 			for (int i = 0; i < lCnt; ++i)
 			{
 				// Load mesh & create material
-				Mesh* mesh = engine->elementFactory->Create<Mesh>();
-				MeshLoader::LoadFBX(mesh, node->GetMesh());
+				ResourcePtr<Mesh> mesh = engine->resourceFactory->Create<Mesh>();
+				MeshLoader::LoadFBX(mesh.Get(), node->GetMesh());
 				Material* mat = engine->resourceFactory->Create<Material>("Default Phong");
 
 				// Attach renderer
@@ -100,7 +101,7 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 
 						Renderer* r = co->AttachComponent<Renderer>();
 						r->SetTexture(tex);
-						r->Init(mat, mesh);
+						r->Init(mat, mesh.Get());
 					}
 					//r->Init(mat, mesh);
 					break;
@@ -135,7 +136,7 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 							Renderer* r = ro->AttachComponent<Renderer>();
 
 							r->SetTexture(texArray.Get());
-							Mesh* mm = new Mesh;
+							ResourcePtr<Mesh> mm = engine->resourceFactory->Create<Mesh>();
 
 							int polySize = node->GetMesh()->GetPolygonSize(j);
 							for (int k = 0; k < polySize; ++k)
@@ -150,7 +151,7 @@ Elements::CompositeObject* SceneLoader::ApplyFBXRecursively(Engine* engine, FbxN
 								mm->indices.push_back(k + 2);
 							}
 
-							r->Init(mat, mm);
+							r->Init(mat, mm.Get());
 						}
 
 						// Update polygon texcoords to reference respective textures

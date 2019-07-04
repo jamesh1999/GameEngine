@@ -42,24 +42,18 @@ void DestroyBackwards(GameEngine::Elements::CompositeObject* co)
 		DestroyBackwards(child->obj.Get());
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+void Register()
 {
-	//Random seed
-	srand(time(nullptr));
-
-	//-----------------
-	// Game Initialisation
-	//-----------------
-
-	GameEngine::Engine game(hInstance);
-
 	RegisterComponent(ShipController);
+}
 
+void Load(GameEngine::Engine& game)
+{
 	D3D11_INPUT_ELEMENT_DESC iLayout[]
 	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, pos), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, tex), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	Material* mat = game.resourceFactory->Create<Material>("Default Phong");
@@ -98,7 +92,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
-	                                          &game.graphics->dpthVtx);
+		&game.graphics->dpthVtx);
 	game.graphics->device->CreateInputLayout(
 		iLayout, 3, buff->GetBufferPointer(), buff->GetBufferSize(), &game.graphics->dpthILayout);
 	success = D3DCompileFromFile(
@@ -121,7 +115,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
-	                                         &game.graphics->dpthPx);
+		&game.graphics->dpthPx);
 
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
@@ -143,7 +137,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreateVertexShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
-	                                          &game.graphics->bloomVtx);
+		&game.graphics->bloomVtx);
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
 		nullptr,
@@ -164,7 +158,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
-	                                         &game.graphics->bloomPx);
+		&game.graphics->bloomPx);
 
 	success = D3DCompileFromFile(
 		L"blur.hlsl",
@@ -186,13 +180,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (err != nullptr)
 		err->Release();
 	game.graphics->device->CreatePixelShader(buff->GetBufferPointer(), buff->GetBufferSize(), nullptr,
-	                                         &game.graphics->bloomPxV);
+		&game.graphics->bloomPxV);
 
 	//MeshData* skybox = new MeshData;
 	//std::vector<std::string> tex_skybox;
 	//MeshLoader::ApplyFBXWithTextures(skybox, fbxNode, "skycube1_nolight", tex_skybox);
 
-	TrackLayout tl;
+	TrackLayout* tl = new TrackLayout;
 	GameEngine::Resources::Mesh* track_layout = new GameEngine::Resources::Mesh;
 	//fbxNode = MeshLoader::LoadFBX("Track_Outline.fbx");
 
@@ -213,8 +207,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	GameEngine::Elements::CompositeObject* co = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 
 	GameEngine::Elements::Transform* t = co->GetComponent<GameEngine::Elements::Transform>();
-	t->SetPosition({0.0f, 0.0f, 0.0f});
-	t->SetScale({1.0f, 1.0f, 1.0f});
+	t->SetPosition({ 0.0f, 0.0f, 0.0f });
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
 	t->m_static = true;
 
 	GameEngine::Elements::CompositeObject* scn = GameEngine::Resources::SceneLoader::LoadFBX(&game, "Track.fbx");
@@ -233,8 +227,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	GameEngine::Elements::CompositeObject* sky = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	GameEngine::Renderer* r = sky->AttachComponent<GameEngine::Renderer>();
 	t = sky->GetComponent<GameEngine::Elements::Transform>();
-	t->SetPosition({0.0f, 0.0f, 0.0f});
-	t->SetScale({1.0f, 1.0f, 1.0f});
+	t->SetPosition({ 0.0f, 0.0f, 0.0f });
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
 
 	Material* mat1 = game.resourceFactory->Create<Material>("");
 	mat1->passes.push_back(RenderPass());
@@ -252,9 +246,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	GameEngine::Elements::CompositeObject* ship = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	t = ship->GetComponent<GameEngine::Elements::Transform>();
-	t->SetPosition({-707.0f, 13.0f, -78.0f});
+	t->SetPosition({ -707.0f, 13.0f, -78.0f });
 	t->SetRotation(DirectX::XMQuaternionIdentity());
-	t->SetScale({1.0f, 1.0f, 1.0f});
+	t->SetScale({ 1.0f, 1.0f, 1.0f });
 
 	GameEngine::Elements::CompositeObject* l = game.elementFactory->Create<GameEngine::Elements::CompositeObject>();
 	auto cmp = l->AttachComponent<GameEngine::Graphics::Light>();
@@ -302,12 +296,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game.graphics->AddLight(cmp);
 
 	ship->AttachComponent<ShipController>();
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+	GameEngine::Engine engine(hInstance); // Instantiate the engine
+	Register(); // Register user code for use
+	Load(engine); // Load from disk
+
+	for (auto res : *engine.resources)
+	{
+		res.second->Save("Resources/" + res.second->GetIdentifier());
+	}
 
 	// Windows main loop
 	MSG message;
 	while (true)
 	{
-		if (PeekMessage(&message, game.window->GetHandle(), 0, 0, true))
+		if (PeekMessage(&message, engine.window->GetHandle(), 0, 0, true))
 		{
 			//Translate then handle in WndProc()
 			TranslateMessage(&message);
@@ -317,11 +323,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				break;
 		}
 		else
-			game.Loop();
+			engine.Loop();
 	}
-
-	//Clean up the console
-	FreeConsole();
 
 	return 0;
 }

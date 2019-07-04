@@ -29,7 +29,7 @@
 
 using namespace GameEngine;
 
-//Initialise factories with a reference to the engine
+// Initialise factories with a reference to the engine
 Engine::Engine(HINSTANCE hInstance)
 {
 #ifndef NDEBUG
@@ -74,7 +74,7 @@ Engine::Engine(HINSTANCE hInstance)
 	particleSystem = new GameEngine::Graphics::ParticleSystem(this);
 }
 
-//Clean up dynamic allocation
+// Clean up dynamic allocation
 Engine::~Engine()
 {
 	delete clock;
@@ -87,34 +87,41 @@ Engine::~Engine()
 	delete elementFactory;
 	delete elements;
 	delete resourceFactory;
+
+#ifndef NDEBUG
+	//Clean up the console
+	FreeConsole();
+#endif
 }
 
-//One complete loop of the game
+// One complete loop of the game
 void Engine::Loop() const
 {
 	world->Update();
 	particleSystem->Update();
 	input->Update();
+
 	graphics->ShadowPasses();
 	graphics->StartDraw();
 	graphics->RenderObjects();
 	particleSystem->Draw();
 	graphics->EndDraw();
+
 	clock->EndFrame();
 	clock->StartFrame();
 }
 
-//Handles messages from WndProc()
+// Handles messages from WndProc()
 bool Engine::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) const
 {
-	//Chain other message handlers
+	// Chain other message handlers
 	if (input != nullptr && input->HandleMessage(hWnd, message, wParam, lParam)) return true;
 	if (window != nullptr && window->HandleMessage(hWnd, message, wParam, lParam)) return true;
 	if (graphics != nullptr && graphics->HandleMessage(hWnd, message, wParam, lParam)) return true;
 
 	switch (message)
 	{
-		//Quit the window
+		// Quit the window
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return true;

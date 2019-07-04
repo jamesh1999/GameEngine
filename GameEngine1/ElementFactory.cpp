@@ -14,6 +14,17 @@ ElementFactory::ElementFactory(Engine* e) : m_engine(e)
 	re = std::default_random_engine(rd());
 }
 
+Element* ElementFactory::DeserialiseHeader(std::istream& in)
+{
+	std::string type;
+	std::getline(in, type);
+	Element::UID uid;
+	in >> uid;
+
+	Element* e = elements[type]();
+	Initialise(e, uid);
+}
+
 Engine* ElementFactory::GetEngine()
 {
 	return m_engine;
@@ -24,11 +35,11 @@ void ElementFactory::_RegisterElement(std::string name, Element* (*instantiator)
 	elements[name] = instantiator;
 }
 
-void ElementFactory::Initialise(Element* e)
+void ElementFactory::Initialise(Element* e, Element::UID uid)
 {
-	e->m_engine = m_engine; // Create engine reference
-	e->m_uid = FindFreeUID(); // Assign a unique ID
-	m_engine->elements->m_elements[e->m_uid] = e; // Add to the ElementTable
+	e->m_engine = GetEngine(); // Create engine reference
+	e->m_uid = uid; // Assign a unique ID
+	GetEngine()->elements->m_elements[e->m_uid] = e; // Add to the ElementTable
 }
 
 Element::UID ElementFactory::FindFreeUID()
@@ -36,26 +47,24 @@ Element::UID ElementFactory::FindFreeUID()
 	// Poll random UIDs until a free one is located
 	Element::UID free;
 
-	while (m_engine->elements->operator[](free = rDist(re)) != nullptr);
+	while (GetEngine()->elements->operator[](free = rDist(re)) != nullptr);
 	return free;
 }
 
 Element* ElementFactory::Deserialize(std::istream& in)
 {
-	std::string type;
-	in >> type;
-	
-	Element* c = elements[type]();
-	*c << in;
+	// Read element header then continue as normal
+	Element* e = DeserialiseHeader(in);
 
-	return c;
+	*e << in;
+	return e;
 }
 
 template <>
 CompositeObject* ElementFactory::Create<CompositeObject>()
 {
 	CompositeObject* obj = new CompositeObject;
-	Initialise(obj);
+	Initialise(obj, FindFreeUID());
 	obj->Create();
 	return obj;
 }

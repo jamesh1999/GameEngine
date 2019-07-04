@@ -10,21 +10,22 @@ void ResourceFactory::_RegisterResource(std::string name, void(*loader)(Resource
 	resources[name] = loader;
 }
 
-Resource* ResourceFactory::Deserialize(std::istream& in)
+Resource* ResourceFactory::DeserialiseHeader(std::istream& in, Resource* resource)
 {
-	Resource* resource = static_cast<Resource*>(ElementFactory::Deserialize(in));
-
-	// Don't store failed resources
-	if (resource == nullptr) return nullptr;
-
-	// Use the UID as their identifier
 	std::stringstream ss;
 	ss << resource->GetUID();
 	std::string identifier = ss.str();
 
 	static_cast<Resource*>(resource)->m_identifier = ss.str();
-
 	GetEngine()->resources->resources[ss.str()] = static_cast<Resource*>(resource);
+}
 
+Resource* ResourceFactory::Deserialize(std::istream& in)
+{
+	// Read element/resource headers then continue as normal
+	Resource* resource = static_cast<Resource*>(ElementFactory::DeserialiseHeader(in));
+	DeserialiseHeader(in, resource);
+	
+	*resource << in;
 	return resource;
 }

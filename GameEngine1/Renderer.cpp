@@ -60,7 +60,7 @@ void Renderer::SetTexture(Resources::Texture* tex)
 Resources::Mesh* Renderer::GetMesh() const
 {
 	//return *mesh;
-	return mesh;
+	return mesh.Get();
 }
 
 bool Renderer::GetTransparent() const

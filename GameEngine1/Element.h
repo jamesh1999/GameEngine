@@ -2,6 +2,8 @@
 #define __ELEMENT_INCLUDED__
 
 #include <unordered_set>
+#include <istream>
+#include <ostream>
 #include "Engine.h"
 #include "ISerializable.h"
 
@@ -38,6 +40,9 @@ namespace GameEngine
 
 			Engine* GetEngine();
 			UID GetUID();
+
+			Element& operator<<(std::istream&);
+			Element& operator>>(std::ostream&);
 		};
 	}
 }

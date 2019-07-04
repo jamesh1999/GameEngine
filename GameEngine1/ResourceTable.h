@@ -3,7 +3,6 @@
 
 #include <string>
 #include <unordered_map>
-#include "ISerializable.h"
 #include "Engine.h"
 
 namespace GameEngine
@@ -13,7 +12,7 @@ namespace GameEngine
 		class Resource;
 		class ResourceFactory;
 
-		class ResourceTable : public Utils::ISerializable
+		class ResourceTable
 		{
 			friend class ResourceFactory;
 
@@ -25,12 +24,12 @@ namespace GameEngine
 
 			ResourceTable(Engine*);
 
-			ResourceTable& operator<<(std::istream&);
-			ResourceTable& operator>>(std::ostream&);
-
 			Resource* operator[](const std::string&);
 			void Erase(const std::string&);
 			void Erase(Resource*);
+
+			std::unordered_map<std::string, Resource*>::iterator begin();
+			std::unordered_map<std::string, Resource*>::iterator end();
 		};
 	}
 }
