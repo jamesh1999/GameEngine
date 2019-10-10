@@ -39,6 +39,5 @@ void Resource::Save(const std::string& filename)
 
 	// Serialize & save to new location
 	std::ofstream out(filename);
-	out << typeid(*this).name();
 	*this >> out;
 }

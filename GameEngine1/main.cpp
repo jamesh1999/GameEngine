@@ -306,7 +306,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	for (auto res : *engine.resources)
 	{
-		res.second->Save("Resources/" + res.second->GetIdentifier());
+		res.second->Save(res.second->GetIdentifier());
 	}
 
 	// Windows main loop

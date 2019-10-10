@@ -9,7 +9,7 @@
 #include "TextureArray.h"
 #include "Transform.h"
 
-
+// Recursively find all renderers beneath a point
 void StaticBatcher::AggregateRenderers(GameEngine::Elements::CompositeObject* co, std::vector<GameEngine::Renderer*>& agg)
 {
 	GameEngine::Renderer* r = co->GetComponent<GameEngine::Renderer>();
@@ -20,48 +20,13 @@ void StaticBatcher::AggregateRenderers(GameEngine::Elements::CompositeObject* co
 		AggregateRenderers(child->obj.Get(), agg);
 }
 
+// Merge all renderers below a point into a single renderer at the point
 void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameEngine::Engine* engine)
 {
+	// Find all renderers below root
 	std::vector<GameEngine::Renderer*> renderers;
 	AggregateRenderers(root, renderers);
 
-	/*GameEngine::Renderer* nr = root->AttachComponent<GameEngine::Renderer>();
-
-	auto m = new GameEngine::Resources::Mesh;
-	GameEngine::Resources::ResourceRef<GameEngine::Resources::TextureArray> ta = engine->resourceFactory->Create<GameEngine::Resources::TextureArray>();
-
-	int idxOffset = 0;
-	for (auto r : renderers)
-	{
-		if (r->GetTransparent()) continue;
-		r->m_active = false;
-
-		int* map = new int[r->m_textures->Size()];
-		for (int i = 0; i < r->m_textures->Size(); ++i)
-		{
-			map[i] = ta->Find((**r->m_textures)[i]);
-			if (map[i] != -1) continue;
-			ta = ta->Add((**r->m_textures)[i]);
-			map[i] = ta->Size() - 1;
-		}
-
-		for (int i = 0; i < r->mesh->vertices.size(); ++i)
-		{
-			Vertex v = r->mesh->vertices[i];
-			v.tex.z = map[static_cast<int>(v.tex.z)];
-			m->vertices.push_back(v);
-		}
-
-		for (int i = 0; i < r->mesh->indices.size(); ++i)
-			m->indices.push_back(r->mesh->indices[i] + idxOffset);
-
-		idxOffset += r->mesh->vertices.size();
-
-		delete[] map;
-	}
-
-	nr->m_textures = ta;
-	nr->Init(*renderers[0]->mat, m);*/
 
 	bool unbatched = true;
 	while (unbatched)
@@ -74,7 +39,7 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({0.0f, 0.0f, 0.0f});
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({0.0f, 0.0f, 0.0f});
 
-		auto m = new GameEngine::Resources::Mesh;
+		GameEngine::Resources::ResourcePtr<GameEngine::Resources::Mesh> m = engine->resourceFactory->Create<GameEngine::Resources::Mesh>();
 		GameEngine::Renderer* tr = trans->AttachComponent<GameEngine::Renderer>();
 		auto ta = engine->resourceFactory->Create<GameEngine::Resources::TextureArray>();
 
@@ -117,7 +82,7 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 		}
 
 		tr->m_textures = ta;
-		tr->Init(mat, m);
+		tr->Init(mat, m.Get());
 	}
 
 	unbatched = true;
@@ -133,7 +98,7 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetPosition({0.0f, 0.0f, 0.0f});
 		trans->GetComponent<GameEngine::Elements::Transform>()->SetRotation({0.0f, 0.0f, 0.0f});
 
-		auto m = new GameEngine::Resources::Mesh;
+		GameEngine::Resources::ResourcePtr<GameEngine::Resources::Mesh> m = engine->resourceFactory->Create<GameEngine::Resources::Mesh>();
 		GameEngine::Renderer* tr = trans->AttachComponent<GameEngine::Renderer>();
 		auto ta = engine->resourceFactory->Create<GameEngine::Resources::TextureArray>();
 
@@ -175,13 +140,15 @@ void StaticBatcher::BatchFrom(GameEngine::Elements::CompositeObject* root, GameE
 		}
 
 		tr->m_textures = ta;
-		tr->Init(mat, m);
+		tr->Init(mat, m.Get());
 	}
 
+	// Destroy all batched renderers
 	for (auto r : renderers)
 		r->Destroy();
 }
 
+// Recursively destroy all empty objects
 void StaticBatcher::CullHeirarchy(GameEngine::Elements::CompositeObject* root)
 {
 	for (auto child : root->GetComponent<GameEngine::Elements::Transform>()->GetChildren())
